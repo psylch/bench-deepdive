@@ -1,115 +1,121 @@
-<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Agent 评测论文精读</title><link rel="stylesheet" href="style.css"></head><body><main><h1 id="agent">Agent 评测论文精读</h1>
-<blockquote>
-<p>2026-10-13 · 另一篇：<a href="tech-reports-data.html">中国开源模型 tech report 的数据部分</a>
-引用尽量保留原文措辞，出处标在每节末尾；没公开的写“未公开”。</p>
-</blockquote>
-<h2 id="_1">总览</h2>
-<table>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent 评测论文精读</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Reenie+Beanie&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"></head><body>
+<main class="pw wide" id="top">
+<div class="meta">NOTES · 2026-10 · <a class="sw" href="tech-reports-data.html">Tech report 数据部分 →</a></div>
+<h1 class="ph1">Agent 评测论文精读</h1>
+<div class="art lead"><blockquote>
+<p>2026-10-13 · 另一篇：<a href="tech-reports-data.html">中国开源模型 tech report 的数据部分</a> · 引用保留原文措辞（英文不译），每节末尾附链接；没有公开的内容一律写“未公开”。</p>
+</blockquote></div>
+<nav class="tabbar"><div class="grp"><div class="tabs"><a href="#t0-总览" data-t="t0-总览">总览</a></div></div><div class="grp"><span class="gl">美团</span><div class="tabs"><a href="#t1-vitabench-2-0" data-t="t1-vitabench-2-0">VitaBench 2.0</a></div></div><div class="grp"><span class="gl">Copula</span><div class="tabs"><a href="#t2-数据产品" data-t="t2-数据产品">数据产品</a><a href="#t3-参照-openai-gdpval" data-t="t3-参照-openai-gdpval">参照：OpenAI GDPval</a><a href="#t4-参照-finance-agent-benchmark" data-t="t4-参照-finance-agent-benchmark">参照：Finance Agent Benchmark</a><a href="#t5-参照-webdev-arena-与-vision2web" data-t="t5-参照-webdev-arena-与-vision2web">参照：WebDev Arena 与 Vision2Web</a><a href="#t6-与原版逐项对比" data-t="t6-与原版逐项对比">与原版逐项对比</a></div></div><div class="grp"><span class="gl">Humanlaya</span><div class="tabs"><a href="#t7-onemillion-bench" data-t="t7-onemillion-bench">$OneMillion-Bench</a></div></div><div class="grp"><span class="gl">UniPat</span><div class="tabs"><a href="#t8-evocode-bench" data-t="t8-evocode-bench">EvoCode-Bench</a><a href="#t9-saas-bench" data-t="t9-saas-bench">SaaS-Bench</a><a href="#t10-roadmapbench" data-t="t10-roadmapbench">RoadmapBench</a><a href="#t11-clawbench" data-t="t11-clawbench">ClawBench</a><a href="#t12-babyvision" data-t="t12-babyvision">BabyVision</a><a href="#t13-monthly-swebench-与-paperbenchx" data-t="t13-monthly-swebench-与-paperbenchx">Monthly-SWEBench 与 PaperBenchX</a></div></div><div class="grp"><span class="gl">Seed</span><div class="tabs"><a href="#t14-edgebench" data-t="t14-edgebench">EdgeBench</a><a href="#t15-xpertbench" data-t="t15-xpertbench">XpertBench</a><a href="#t16-widesearch" data-t="t16-widesearch">WideSearch</a><a href="#t17-模型卡评测体系" data-t="t17-模型卡评测体系">模型卡评测体系</a></div></div><div class="grp"><span class="gl">Einsia</span><div class="tabs"><a href="#t18-frontier-eng" data-t="t18-frontier-eng">Frontier-Eng</a><a href="#t19-ai4ai-bench" data-t="t19-ai4ai-bench">AI4AI-Bench</a><a href="#t20-swe-refactor-bench" data-t="t20-swe-refactor-bench">SWE Refactor Bench</a><a href="#t21-pptbench" data-t="t21-pptbench">PPTBench</a><a href="#t22-world-models-last-exam-in-physics" data-t="t22-world-models-last-exam-in-physics">World Models&#x27; Last Exam in Physics</a><a href="#t23-browserbc-方法论文" data-t="t23-browserbc-方法论文">BrowserBC（方法论文）</a></div></div><div class="grp"><span class="gl">其他</span><div class="tabs"><a href="#t24-智能知识-曼孚" data-t="t24-智能知识-曼孚">智能知识 / 曼孚</a></div></div><div class="grp"><span class="gl">共性</span><div class="tabs"><a href="#t25-跨-benchmark-的规律" data-t="t25-跨-benchmark-的规律">跨 benchmark 的规律</a></div></div></nav>
+<div class="art"><section class="panel" id="t0-总览"><h2><span class="no">00</span>总览</h2><p><strong>结论先行</strong></p>
+<ul>
+<li>判分方式正在收敛成三类：一是<strong>可执行验证</strong>，靠测试和模拟器（UniPat 的编码类、Einsia、EdgeBench）；二是<strong>专家写的加权原子 rubric 交给 LLM judge 逐条判</strong>（OMB、XpertBench、VitaBench、GDPval 数据集、Copula）；三是<strong>专家盲评两两比较</strong>（GDPval 主指标、WebDev Arena）。</li>
+<li>长程任务几乎都用“全对才算过”的严格指标，同时报一个部分得分：Resolved 和 Checkpoint、Pass Rate 和 Expert Score、MT@4 和 SR，两者之间差距很大。</li>
+<li>每个长程 bench 都记录过 agent 钻评测空子的案例。work 和 judge 分开、隐藏测试、迁移审计、拦截最终请求，正在变成标配。</li>
+<li>Copula 公开的数据产品里，金融和法律两条线最接近 GDPval 的思路：真实工作包、可交付文件、专家逐条写 rubric。差别在于 Copula 用硬门槛 rubric 打绝对分，不做和人类交付物的两两比较。</li>
+</ul>
+<div class="tw"><table>
 <thead>
 <tr>
 <th>评测</th>
 <th>机构</th>
-<th>任务类型</th>
+<th>测什么</th>
 <th>规模</th>
-<th>判分方式</th>
-<th>开源情况</th>
+<th>判分</th>
+<th>公开程度</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>VitaBench 2.0</td>
 <td>美团 LongCat</td>
-<td>生活服务 agent：长期个性化、主动澄清</td>
+<td>生活服务 agent 的长期个性化、主动澄清</td>
 <td>56 用户 / 819 子任务 / 66 工具</td>
-<td>原子 rubric + GPT-4.1 窗口评分，加下单结果核对，全对才得 1</td>
-<td>论文、代码、HF 数据</td>
+<td>原子 rubric，GPT-4.1 窗口评分，再核对下单结果，全对才得 1</td>
+<td>论文、代码、HF</td>
 </tr>
 <tr>
-<td>VitaBench 1.0</td>
-<td>美团 LongCat</td>
-<td>生活服务 agent：跨场景工具使用</td>
-<td>100 跨场景 + 300 单场景</td>
-<td>原子 rubric + 滑动窗口评估</td>
-<td>论文、代码、数据</td>
+<td>OpenAI GDPval（参照）</td>
+<td>OpenAI</td>
+<td>44 个职业的真实知识工作交付物</td>
+<td>全集 1,320；公开 gold 220</td>
+<td>行业专家盲评两两比较（胜率）；另有自动 grader</td>
+<td>论文、HF（220 题）</td>
 </tr>
 <tr>
-<td>WebDev</td>
+<td>Finance Agent Benchmark（参照）</td>
+<td>Vals AI</td>
+<td>基于 SEC 文件的金融分析</td>
+<td>537 题</td>
+<td>rubric 拆点 + contradiction 检查，LLM judge</td>
+<td>论文、50 题公开</td>
+</tr>
+<tr>
+<td>Copula 金融 / 法律长程</td>
 <td>Copula Lab</td>
-<td>前端生成的美学与交互</td>
+<td>研报、财务模型、尽调备忘录</td>
 <td>未公开</td>
-<td>专家分维度打分</td>
-<td>仅官网样例</td>
+<td>专家 rubric，带 Must pass / Hard gate</td>
+<td>官网各 1 个完整样例</td>
 </tr>
 <tr>
-<td>金融长程 Agent</td>
+<td>Copula WebDev / Vision2Web / 3D / 游戏</td>
 <td>Copula Lab</td>
-<td>中文研报 / 财务模型交付</td>
-<td>未公开（在研）</td>
-<td>专家逐项 rubric</td>
-<td>仅官网样例</td>
-</tr>
-<tr>
-<td>3D</td>
-<td>Copula Lab</td>
-<td>3D 场景和资产生成</td>
-<td>未公开（在研）</td>
-<td>可运行验证脚本 + 专家</td>
-<td>仅官网样例</td>
+<td>前端审美与交互、设计稿转网站、3D、Godot 游戏</td>
+<td>未公开</td>
+<td>专家分维度打分，加上可运行验证</td>
+<td>官网样例</td>
 </tr>
 <tr>
 <td>$OneMillion-Bench</td>
 <td>Humanlaya</td>
-<td>五个专业领域的专家任务</td>
-<td>400 题（中英各 200）</td>
-<td>加权 rubric，含负分，LLM judge；0.7 分为通过线</td>
+<td>金融、法律、医疗、自然科学、工业的专家任务</td>
+<td>400 题（CN 和 Global 各 200）</td>
+<td>加权 rubric（−20 到 10），LLM judge；0.7 分为通过线</td>
 <td>论文、代码、HF</td>
-</tr>
-<tr>
-<td>Monthly-SWEBench</td>
-<td>UniPat</td>
-<td>每月新 GitHub issue</td>
-<td>每月约 100 题</td>
-<td>测试通过，Pass@1</td>
-<td>官网榜单</td>
 </tr>
 <tr>
 <td>EvoCode-Bench</td>
 <td>UniPat</td>
-<td>多轮需求变更下的编码</td>
+<td>需求持续变化下的多轮编码</td>
 <td>26 任务 / 227 轮</td>
 <td>累积可执行测试，fail-stop</td>
-<td>论文、数据、Harbor 扩展</td>
+<td>论文、数据</td>
 </tr>
 <tr>
 <td>SaaS-Bench</td>
 <td>UniPat</td>
-<td>浏览器 agent 跨 SaaS 完成业务流程</td>
+<td>浏览器 agent 跨 SaaS 跑业务流程</td>
 <td>106 任务 / 23 个 SaaS</td>
-<td>加权检查点：Checkpoint Score + Resolved Score</td>
+<td>加权检查点</td>
 <td>论文、代码</td>
 </tr>
 <tr>
 <td>RoadmapBench</td>
 <td>UniPat</td>
 <td>按版本路线图实现新功能</td>
-<td>115 任务 / 17 仓库 / 5 种语言</td>
+<td>115 任务 / 17 仓库</td>
 <td>加权子目标测试</td>
 <td>论文</td>
 </tr>
 <tr>
 <td>ClawBench</td>
 <td>UniPat 等</td>
-<td>真实网站上的日常写操作</td>
-<td>153 任务 / 144 平台</td>
-<td>Agent-as-Judge 二值判定，拦截最终提交</td>
+<td>在真实网站上完成写操作</td>
+<td>153 任务 / 144 网站</td>
+<td>拦截最终请求，Agent-as-Judge 二值判定</td>
 <td>论文、官网</td>
 </tr>
 <tr>
 <td>BabyVision</td>
 <td>UniPat 等</td>
-<td>不依赖语言的基础视觉推理</td>
-<td>388 题 / 22 子类</td>
-<td>答案匹配</td>
+<td>不依赖语言的基础视觉</td>
+<td>388 题 + 生成版 280 题</td>
+<td>答案等价判定</td>
 <td>论文、代码、数据</td>
 </tr>
 <tr>
@@ -117,64 +123,93 @@
 <td>字节 Seed</td>
 <td>12 小时以上的环境学习</td>
 <td>134 任务（开源 51）</td>
-<td>隐藏 judge 打分，看学习曲线</td>
+<td>隐藏 judge，看学习曲线</td>
 <td>论文、代码、HF</td>
 </tr>
 <tr>
 <td>XpertBench</td>
 <td>字节 Seed</td>
 <td>专家级开放任务</td>
-<td>1,346 题 / 80 类</td>
+<td>1,346 题 / 80+ 类</td>
 <td>15–40 条加权 rubric，ShotJudge</td>
-<td>论文（数据开放情况未写明）</td>
+<td>论文</td>
 </tr>
 <tr>
 <td>WideSearch</td>
 <td>字节 Seed</td>
 <td>大规模信息收集成表</td>
 <td>200 题（中英各 100）</td>
-<td>逐格精确匹配或 LLM judge；SR / F1</td>
-<td>论文、项目页</td>
+<td>逐格匹配或 LLM judge；SR / F1</td>
+<td>论文、HF</td>
 </tr>
 <tr>
-<td>Seed1.8 / 2.0 模型卡</td>
+<td>Seed 模型卡评测体系</td>
 <td>字节 Seed</td>
-<td>模型评测体系</td>
+<td>模型发布时的评测选择</td>
 <td>—</td>
 <td>—</td>
 <td>模型卡</td>
 </tr>
 <tr>
-<td>Einsia 5 篇</td>
-<td>Einsia Navers Lab</td>
-<td>工程优化、训练算法、仓库迁移、PPT 还原、物理一致性</td>
-<td>47 / 10 / 20 / 500 / 40</td>
-<td>各自的 verifier 或测量</td>
-<td>论文 + GitHub</td>
+<td>Frontier-Eng</td>
+<td>Einsia</td>
+<td>工程优化（提方案、跑评测、再改进的循环）</td>
+<td>47 任务</td>
+<td>冻结的 verifier；跨任务比平均排名</td>
+<td>论文、GitHub</td>
 </tr>
 <tr>
-<td>Expert Evals</td>
-<td>智能知识</td>
-<td>专家在真实任务里评估</td>
-<td>未公开</td>
-<td>专家判定、GSB</td>
-<td>服务，无公开集</td>
+<td>AI4AI-Bench</td>
+<td>Einsia</td>
+<td>改写训练算法</td>
+<td>10 个冻结仓库</td>
+<td>隐藏 evaluator；0 / 0.1 / 1 三点标尺</td>
+<td>论文、GitHub</td>
 </tr>
 <tr>
-<td>Eval 与 Benchmark</td>
-<td>曼孚</td>
+<td>SWE Refactor Bench</td>
+<td>Einsia</td>
+<td>整仓库换技术栈</td>
+<td>20 个仓库</td>
+<td>迁移审计、行为测试、对抗验证三关</td>
+<td>论文、GitHub</td>
+</tr>
+<tr>
+<td>PPTBench</td>
+<td>Einsia</td>
+<td>论文流程图还原成可编辑 PPT</td>
+<td>500 题</td>
+<td>三道门槛 + 细节分，agentic judge</td>
+<td>论文、GitHub</td>
+</tr>
+<tr>
+<td>Phys Last Exam</td>
+<td>Einsia</td>
+<td>视频模型的物理一致性</td>
+<td>40 任务 / 1,280 段视频</td>
+<td>可观测性筛选 + 物理量测量</td>
+<td>论文、GitHub</td>
+</tr>
+<tr>
+<td>BrowserBC</td>
+<td>Einsia</td>
+<td>方法论文：把人类浏览轨迹蒸馏成 skill</td>
+<td>—</td>
+<td>用 WebArena-Hard 和 ClawBench 评测</td>
+<td>论文、GitHub</td>
+</tr>
+<tr>
+<td>Expert Evals / Eval 服务</td>
+<td>智能知识 / 曼孚</td>
 <td>评测服务</td>
 <td>未公开</td>
 <td>未公开</td>
-<td>服务，无公开集</td>
+<td>只有服务页</td>
 </tr>
 </tbody>
-</table>
-<hr />
-<h2 id="1-vitabench-20">1. 美团 VitaBench 2.0</h2>
-<p><strong>测什么、为什么</strong>：论文认为现有 agent benchmark “largely overlook personalization”，默认任务信息都写在当前上下文里。2.0 要测 agent 能否从零碎的历史里推断偏好、在偏好变化时更新，并在缺信息时主动去问。</p>
+</table></div><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t1-vitabench-2-0"><div class="meta">美团</div><h2><span class="no">01</span>VitaBench 2.0</h2><p><strong>测什么、为什么</strong>：论文认为现有 agent benchmark “largely overlook personalization”，默认任务信息都写在当前上下文里。2.0 要测 agent 能否从零碎的历史里推断偏好、在偏好变化时更新，并在缺信息时主动去问。</p>
 <p><strong>任务设计</strong></p>
-<table>
+<div class="tw"><table>
 <thead>
 <tr>
 <th>项</th>
@@ -219,19 +254,23 @@
 <td>“we intentionally reduce the complexity of explicit reasoning and tool usage”，让难点落在偏好上</td>
 </tr>
 </tbody>
-</table>
-<p><strong>rubric 原文</strong>（HF tasks.json，sub_A891207，PCOS 用户点外卖）
-- 「下单商品中应含有肉（指畜肉或禽肉…），不应选择以鱼、虾仁、鸭血、猪肝、鸡胗、鸡杂等内脏/海鲜水产替代肉类的商品」
-- 「下单商家的配送时长应在30分钟内（含30分钟）」
-- 「送达地址应为辽宁省锦州市凌河区延安路六段10号（即用户工作/单位地址），不应送至用户家庭住址」
-- 「下单商品应避免加工食物、油炸食物、高GI食物」
-- 干扰品标注：「香辣牛肉火腿肠炒粉」，<code>distraction_reason</code>：「违反rubric5：加工食物（火腿肠）且高GI（河粉）」</p>
+</table></div>
+<p><strong>rubric 原文</strong>（HF tasks.json，sub_A891207，PCOS 用户点外卖）</p>
+<ul>
+<li>「下单商品中应含有肉（指畜肉或禽肉…），不应选择以鱼、虾仁、鸭血、猪肝、鸡胗、鸡杂等内脏/海鲜水产替代肉类的商品」</li>
+<li>「下单商家的配送时长应在30分钟内（含30分钟）」</li>
+<li>「送达地址应为辽宁省锦州市凌河区延安路六段10号（即用户工作/单位地址），不应送至用户家庭住址」</li>
+<li>「下单商品应避免加工食物、油炸食物、高GI食物」</li>
+<li>干扰品标注：「香辣牛肉火腿肠炒粉」，<code>distraction_reason</code>：「违反rubric5：加工食物（火腿肠）且高GI（河粉）」</li>
+</ul>
 <p>rubric 统计：共 3,813 条 state_rubrics，每个子任务平均 4.95 条（0–12 条）；只有 13 个子任务有 overall_rubrics。</p>
-<p><strong>真实题目原文</strong>
-1. 「忙得脚不沾地，中午饭就帮我点个外卖来单位算了」（外卖，普通个性化）
-2. 「这个小长假没出去，在家里蹲得实在是无聊……帮我找家店，明天我去玩玩打发下时间吧」（到店，主动澄清；用户偏好“上午狗咖、下午打电玩”，<code>user_intention</code>：「用户选择下午去」）</p>
+<p><strong>真实题目原文</strong></p>
+<ol>
+<li>「忙得脚不沾地，中午饭就帮我点个外卖来单位算了」（外卖，普通个性化）</li>
+<li>「这个小长假没出去，在家里蹲得实在是无聊……帮我找家店，明天我去玩玩打发下时间吧」（到店，主动澄清；用户偏好“上午狗咖、下午打电玩”，<code>user_intention</code>：「用户选择下午去」）</li>
+</ol>
 <p><strong>评测流程</strong></p>
-<table>
+<div class="tw"><table>
 <thead>
 <tr>
 <th>环节</th>
@@ -264,9 +303,9 @@
 <td>每题跑 4 次（temperature 0）：Avg@4、Pass@4、Pass^4</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p><strong>主要结果</strong>（全上下文，Avg@4 / Pass^4）</p>
-<table>
+<div class="tw"><table>
 <thead>
 <tr>
 <th>模型</th>
@@ -306,75 +345,467 @@
 <td>0.123</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <ul>
 <li>多数模型加了记忆后下降；Doubao-Seed-2.0-pro 用 RAG 降到 0.339。</li>
 <li>主动任务明显更低：Claude 个性化 46.0、主动 27.4；DeepSeek 44.1 对 27.8；GLM 36.4 对 19.3。</li>
 <li>直接给真实偏好也只有约 50 分（DeepSeek 52.7、Claude 51.2、Seed 49.3）。</li>
 </ul>
-<p><strong>局限与可挑战点</strong>
-- 论文自己承认：“user preferences and interaction histories are programmatically constructed … may not fully capture the full diversity of real-world user behavior”；满意度类指标 “beyond the scope”。
-- 我们认为可挑战的地方：
-  - 模拟器和 judge 都是 GPT-4.1，论文没有报告 judge 和人工的一致率。
-  - 主动性只按结果判，103 个主动子任务的 rubric 里没有“询问 / 确认”类条目，过度提问不扣分。
-  - 全对才得分，rubric 措辞（如“鸡胗不算肉”）直接决定成败。
-  - 论文里偏好数量的说法不一致：2,286 条、“over 1,000”、“17,928 preference annotations … 2,048 distinct preference types” 三种口径都出现过。</p>
-<p><strong>和 1.0 的区别</strong>
-- 1.0（arXiv 2509.26490）：100 个跨场景 + 300 个单场景任务，同样 66 个工具；最强模型跨场景成功率 30%、单场景低于 50%。偏好直接写在给模拟器的指令里，模拟器的 prompt 是 “provide the conditions and preferences from instructions”。
-- 1.0 题目原文：「这周六你和五位好友准备去北京体验一下真人 CS…你负责找找有什么场地规模大、布置专业的户外 CS 基地…顺便再看看闪购上有没有你一直用的安耐晒…」
-- 1.0 rubric 原文：「真人CS订单套餐需包含教练指导」「下单的防晒商品的品牌应为安耐晒」「…因此需要将真人CS订单的预约时间14:00:00修改为2025年6月21日 15:30:00左右【即预约到店时间在15:15-15:45区间内】」
-- 区别：1.0 测“信息给全时能不能做对复杂任务”，2.0 测“信息没给时能不能从历史里推断出来”。</p>
-<p>链接：
-- 2.0：<a href="https://arxiv.org/abs/2605.27141">arXiv 2605.27141</a> · <a href="https://github.com/meituan-longcat/vitabench-2.0">GitHub</a> · <a href="https://huggingface.co/datasets/meituan-longcat/VitaBench-2.0">HF</a> · <a href="https://vitabench2.github.io/">项目页</a> · <a href="https://tech.meituan.com/2026/06/29/LongCat-VitaBench-2.0.html">美团技术博客</a>
-- 1.0：<a href="https://arxiv.org/abs/2509.26490">arXiv 2509.26490</a> · <a href="https://github.com/meituan-longcat/vitabench">GitHub</a> · <a href="https://huggingface.co/datasets/meituan-longcat/VitaBench">HF</a></p>
-<hr />
-<h2 id="2-copula-lab">2. Copula Lab</h2>
-<p>官网 Benchmark 页只列了两个“In development”（3D、金融长程 agent），没有论文、公开数据集或榜单。方法论原文：“Real tasks, real deliverables / Expert-authored rubrics / Versioned methods and results / Long-horizon, agent-oriented”。中文 GDPval（“按中国官方 GDP 产业结构加权”）只出现在第三方报道里，官网现在没有对应页面。</p>
-<table>
+<p><strong>局限与可挑战点</strong></p>
+<ul>
+<li>论文自己承认：“user preferences and interaction histories are programmatically constructed … may not fully capture the full diversity of real-world user behavior”；满意度类指标 “beyond the scope”。</li>
+<li>我们认为可挑战的地方：</li>
+<li>模拟器和 judge 都是 GPT-4.1，论文没有报告 judge 和人工的一致率。</li>
+<li>主动性只按结果判，103 个主动子任务的 rubric 里没有“询问 / 确认”类条目，过度提问不扣分。</li>
+<li>全对才得分，rubric 措辞（如“鸡胗不算肉”）直接决定成败。</li>
+<li>论文里偏好数量的说法不一致：2,286 条、“over 1,000”、“17,928 preference annotations … 2,048 distinct preference types” 三种口径都出现过。</li>
+</ul>
+<p><strong>和 1.0 的区别</strong></p>
+<ul>
+<li>1.0（arXiv 2509.26490）：100 个跨场景 + 300 个单场景任务，同样 66 个工具；最强模型跨场景成功率 30%、单场景低于 50%。偏好直接写在给模拟器的指令里，模拟器的 prompt 是 “provide the conditions and preferences from instructions”。</li>
+<li>1.0 题目原文：「这周六你和五位好友准备去北京体验一下真人 CS…你负责找找有什么场地规模大、布置专业的户外 CS 基地…顺便再看看闪购上有没有你一直用的安耐晒…」</li>
+<li>1.0 rubric 原文：「真人CS订单套餐需包含教练指导」「下单的防晒商品的品牌应为安耐晒」「…因此需要将真人CS订单的预约时间14:00:00修改为2025年6月21日 15:30:00左右【即预约到店时间在15:15-15:45区间内】」</li>
+<li>区别：1.0 测“信息给全时能不能做对复杂任务”，2.0 测“信息没给时能不能从历史里推断出来”。</li>
+</ul>
+<p>链接：</p>
+<ul>
+<li>2.0：<a href="https://arxiv.org/abs/2605.27141">arXiv 2605.27141</a> · <a href="https://github.com/meituan-longcat/vitabench-2.0">GitHub</a> · <a href="https://huggingface.co/datasets/meituan-longcat/VitaBench-2.0">HF</a> · <a href="https://vitabench2.github.io/">项目页</a> · <a href="https://tech.meituan.com/2026/06/29/LongCat-VitaBench-2.0.html">美团技术博客</a></li>
+<li>1.0：<a href="https://arxiv.org/abs/2509.26490">arXiv 2509.26490</a> · <a href="https://github.com/meituan-longcat/vitabench">GitHub</a> · <a href="https://huggingface.co/datasets/meituan-longcat/VitaBench">HF</a></li>
+</ul><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t2-数据产品"><div class="meta">Copula</div><h2><span class="no">02</span>数据产品</h2><p><strong>结论</strong>：Copula 没有论文、公开数据集，也没有榜单。能逐字核对的只有官网 9 个页面：Benchmark 页和 8 个数据产品页。金融和法律两页公开了完整的 prompt、rubric 和参考材料清单，是最能看出它方法的材料；其余几页只有产品描述和样例名。“中文版 GDPval”这个说法只出现在第三方报道里（称“按中国官方 GDP 产业结构加权”），官网现在没有这一页。</p>
+<p><strong>Benchmark 页原文</strong></p>
+<ul>
+<li>在研两个：3D（“A verifiable measure of 3D scene and asset generation”）和金融长程 agent。</li>
+<li>金融那一条写明了参照对象：“<strong>Following the Finance Agent Benchmark direction</strong>, we focus on Chinese financial conventions, compliance workflows and collaboration across roles. Tasks are open-ended, with office documents as deliverables; finance experts define the task distribution and evaluation rubrics.”</li>
+<li>方法论四条：“Real tasks, real deliverables”（“Models are scored on complete deliverables — documents, code, analyses — not multiple-choice answers”）；“Expert-authored rubrics”（“Domain experts define the scoring dimensions and per-task anchors”）；“Versioned methods and results”；“Long-horizon, agent-oriented”（“Tasks span hours to days of expert work”）。</li>
+</ul>
+<h3>金融长程任务环境（Finance Long-Horizon）</h3>
+<div class="tw"><table>
 <thead>
 <tr>
-<th>产品</th>
-<th>测什么</th>
-<th>官网样例</th>
-<th>判分</th>
-<th>规模</th>
+<th>项</th>
+<th>内容（官网原文或统计）</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>WebDev（官网归在数据产品下）</td>
-<td>“visual quality, motion and gestures, multi-step interaction flows, and how well the design fits its intended use”</td>
-<td>Tandem（5–10 岁儿童学习平台）；Errand（“through questions, comparisons and permission cards, the user authorizes it to tidy an inbox, book classes and shop inside a chat”）；Side A Records；Stayform 酒店预订</td>
-<td>“expert-authored dimensional scores”；“Task-specific criteria assess functional behavior and design quality”；支持同一需求不同实现的偏好对比</td>
-<td>未公开</td>
+<td>定位</td>
+<td>“Each datapoint is a complete professional work package”，交付物是 “a research report, financial model or other professional deliverable ready for review”</td>
 </tr>
 <tr>
-<td>金融长程</td>
-<td>“Chinese financial conventions, compliance workflows and multi-role collaboration”；交付 office 文档</td>
-<td>爱迪特（301580.SZ）首次覆盖研报，截止 2026-08-06（见下）</td>
-<td>“Task distributions and rubrics defined by finance experts”；“itemized criteria … correctness, completeness and business usability”</td>
-<td>未公开</td>
+<td>构造</td>
+<td>“defined, constructed and validated by experienced finance practitioners”；每条数据含任务要求、执行记录和逐项 criteria，用途写的是评测、SFT、偏好学习和 RL</td>
 </tr>
 <tr>
-<td>3D</td>
-<td>“multi-file projects, spatial reasoning and runnable verification scripts”</td>
-<td>Three.js：天坛祈年殿、樱花河景、雨水口袋公园；Blender：竞技场导览、海上复古车厢、深海观景厅</td>
-<td>“runnable verification scripts with automatically checkable criteria”；数据产品另评 “form, spatial structure, materials, motion, interaction controls and engineering usability”</td>
-<td>未公开</td>
+<td>样例</td>
+<td>爱迪特（301580.SZ）首次覆盖研报（完整公开）；格力电器 2022E–2026E 三表预测与估值；桃李面包 2023E–2026E 盈利预测（这两个只有标题）</td>
+</tr>
+<tr>
+<td>参考材料</td>
+<td>R01 年报、R02 一季报、R10 股权激励草案、R29 商务部出口管制公告……页面显示 “showing 2 of 286 pages”</td>
+</tr>
+<tr>
+<td>rubric 结构</td>
+<td>“46 criteria in eight groups, 114 points in all”；分组和条数：信息边界与交付 4、历史经营与财务质量 6、商业模式与治理 6、行业需求与政策传导 5、供应链与新业务 7、盈利预测与模型勾稽 9、估值结论与风险 7、呈现质量 2</td>
+</tr>
+<tr>
+<td>计分</td>
+<td>“Each criterion is scored as the share of it that is met (0–1) times its points”；“Criteria marked Must pass are judged 0 or 1 only, and failing any one sets the total to 0”</td>
+</tr>
+<tr>
+<td>干扰与难度</td>
+<td>时间截止（2026-08-06）、多来源口径冲突、“未落地的政策、产能、订单不能写成已发生事实”；数值类条目都带容差</td>
 </tr>
 </tbody>
-</table>
-<p><strong>金融长程题原文节选</strong>（英文原文，未翻译）：“As a medical device or dental healthcare analyst at a brokerage research institute, initiate coverage of Aidite (Qinhuangdao) Technology Co., Ltd. (301580.SZ) … based on … information that was public and verifiable as of August 6, 2026 … Distinguish company disclosures, government and regulatory documents, third-party materials and analyst assumptions … Policies, capacity, orders, price adjustments or new-business progress that have not materialized must not be presented as accomplished facts.” 样例页有 Prompt / Rubric / Reference 三栏，rubric 全文没能抓取。</p>
-<p><strong>可挑战点</strong>
-- 审美评分的专家一致性、规模、版本都没公开。
-- 金融题的“信息截止日”无法排除训练数据泄漏。
-- 3D 的脚本只能查结构，查不了好不好看。</p>
-<p>其他数据产品页（未细读）：long-horizon-legal、godot-gamecraft、game3d-native、vision2web。</p>
-<p>链接：<a href="https://www.copulalab.com/products/benchmark">Benchmark</a> · <a href="https://www.copulalab.com/products/data-products/webdev-aesthetics">WebDev</a> · <a href="https://www.copulalab.com/products/data-products/long-horizon-finance">金融长程</a> · <a href="https://www.copulalab.com/products/data-products/Web3D-with-three.js">Three.js</a> · <a href="https://www.copulalab.com/products/data-products/Web3D-with-blender">Blender</a> · <a href="https://www.copulalab.com/products/data-products/long-horizon-legal">Legal</a> · <a href="https://www.copulalab.com/products/data-products/godot-gamecraft">Godot</a> · <a href="https://www.copulalab.com/products/data-products/game3d-native">Game3D</a> · <a href="https://www.copulalab.com/products/data-products/vision2web">Vision2Web</a> · 第三方 GDPval 介绍：<a href="https://ai-bot.cn/copula-lab/">ai-bot.cn</a> · <a href="https://finance.sina.com.cn/stock/t/2026-08-16/doc-ininnkfv8014751.shtml">新浪</a></p>
-<hr />
-<h2 id="3-humanlaya-onemillion-bench">3. Humanlaya $OneMillion-Bench</h2>
-<p><strong>测什么</strong>：把专家任务换算成经济价值，测 agent 在专业工作上离专家多远。“Each task is assigned a real-world value, calculated by the … time required for task completion … prevailing market hourly wage”，总价值超过 100 万美元。</p>
-<table>
+</table></div>
+<p><strong>题目原文（节选）</strong></p>
+<blockquote>
+<p>“As a medical device or dental healthcare analyst at a brokerage research institute, initiate coverage of Aidite (Qinhuangdao) Technology Co., Ltd. (301580.SZ) … The research should be based on the reference materials provided and on information that was public and verifiable as of August 6, 2026 … Independently build earnings forecasts for 2026–2028 … Deliver a formal PDF report that opens normally and an XLSX model that can be recalculated … The PDF and XLSX should carry the same version number, and the model’s formulas should be checkable and reconcile”</p>
+</blockquote>
+<p><strong>rubric 原文（逐字）</strong></p>
+<ul>
+<li>Must pass（+1）：“The report must not use information from after August 6, 2026 for core facts, forecast inputs, valuation or the investment conclusion, and must not fabricate core data or mismatch the subject of the task; ordinary clerical errors do not by themselves mean this item is not satisfied.”</li>
+<li>+3：“Accurately state operating revenue for 2023–2025 of about 7.804, 8.882 and 10.348 (RMB 100 million) and 2025 year-on-year growth of 16.51%; the tolerance is ±0.005 (RMB 100 million) … confusing units, years, or actuals and forecasts earns no points.”</li>
+<li>+3：“Make clear that 247.69 (RMB per block) is the 2023 average price and that the average selling prices for 2024–2025 have not been disclosed; any estimate must explain its method, and this figure must not be treated as the current price.”</li>
+<li>+3：“The target price … an independent recalculation differs from the report’s conclusion by no more than 3%.”</li>
+<li>+3：“The investment rating is independently derived … the rating is not presupposed to be Buy.”</li>
+</ul>
+<h3>法律长程任务环境（Legal Long-Horizon）</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定位</td>
+<td>“Each datapoint is a complete work package containing dozens to hundreds of contracts, emails, minutes, accounts and evidentiary documents”</td>
+</tr>
+<tr>
+<td>样例</td>
+<td>辰澜云智（Chenlan Yunzhi）股权收购尽调：封闭数据室 VDR-001 至 VDR-100，附 XLSX 股东名册、PDF 条款清单、DOC 买方修订版 SPA、MD 法律快照</td>
+</tr>
+<tr>
+<td>交付</td>
+<td>四个文件：<code>red_flag_memo.md</code>、<code>issues_list.json</code>、<code>consent_action_matrix.csv</code>、<code>follow_up_questions.md</code></td>
+</tr>
+<tr>
+<td>rubric 结构</td>
+<td>“All 67 criteria. Each is judged pass or fail … 15 are hard gates. There is no automatic total or pass line … Rubric version 0.4 · not yet calibrated.” 按问题 R01–R12 组织，每个问题拆成四类：E 找到并定位证据、R 结论不越界、A 提出可执行动作、X 四份交付物一致；另有 7 条 Negative controls、4 条交付物存在性检查</td>
+</tr>
+<tr>
+<td>防重复扣分</td>
+<td>“a criterion that depends on a failed one can be marked blocked, so one root omission is not penalised twice”</td>
+</tr>
+<tr>
+<td>干扰项</td>
+<td>用 Negative controls 显式设置：例如 “Do not derive current termination rights from the superseded 2023 Huajing trial agreement”；“Do not override the signed Xingyuan special contract with an unsigned standard template”；“Do not characterize the RMB 2 million repayment as withdrawal of capital merely because of timing proximity when a separate loan is fully evidenced”</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>题目原文（节选）</strong></p>
+<blockquote>
+<p>“You are a member of the buyer’s legal team. Review the target company’s closed data room and identify material legal issues that may affect signing, closing or post-closing business continuity in a proposed acquisition of 80% of its registered equity … Each conclusion must cite document IDs from VDR-001 to VDR-100 … Do not browse the internet … Missing material does not establish that an event did not occur … Do not treat similarly named entities, historical versions, unsigned templates, drafts or ordinary assignment restrictions as effective change-of-control provisions.”</p>
+</blockquote>
+<p><strong>rubric 原文（R01-E，Hard gate）</strong></p>
+<blockquote>
+<p>“Identify the following using the effective document versions and correct parties: Lin Yue, Su Zhiyuan, and Chengming Ventures have all signed the VDR-091 term sheet and VDR-092 transfer notice … the statutory 30-day response period had not expired as of September 5 … Lanqiao has neither responded nor waived its rights. Delivery of the notice therefore does not establish that Lanqiao's statutory pre-emption rights and all signing procedures have been resolved, nor should the transaction simply be characterized as invalid.”</p>
+</blockquote>
+<p>R01-R 原文：“Apply articles 84, 86, and 87 of the Company Law … Delivery alone does not complete the procedures, and incomplete procedures do not automatically invalidate the transfer.”</p>
+<h3>其余 6 个数据产品</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>产品</th>
+<th>输入 → 产出</th>
+<th>评什么（原文）</th>
+<th>样例</th>
+<th>对应的公开 benchmark</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WebDev</td>
+<td>自然语言 brief → 可运行前端，附截图、开发轨迹</td>
+<td>“visual quality, motion and gestures, multi-step interaction flows, and how well the design fits its intended use”；“expert-authored dimensional scores”；支持 “preference comparisons between implementations of the same brief”</td>
+<td>Tandem（5–10 岁儿童学习平台）</td>
+<td>WebDev Arena（LMArena）</td>
+</tr>
+<tr>
+<td>Vision2Web</td>
+<td>文字需求 + 页面截图 + 交互参考视频 + 素材 → 可运行网站</td>
+<td>“Visual and functional evaluations assess reconstruction fidelity and actual behavior separately”；展示的是 “dynamic-interaction subset”</td>
+<td>ORBIT（时尚电商）</td>
+<td>同名 benchmark：智谱 Vision2Web（arXiv 2603.26648）</td>
+</tr>
+<tr>
+<td>Web3D with Three.js</td>
+<td>需求 → 程序化建模的浏览器 3D 应用</td>
+<td>“form, spatial structure, materials, motion, interaction controls and engineering usability”</td>
+<td>天坛祈年殿</td>
+<td>未找到明确参照</td>
+</tr>
+<tr>
+<td>3D with Blender</td>
+<td>需求 → Blender 工程 + 导出资产 + Web3D 应用</td>
+<td>结构、材质、动画和运行行为是否符合要求；保留 “editable source projects and reproducible production scripts”</td>
+<td>Highland Arena Tour</td>
+<td>未找到明确参照</td>
+</tr>
+<tr>
+<td>Godot 2D GameCraft</td>
+<td>PRD → 可玩的 Godot 2D 游戏</td>
+<td>“Replayed inputs produce game-state records, videos and key frames”；看实际游玩是否满足 PRD</td>
+<td>Skyforge Courier（平台跳跃）</td>
+<td>未找到明确参照</td>
+</tr>
+<tr>
+<td>Game3D Native</td>
+<td>美术需求 → DCC 原生工程（网格、UV、材质、骨骼、动画）</td>
+<td>“visual quality, project completeness and reproducibility”</td>
+<td>Bakery &amp; Workshop</td>
+<td>未找到明确参照</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>可挑战点</strong></p>
+<ul>
+<li>两份长程 rubric 都没有公开专家间一致率；法律那份自己写明 “not yet calibrated”。</li>
+<li>金融题 “截止 2026-08-06” 是对模型的约束，但答案来自公开年报，训练数据泄漏没法排除。</li>
+<li>WebDev 和 3D 的审美分是专家打的，评分者人数、分歧处理和数据规模都没公开。</li>
+</ul>
+<p>链接：<a href="https://www.copulalab.com/products/benchmark">Benchmark</a> · <a href="https://www.copulalab.com/products/data-products/long-horizon-finance">金融长程</a> · <a href="https://www.copulalab.com/products/data-products/long-horizon-legal">法律长程</a> · <a href="https://www.copulalab.com/products/data-products/webdev-aesthetics">WebDev</a> · <a href="https://www.copulalab.com/products/data-products/vision2web">Vision2Web</a> · <a href="https://www.copulalab.com/products/data-products/Web3D-with-three.js">Three.js</a> · <a href="https://www.copulalab.com/products/data-products/Web3D-with-blender">Blender</a> · <a href="https://www.copulalab.com/products/data-products/godot-gamecraft">Godot</a> · <a href="https://www.copulalab.com/products/data-products/game3d-native">Game3D</a> · 第三方 GDPval 报道：<a href="https://ai-bot.cn/copula-lab/">ai-bot.cn</a> · <a href="https://finance.sina.com.cn/stock/t/2026-08-16/doc-ininnkfv8014751.shtml">新浪</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t3-参照-openai-gdpval"><div class="meta">Copula</div><h2><span class="no">03</span>参照：OpenAI GDPval</h2><p><strong>测什么、为什么</strong>：用模型能力直接衡量 AI 对经济的潜在影响，不等采用率、GDP 这类滞后指标。论文原话：“these methods are lagging indicators of AI impacts. We consider an alternate method … directly measuring AI model capabilities.”</p>
+<p><strong>样例设计</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>选职业</td>
+<td>先挑占美国 GDP 超过 5% 的 9 个行业，再在每个行业里挑工资总额最高、且 “predominantly digital” 的 5 个职业（GPT-4o 判断 O*NET 任务是否数字化，按重要性加权后 ≥60% 才算），共 44 个职业，年薪总额 3 万亿美元</td>
+</tr>
+<tr>
+<td>专家</td>
+<td>至少 4 年经验，平均 14 年；要过视频面试、背景调查、培训和测验；“Less than 10% of applicants were selected”</td>
+</tr>
+<tr>
+<td>任务构成</td>
+<td>一个请求（常带参考文件）加一份专家交付物；专家把任务对齐到本职业的 O*NET 任务；平均需要专家 7 小时，最长数周</td>
+</tr>
+<tr>
+<td>质控</td>
+<td>先用模型自动筛查，再经过至少三轮人工：通才审、同职业专家审、第三位专家迭代反馈；“Each task received an average of five human reviews”</td>
+</tr>
+<tr>
+<td>规模</td>
+<td>全集 1,320 题（每职业 30 题）；公开 gold 子集 220 题（每职业 5 题）；gold 子集每题最多 17 个参考文件，全集最多 38 个</td>
+</tr>
+<tr>
+<td>价值</td>
+<td>每题价值 = 平均完成时长 × 该职业 OEWS 时薪中位数</td>
+</tr>
+<tr>
+<td>公开集统计（HF）</td>
+<td>9 个行业里 8 个各 25 题，零售 20 题；每题 rubric 14–137 条，平均 47.5 条；分值以 +1 和 +2 为主，也有负分（−2 到 −20）</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>评分</strong></p>
+<ul>
+<li>主指标是盲评两两比较：同职业专家拿到请求、参考文件和两份不署名的交付物，排出优劣并写理由。“grading each comparison for the gold subset took over an hour”。每个模型每题采样 3 次，每份样本由 3 位不同专家评，所以每题每模型有 9 次比较。</li>
+<li>胜率的定义：“how often the model deliverable is rated better than the human deliverable”。</li>
+<li>自动 grader 基于 GPT-5-high，和专家的一致率 65.7%，专家之间的一致率 70.8%；论文提到 grader 对 OpenAI 自家模型的判断和专家相关性更低（“models often favor their own responses”）。有 12 题自动 grader 判不了（要联网、要跑非 Python 语言、字体、语音），所以没给分。</li>
+<li>rubric：HF 数据集每题都附 <code>rubric_json</code>，<code>author_type</code> 都是 human。<strong>论文正文没有写这些 rubric 在评分里怎么用</strong>。</li>
+</ul>
+<p><strong>真实题目与 rubric 原文（HF 数据集）</strong></p>
+<ol>
+<li>金融分析师：“It is April 11, 2025 and you are an Investment Banking Analyst in the Equity Capital Markets group … please create a detailed Excel output outlining all sub-sectors and individual companies within the S&amp;P500 … i) backward looking P/E multiple (LTM) … ii) forward looking P/E multiple (NTM) …”
+   - rubric：“[+2] Includes the "as-of" date as April 11, 2025”；“[+5] Includes all unique individual companies that is part of the S&amp;P 500 as of April 11, 2025”；“[+3] Workbook visibly declares the classification taxonomy and level used for sub-sectors (e.g., GICS …)”。共 40 条，正分合计 110。</li>
+<li>审计师：“You are an auditor and as part of an audit engagement, you are tasked with reviewing and testing the accuracy of reported Anti-Financial Crime Risk Metrics …”
+   - rubric：“[+2] The submitted deliverable is an Excel workbook file whose basename is 'Sample'”；“[+2] The workbook contains a worksheet named exactly 'Sample Size Calculation'”。</li>
+<li>软件开发：“PrivateCrypMix is a cross-chain, privacy-preserving crypto mixer … built on the Polygon network … integrate with Aave’s lending protocol …”
+   - rubric：“[+2] Deposit flow allows selection only from predefined fixed deposit amounts (no arbitrary free-form amount entry).” 共 55 条。
+- 负分例子：“[−20] The deliverable contains a text-based description of the mixing or output process used to create the deliverable, but no audio from the attached reference files.”</li>
+</ol>
+<p><strong>主要结果</strong></p>
+<ul>
+<li>“47.6% of deliverables by Claude Opus 4.1 were graded as better than (wins) or as good as (ties) the human deliverable”。Claude 强在格式和版式等审美方面，GPT-5 强在准确性；按文件类型看，GPT-5 在纯文本上领先，Claude 在 pdf、xlsx、ppt 上领先。</li>
+<li>OpenAI 自家模型的表现 “increased roughly linearly over time”。</li>
+<li>输掉的原因：Claude、Grok、Gemini 多数输在指令遵循；GPT-5 high 主要输在格式。</li>
+<li>加一段通用的自检 prompt 后，GPT-5 生成的 PDF 不再出现黑方块（此前超过一半的 PDF 有），PPT 严重格式错误从 86% 降到 64%，胜率提高 5 个百分点。</li>
+<li>少给上下文的版本：prompt 长度只有原来的 42%，GPT-5 表现下降。</li>
+</ul>
+<p><strong>论文自述的局限</strong>：只覆盖 44 个职业、每职业 30 题；只测能在电脑上完成的知识工作；“Tasks are precisely-specified and one-shot, not interactive”；自动 grader 不如专家；专家评分成本高。</p>
+<p>链接：<a href="https://arxiv.org/abs/2510.04374">arXiv 2510.04374</a> · <a href="https://huggingface.co/datasets/openai/gdpval">HF openai/gdpval</a> · <a href="https://evals.openai.com">evals.openai.com</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t4-参照-finance-agent-benchmark"><div class="meta">Copula</div><h2><span class="no">04</span>参照：Finance Agent Benchmark</h2><p><strong>测什么</strong>：入门级金融分析师用 SEC 文件做研究的工作，agent 可以用 EDGAR 和网页搜索。这是 Copula Benchmark 页明确写出的参照对象。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>专家</td>
+<td>来自银行、对冲基金和创业公司的金融从业者，“at least 2-3 years of working experience at bulge bracket firms such as Goldman Sachs and J.P. Morgan”</td>
+</tr>
+<tr>
+<td>构造</td>
+<td>专家先定 9 类任务的分类法，再出题；每题包括问题、标准答案、所需文档和分步解法；文档限 2024 年以后（“after most training cutoffs”）；由另一位专家复核计算</td>
+</tr>
+<tr>
+<td>规模与分布</td>
+<td>537 题：定量检索 102、定性检索 97、数值推理 83、Beat or Miss 69、财务建模 47、调整项 43、市场分析 34、趋势 33、复杂检索 29</td>
+</tr>
+<tr>
+<td>数据切分</td>
+<td>50 题公开（CC BY 4.0），150 题私有验证集（申请可得），337 题完全不公开</td>
+</tr>
+<tr>
+<td>工具</td>
+<td>GoogleSearch、EdgarSearch、ParseHTML、RetrieveInformation</td>
+</tr>
+<tr>
+<td>判分</td>
+<td>GPT-4o 从专家答案里自动抽出 rubric，作者人工复核；每个要点单独判 “correctness”，另加一条 “contradiction” 检查是否和专家答案冲突；按合取规则（全部满足）判定是否正确</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>真实题目与 rubric 原文（公开 50 题）</strong></p>
+<ol>
+<li>“It is currently March 11th, 2025. February financials for TSM have been released as of March 10, 2025. Assuming revenue in March 2025 grows at a rate equal to the average growth rate in March over the past 3 years, will TSM beat or miss Q1 2025 guidance and by how much?”（专家用时 60 分钟）
+   - rubric：<code>{"operator": "correctness", "criteria": "Q1 2025 guidance (NT$ at 3288): 835,152"}</code>、<code>{"operator": "correctness", "criteria": "Average February to March growth rate: 4.5%"}</code>、<code>{"operator": "correctness", "criteria": "Q1: -1.2% Miss"}</code>，最后一条是 contradiction。</li>
+<li>“Did TJX beat or miss its Q4 FY 2025 pre-tax margin guidance? Express result as BPS difference”（10 分钟）——rubric：“80bps beat from low end”“70bps beat from high end”。</li>
+<li>论文里的拆点示例：“How has Carvana’s (NYSE: CVNA) gross profit per unit changed from 2019-2024?” 拆成 5 个检查点，例如 “CVNA gross profit per unit in 2019 was $2,852”。</li>
+</ol>
+<p><strong>结果</strong>：o3 准确率 46.8%，每题 $3.79；Claude 3.7 Sonnet（Thinking）45.9%；Gemini 2.5 Pro Preview 28.4%；专家平均每题 16.8 分钟、$25.66。Vals 官网的 v2 版本扩到 927 题，榜首 60.60%。</p>
+<p>链接：<a href="https://arxiv.org/abs/2508.00828">arXiv 2508.00828</a> · <a href="https://github.com/vals-ai/finance-agent">GitHub</a> · <a href="https://vals.ai/benchmarks/fabv2">Finance Agent v2</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t5-参照-webdev-arena-与-vision2web"><div class="meta">Copula</div><h2><span class="no">05</span>参照：WebDev Arena 与 Vision2Web</h2><p><strong>WebDev Arena（LMArena）</strong>：没有论文，下面只依据官方博客。</p>
+<ul>
+<li>流程：用户提交一个 prompt，两个匿名模型各生成一个 React/TypeScript + Tailwind 的单文件应用，在 E2B 沙箱里并排渲染，用户投票（A 胜、B 胜、平局、都不好）。</li>
+<li>打分：用 Bradley-Terry 模型从两两对战结果算出 Arena Score；截至博客发布时 “over 80,000 community votes”。</li>
+<li>system prompt 原文：“Use TypeScript as the language for the React component”；“Use Tailwind classes for styling. DO NOT USE ARBITRARY VALUES (e.g. 'h-[600px]')”；“Make sure to include all necessary code in one file.”</li>
+<li>题目由用户自由提交，没有固定题集，也没有 rubric。</li>
+</ul>
+<p><strong>Vision2Web（智谱，arXiv 2603.26648）</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>层级</td>
+<td>Level 1 静态页（多设备原型图转页面，只算 VS）；Level 2 交互式多页前端（原型 + 文字需求，VS + FS）；Level 3 全栈（PRD + 原型，VS + FS）</td>
+</tr>
+<tr>
+<td>规模</td>
+<td>193 题（100 / 66 / 27），16 个子类，918 张原型图，1,255 个测试用例</td>
+</tr>
+<tr>
+<td>来源</td>
+<td>只取自 C4 里的真实网站，经过三阶段过滤</td>
+</tr>
+<tr>
+<td>标注</td>
+<td>专家先起草测试 workflow，Claude Code 细化成可执行节点，再由人工质检（“the agent serves as an annotation assistant rather than an independent source of ground truth”）</td>
+</tr>
+<tr>
+<td>判分</td>
+<td>GUI agent（GLM-4.6V）按 workflow 节点做功能验证，得 FS；VLM judge 逐块比对原型，得 VS</td>
+</tr>
+<tr>
+<td>结果</td>
+<td>Claude Code 框架下：Claude-Opus-4.5 在 L1 平均 VS 50.5，L2 FS 63.6，L3 VS 34.3 / FS 53.1；Gemini-3-Pro-Preview 在 L1 最高（59.2），但在 L2 和 L3 大幅下降</td>
+</tr>
+</tbody>
+</table></div>
+<p>链接：<a href="https://arena.ai/blog/webdev-arena">WebDev Arena 博客</a> · Vision2Web <a href="https://arxiv.org/abs/2603.26648">arXiv 2603.26648</a> · <a href="https://github.com/zai-org/Vision2Web">GitHub</a> · <a href="https://huggingface.co/datasets/zai-org/Vision2Web">HF</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t6-与原版逐项对比"><div class="meta">Copula</div><h2><span class="no">06</span>与原版逐项对比</h2><div class="tw"><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>OpenAI GDPval</th>
+<th>Finance Agent Benchmark</th>
+<th>Copula 金融 / 法律长程</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>任务单位</td>
+<td>一个职业请求 + 参考文件，交付一份专家级成果</td>
+<td>一个可验证的问题，答案通常是几个数字或要点</td>
+<td>一个完整工作包，含几十到几百份材料，交付多个文件（PDF + XLSX，或 4 份法律文书）</td>
+</tr>
+<tr>
+<td>时长</td>
+<td>专家平均 7 小时</td>
+<td>专家平均 16.8 分钟</td>
+<td>官网写 “hours to days”</td>
+</tr>
+<tr>
+<td>选题</td>
+<td>按美国 GDP 占比选行业，再按工资总额选职业</td>
+<td>9 类分析师任务的分类法</td>
+<td>中国金融惯例、合规流程、多角色协作；具体分布未公开</td>
+</tr>
+<tr>
+<td>专家</td>
+<td>平均 14 年经验，录取率不到 10%</td>
+<td>2–3 年大投行经验</td>
+<td>“experienced finance / legal practitioners”，人数和资历未公开</td>
+</tr>
+<tr>
+<td>评分</td>
+<td>专家盲评两两比较，主指标是胜率；自动 grader 和专家一致率 65.7%</td>
+<td>拆点 + contradiction，合取判定</td>
+<td>绝对分 rubric：金融 46 条 / 114 分，可部分得分，加 Must pass 一票否决；法律 67 条二值判定，15 条 hard gate，有 blocked 机制，不设总分</td>
+</tr>
+<tr>
+<td>防作弊 / 防幻觉</td>
+<td>依靠专家判断</td>
+<td>contradiction 检查</td>
+<td>信息截止日；数值带容差；Negative controls；要求每个结论都能溯源到材料</td>
+</tr>
+<tr>
+<td>和人类比</td>
+<td>每题都有专家交付物作为对手</td>
+<td>有专家用时和成本</td>
+<td>页面写 “Real human-produced deliverables”，但没有说明是否用它做两两比较</td>
+</tr>
+<tr>
+<td>公开程度</td>
+<td>220 题 + 自动 grader</td>
+<td>50 题</td>
+<td>各 1 个完整样例</td>
+</tr>
+</tbody>
+</table></div>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>WebDev Arena</th>
+<th>Copula WebDev</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>题目来源</td>
+<td>用户自由提交</td>
+<td>按行业、产品形态、页面类型、视觉风格组织的 brief</td>
+</tr>
+<tr>
+<td>产物</td>
+<td>单文件 React 组件</td>
+<td>多步迭代的可运行前端项目，附截图和开发轨迹</td>
+</tr>
+<tr>
+<td>评分</td>
+<td>众包两两投票，Bradley-Terry</td>
+<td>专家按维度打分（视觉、动效与手势、多步交互、用途契合）；也支持同 brief 的偏好对比</td>
+</tr>
+</tbody>
+</table></div>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>智谱 Vision2Web</th>
+<th>Copula Vision2Web</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输入</td>
+<td>原型图 + 素材库（含视频文件）+ 文字需求或 PRD</td>
+<td>文字需求 + 页面截图 + <strong>交互参考视频</strong> + 素材</td>
+</tr>
+<tr>
+<td>重点</td>
+<td>三层难度，从静态页到全栈</td>
+<td>动态交互子集：滚动、悬停、拖拽、视图切换</td>
+</tr>
+<tr>
+<td>评分</td>
+<td>GUI agent 测功能，VLM 判视觉，全自动</td>
+<td>“Visual and functional evaluations assess … separately”，评分者是谁未公开</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>结论</strong></p>
+<ul>
+<li>Copula 的金融和法律线在任务颗粒度上比 GDPval 更大（一个工作包对一个请求），rubric 比 FAB 更细（46–67 条对 3–10 条），而且加了一票否决类条目。这些设计针对的是长程交付里“一个根本性错误就全盘作废”的问题。</li>
+<li>它没有采用 GDPval 的核心设计：拿人类交付物做两两比较、报告胜率。好处是绝对分可复现；代价是没法回答“离人类专家还有多远”。</li>
+<li>“中文版 GDPval”在官网上找不到对应页面，按什么分布选职业、多少题、谁来评都未公开。面试时可以直接问这几点。</li>
+</ul><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t7-onemillion-bench"><div class="meta">Humanlaya</div><h2><span class="no">07</span>$OneMillion-Bench</h2><p><strong>测什么、为什么</strong>：问答类 benchmark “lack clarity and provide limited insight into whether they can perform professional work and reliably create value”。OMB 把每道题的价值折算成资深专业人士完成它所需的工资，全部题目总价值超过 100 万美元，模型的成绩就表示为“能挣到多少钱”。</p>
+<p><strong>样例设计</strong></p>
+<div class="tw"><table>
 <thead>
 <tr>
 <th>项</th>
@@ -384,259 +815,1304 @@
 <tbody>
 <tr>
 <td>规模</td>
-<td>400 题：CN 和 Global 各 200，金融、法律、医疗、自然科学、工业每个领域 40 题</td>
+<td>400 题：Global 200 题（英文），CN 200 题（中文，“not a direct translation … but a purpose-built collection”，涉及中国本地法规和行业标准）；每个子集覆盖金融、法律、医疗、自然科学、工业 5 个领域，各 40 题；共 37 个子领域、92 个三级类</td>
 </tr>
 <tr>
-<td>rubric</td>
-<td>每题 15.9–18.8 条，其中约 4 条负分项；权重 −20 到 10；负分项针对 “behavioral violations of industrial norms or professional conduct, harmful generation, hallucination”</td>
+<td>题长和 rubric 数</td>
+<td>CN 题平均 555–965 字，Global 题平均 1,635–3,278 字；每题平均 15.9–18.8 条 rubric，其中约 4 条是负分项（全集合计 1,659 条负分 rubric）</td>
 </tr>
 <tr>
 <td>构造</td>
-<td>专家出题，另一位专家审，有分歧时第三位专家仲裁；所有模型都满分的题删掉，所有模型都低分的题复审</td>
+<td>三阶段：①专家出题，同时写参考答案和 rubric，并立即做 “concurrent adversarial validation”（“retained only if several agents fail to meet a predefined passing threshold”）；②同子领域的第二位专家评审，两人迭代到达成一致；③仍有分歧或有风险的题交给第三位专家审计；总计超过 2,000 专家小时</td>
 </tr>
 <tr>
-<td>指标</td>
-<td>Expert Score（加权，截断到 [0,1]）；Pass Rate = Expert Score ≥ 0.7；Economic Value = 通过题的价值之和</td>
+<td>难度控制</td>
+<td>双向截断：所有 agent 都能做对的题删掉；所有 agent 普遍低分的题 “undergo a secondary review to avoid unanswerable or infeasible tasks”</td>
+</tr>
+<tr>
+<td>时效</td>
+<td>设计原则是 time-agnostic，每题标注时效性：Time-agnostic 249、Weakly 125、Strongly 26</td>
+</tr>
+<tr>
+<td>价值</td>
+<td>每题价值 = 2–3 位资深专家估计的用时 × 时薪；美国时薪用 BLS OEWS，中国用一线城市工资指导价；年工时按 2,080 小时折算，只有纯工资口径的数据才乘 1.3</td>
+</tr>
+<tr>
+<td>rubric 标签</td>
+<td>事实信息 / 观点分析（推理）/ 表达 / 指令遵循；权重从 −20 到 10，最常见的是 5、10、6</td>
 </tr>
 </tbody>
-</table>
-<p><strong>题目与 rubric 原文</strong>（金融，精算）：题干 “Please list the four methods used by life insurance companies to calculate reserves prior to the advent of the Valuation Manual …”；rubric：“+9 List the four reserve calculation methods … Net Level Premium Method (NLP), Full Preliminary Term Method (FPT), Modified Reserve Method, and Commissioners Reserve Valuation Method (CRVM)”；“−4 The model failed to point out that the Force of Interest method is typically used for estimation.”</p>
-<p><strong>主要结果</strong>（Global 集，开搜索）</p>
-<table>
+</table></div>
+<p><strong>真实题目与 rubric 原文</strong></p>
+<ol>
+<li>CN 金融：“三安光电为湖北半导体领域知名上市企业，曾经一度被纳入上证50、上证180和沪深300三大指数，但在2021年年底，三安光电被三大指数一起剔除……你作为湖北省国资委的一名专职研究员，需要对其可行性进行研究。”
+   - [10]“明确股票市场指数不支持 “主动申请”，仅为 “被动筛选””
+   - [5]“计算三安光电的日均总市值（745.72亿元）、日均成交额（5.62亿元）、日均换手率（0.77%），其中交易数据区间选取2023年4月27日至2024年4月26日”
+   - [10]“指出三安光电2021年被剔除的根本原因为上交所对于三安光电的财务数据存疑，以及三安光电的业绩波动较大、股价波动较大。”</li>
+<li>Global 金融（Strongly time-sensitive）：“Markets are pricing in a high probability that the Bank of Japan (BOJ) will raise its policy rate to 0.75% on December 19, 2025 … please retrieve and analyze the performance of major assets across China, the United States, and Japan during each BOJ rate-hike episode since the BOJ ended Yield Curve Control (YCC)”
+   - [5]“The model states that in the event window around the surprise July 31, 2024 hike, Bitcoin fell by 17.23% (±1% tolerance).”
+   - [−2]“The report contains hollow concluding remarks (e.g., "In summary," "We look forward to") or transitional sentences lacking substantive content.”</li>
+<li>其他负分项原文：“[−3] The model incorrectly uses Quarterly Reports (Form 10-Q) as the source of information for this question.”；“[−3] The answer contains irrelevant extra information, such as a general investment analysis of Chubb.”</li>
+</ol>
+<p><strong>评测流程</strong></p>
+<ul>
+<li>LLM judge 逐条二值判定每条 rubric（README 示例用的 judge 是 <code>google/gemini-3-pro-preview</code>，带 CoT）；论文正文没有写明 judge 模型。</li>
+<li>Expert Score = max(0, Σ 命中权重 / 正分权重总和)，截断到 [0,1]；Pass Rate = Expert Score ≥ 0.7 的比例；Economic Value = 通过题目的价值之和。</li>
+<li>和人工评分的相关性：医疗 r=0.59，工业 0.48，法律 0.41，金融 0.35，自然科学 0.26（p=0.11，不显著）。</li>
+</ul>
+<p><strong>结果</strong></p>
+<div class="tw"><table>
 <thead>
 <tr>
 <th>模型</th>
-<th>Expert Score</th>
-<th>Pass Rate</th>
-<th>价值</th>
+<th>Global 价值（无检索 → 有检索）</th>
+<th>Global Expert Score</th>
+<th>Global Pass Rate</th>
+<th>CN Pass Rate（有检索）</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Claude-Opus-4.6</td>
-<td>63.0</td>
-<td>43.5%</td>
-<td>$483.8k</td>
+<td>$439.2k → $483.8k</td>
+<td>55.0 → 63.0</td>
+<td>36.5 → 43.5</td>
+<td>48.5</td>
 </tr>
 <tr>
-<td>GPT-5.4-high</td>
-<td>59.2</td>
-<td>38.0%</td>
-<td>$365.5k</td>
+<td>GPT-5.4-High</td>
+<td>$330.9k → $365.5k</td>
+<td>55.0 → 59.2</td>
+<td>31.5 → 38.0</td>
+<td>35.5</td>
 </tr>
 <tr>
-<td>Doubao-Seed-2.0-pro</td>
-<td>51.8</td>
-<td>28.5%</td>
-<td>$330.7k</td>
+<td>Gemini-3-Pro-Preview</td>
+<td>$187.3k → $345.3k</td>
+<td>43.7 → 52.8</td>
+<td>15.5 → 28.5</td>
+<td>30.0</td>
+</tr>
+<tr>
+<td>Doubao-Seed-2.0-Pro</td>
+<td>$123.9k → $330.7k</td>
+<td>39.4 → 51.8</td>
+<td>13.5 → 28.5</td>
+<td>25.0</td>
 </tr>
 <tr>
 <td>GLM-5</td>
-<td>41.1</td>
-<td>16.5%</td>
-<td>$177.9k</td>
+<td>$107.8k → $177.9k</td>
+<td>38.5 → 41.1</td>
+<td>9.5 → 16.5</td>
+<td>11.0</td>
+</tr>
+<tr>
+<td>o3-Deep-Research</td>
+<td>$181.7k</td>
+<td>46.3</td>
+<td>17.0</td>
+<td>—</td>
 </tr>
 </tbody>
-</table>
-<p>开搜索对豆包提升最大（价值 +$206.9k）；Kimi-K2.5、MiniMax-M2.1、DeepSeek-V3.2-Speciale 开搜索后反而下降。</p>
-<p><strong>judge 和人工的一致性</strong>：论文报告了 Pearson 相关。医疗 r=0.59（一致率 98.0%）、工业 0.48、法律 0.41、金融 0.35；自然科学 r=0.26、p=0.11，不显著（一致率 82.2%）。</p>
-<p><strong>局限</strong>：论文承认 “current rubrics are less objective than the equivalency checker … and relies on the model judge's capabilities”。我们认为可挑战的地方：价值按工时×时薪估算比较粗；0.7 的通过线是人为设的（论文做了敏感性分析）。</p>
-<p>链接：<a href="https://arxiv.org/abs/2603.07980">arXiv 2603.07980</a> · <a href="https://github.com/humanlaya/OneMillion-Bench">GitHub</a> · <a href="https://huggingface.co/datasets/humanlaya-data-lab/OneMillion-Bench">HF</a> · <a href="https://humanlaya.com/">官网</a>（ExcelBench、BiomniBench、WorldTravel 只有官网榜单）</p>
-<hr />
-<h2 id="4-unipat">4. UniPat</h2>
-<table>
+</table></div>
+<ul>
+<li>“The Strong Get Stronger”：打开检索后，强模型提升更多；Hunyuan-2.0、Step-3.5-Flash 等弱模型反而下降。</li>
+<li>“Partial Credit, Low Delivery”：Expert Score 达到 45–50% 的模型，Pass Rate 往往低于 25%。</li>
+<li>换用专门的 agent 框架会改变排名；多次采样的 pass^k 随 k 增大明显衰减。</li>
+</ul>
+<p><strong>局限（论文 G 节）</strong>：只覆盖五个领域；rubric “are less objective than the equivalency checker of a single expression or number, and relies on the model judge’s capabilities”；自然科学领域 judge 和人工的一致性低。</p>
+<p>链接：<a href="https://arxiv.org/abs/2603.07980">arXiv 2603.07980</a> · <a href="https://github.com/humanlaya/OneMillion-Bench">GitHub</a> · <a href="https://huggingface.co/datasets/humanlaya-data-lab/OneMillion-Bench">HF</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t8-evocode-bench"><div class="meta">UniPat</div><h2><span class="no">08</span>EvoCode-Bench</h2><p><strong>测什么、为什么</strong>：现有编码 benchmark 大多一次给齐需求、一次判分。真实开发是需求一轮轮演进、互相冲突，前面写下的代码会约束后面的工作。EvoCode 把一个任务做成 5–15 轮的连续会话，同一个 workspace 一直保留，测 agent 能不能“maintain a valid evolving workspace”。</p>
+<p><strong>样例设计</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>规模</td>
+<td>26 个任务、227 轮；5–7 轮 9 个，8–9 轮 12 个，10–15 轮 5 个</td>
+</tr>
+<tr>
+<td>分类（两条轴）</td>
+<td>交互风格：Explorative 16 / Contractual 6 / Document-driven 4；工程活动：Construction 13、Spec Evolution 3、Review 5、Migration 5</td>
+</tr>
+<tr>
+<td>需求变化</td>
+<td>每轮标注变化类型（可多选）：Extension 198、Correction 69、Conflict 42；110 轮至少有一次纠正或冲突</td>
+</tr>
+<tr>
+<td>题目设计</td>
+<td>“Instructions describe observable behavior, tests verify execution rather than source layout”；每个任务从一个有一定规模的系统起步，且 “includes at least one correction and one conflict”</td>
+</tr>
+<tr>
+<td>构造（四步）</td>
+<td>①工程师写完整的需求链：指令、参考解、测试、Docker（LLM 只用来起草想法）；②两位独立 reviewer 检查指令、测试、参考解三者是否一致；③oracle 验证：参考解每一轮都要拿 r=1；④交叉验证，审计捷径（“hard-coding fixture outputs … satisfying only the latest round while breaking earlier requirements”）</td>
+</tr>
+<tr>
+<td>领域</td>
+<td>ML/MLOps 9、数据工程 4、测试与自动化 4、系统 3、科学计算 3、基础设施与安全 3</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>真实题目</strong>：<code>deterministic-data-pipeline-go</code>（15 轮，Contractual / Construction）</p>
+<ul>
+<li>Round 1：“Build dpipe as a deterministic Go CLI that reads CSV files, validates rows against JSON schemas, applies ordered transformations, writes bit-identical outputs, and records reproducibility metadata.”</li>
+<li>Round 5（冲突）：“Change the verify and manifest checksum behavior from SHA-256 sidecar files to BLAKE2b-256 manifest checksums, while adding a lineage command.”</li>
+<li>Round 10（冲突）：“Replace the manifest entry field blake2b with checksum and algorithm, then add a reconcile command that compares two manifests.”</li>
+<li>Round 15：“Change snapshot row hashes from MD5 to SHA-256 … The final verifier exercises the accumulated system across transforms, auditability, lineage, manifest formats, snapshots, and changelogs.”</li>
+</ul>
+<p><strong>评测流程</strong></p>
+<ul>
+<li>Harbor 加 Terminus-2 harness，每对 agent 和任务各用一个 Docker 容器，只靠执行 verifier 判对错。每轮的测试是<strong>累积</strong>的，前面还有效的需求都会再测一遍。</li>
+<li><strong>MT@4</strong>：4 次独立尝试，每次都 fail-stop（“if attempt a first fails at round i, then r = 0 for every j &gt; i”），某轮只要任一次尝试通过就算分。</li>
+<li><strong>SR</strong>：把 workspace 快进到参考解在目标轮之前的状态，只测这一轮。<strong>Comp</strong>：整个任务全部通过。</li>
+</ul>
+<p><strong>结果（Table 2 节选）</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>MT@4</th>
+<th>SR</th>
+<th>Comp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Opus-4.7</td>
+<td>54.0</td>
+<td>76.7</td>
+<td>42.3</td>
+</tr>
+<tr>
+<td>GPT-5.5</td>
+<td>52.4</td>
+<td>74.4</td>
+<td>38.5</td>
+</tr>
+<tr>
+<td>Opus-4.6</td>
+<td>44.0</td>
+<td>78.9</td>
+<td>34.6</td>
+</tr>
+<tr>
+<td>GLM-5.1</td>
+<td>36.2</td>
+<td>63.9</td>
+<td>15.4</td>
+</tr>
+<tr>
+<td>Kimi-K2.6</td>
+<td>31.9</td>
+<td>59.0</td>
+<td>23.1</td>
+</tr>
+<tr>
+<td>Gemini-3.1</td>
+<td>13.7</td>
+<td>46.7</td>
+<td>11.5</td>
+</tr>
+<tr>
+<td>Doubao-2.0</td>
+<td>1.9</td>
+<td>23.8</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>SR 比 MT@4 高 22–40 分，排名也变了：SR 最高的 Opus-4.6 在 MT@4 只排第三。</li>
+<li>按轮次看，MT@4 通过率从第 1 轮的 46.7 降到第 5 轮 21.3、第 10 轮 7.7；SR 在第 3–8 轮稳定在 52–57%。“57.0% of failed MT@4 round records are solvable under SR”。</li>
+<li>失败原因里 Missed-requirement 在每个档位都占 87–90%。</li>
+<li>官网自曝：Harbor 的多轮模式会把上一轮的 <code>/tests/test.sh</code> 和 reward 留在 workspace 里，影响 12/26 个任务；修复后全部重跑，上游 issue #1960、PR #1961。</li>
+</ul>
+<p><strong>局限（附录 A）</strong>：只有 26 题，扩展受限于人工成本；“The fail-stop model may underestimate agents capable of recovery”；只覆盖能用可执行测试验证的任务，主观的设计决策和代码质量不测。</p>
+<p>链接：<a href="https://arxiv.org/abs/2605.24110">arXiv 2605.24110</a> · <a href="https://unipat.ai/benchmarks/EvoCode-Bench">官网</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t9-saas-bench"><div class="meta">UniPat</div><h2><span class="no">09</span>SaaS-Bench</h2><p><strong>测什么、为什么</strong>：computer-use agent 在真实工作里要跨多个 SaaS 完成一整条业务流程，比如在 CRM 建商机、到财务系统开票、再去票务系统建活动。SaaS-Bench 把 23 个开源 SaaS 部署到本地，测这种 “professional, cross-application, long-horizon, and verifiable” 的任务。</p>
+<p><strong>样例设计</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>环境</td>
+<td>23 个 Docker 化的 SaaS，覆盖 6 个领域（Business、Healthcare、Software、Teamwork、Agriculture、Media）；按 SQL schema 填充数据：没有公开数据的用 LLM 生成 “fake but realistic” 数据，有的就导入开源数据集；锁定版本、配置和种子数据，每次执行前重置</td>
+</tr>
+<tr>
+<td>规模</td>
+<td>106 题：纯文本 74、多模态 32（输入里有图片、PDF、音视频）；93.4% 的题跨 2 个以上应用</td>
+</tr>
+<tr>
+<td>构造</td>
+<td>①从职业角色（项目经理、财务、医疗行政……）的日常工作流抽象出任务种子；②两轮 Builder–Challenger–Refiner 循环：Claude Opus 4.6 生成，人类专家 Challenger 挑问题，Refiner 修改；③静态质检；④动态执行检查</td>
+</tr>
+<tr>
+<td>难度控制</td>
+<td>靠静态质检 rubric 剔除凑数题（见下）</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>静态质检 rubric 原文</strong>：6 个维度，每个 1–3 分（多模态题加一个 “multimodal feasibility” 维度，满分 21）。</p>
+<ul>
+<li>Dependency depth 3 分：“The task has a strict sequential dependency structure: outputs, data, computed values, or decisions from earlier steps determine the inputs of later steps.”</li>
+<li>Complexity quality 1 分：“The high operation count mainly comes from repetitive data entry or over-specification, such as requiring exact wording.”</li>
+<li>反模式标记：“crm_dumping_ground. The final step merely creates a summary note in a CRM or document tool without meaningful business logic”；“parallel_tasking. The steps across multiple applications have no data dependency”；“spec_overflow. The task description is overly detailed, such as specifying exact wording, cell values, or email body text”；多模态题另有 modal_phantom（“the ground-truth value is leaked directly in the task description”等情况）。</li>
+</ul>
+<p><strong>评测流程</strong></p>
+<ul>
+<li>所有 agent 统一用 browser-use 框架，只能通过浏览器 UI 操作，不能直接访问数据库、API 或 verifier；agent 只拿到任务描述、应用入口 URL 和登录凭证。</li>
+<li>每题拆成若干带权重的检查点，分三类：State-Check（数据库记录、API 返回）、Content-Check（结构规则和字符串匹配）、LLM-Judge（开放式产出）。</li>
+<li>Resolved Score：所有检查点全过才是 1；Checkpoint Score：按通过检查点的权重给部分分。</li>
+</ul>
+<p><strong>真实题目：bof_032</strong>（Twenty CRM、BigCapital、Pretix 三个应用，18 个检查点，总权重 33）</p>
+<ul>
+<li>任务：在 CRM 建公司和商机；在 BigCapital 为客户 Arcturus Digital 建公司客户、两张里程碑发票、一笔收款和一笔分录；在 Pretix 建庆功活动。</li>
+<li>Opus 4.6 在客户表单里同时填了 First: Elena、Last: Vasquez 和 Company，结果建出来的是<strong>个人客户</strong> Elena Vasquez。第 311 步看到 “Elena Vasquez (Arcturus Digital) shows $55,000.00 balance” 就判定 “BigCapital ALL DONE”。</li>
+<li>验证结果 “Score: 0.242 (8/33)”：Check 7（客户查找，权重 1）成了卡点，下游 4 个检查点（权重 9）一起失败。9 个模型里有 6 个在这一步出错。</li>
+</ul>
+<p><strong>结果（Table 2 节选）</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>模型</th>
+<th>平均步数</th>
+<th>纯文本 Overall</th>
+<th>多模态 Overall</th>
+<th>Resolved</th>
+<th>Checkpoint 总分</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude Opus 4.7</td>
+<td>175</td>
+<td>42.8</td>
+<td>46.3</td>
+<td>3.8</td>
+<td>43.9</td>
+</tr>
+<tr>
+<td>GPT-5.5 High</td>
+<td>200</td>
+<td>42.1</td>
+<td>47.6</td>
+<td>1.9</td>
+<td>43.8</td>
+</tr>
+<tr>
+<td>Claude Opus 4.6</td>
+<td>257</td>
+<td>40.7</td>
+<td>48.7</td>
+<td>1.9</td>
+<td>43.2</td>
+</tr>
+<tr>
+<td>Kimi K2.6</td>
+<td>269</td>
+<td>30.1</td>
+<td>43.5</td>
+<td>0.9</td>
+<td>34.1</td>
+</tr>
+<tr>
+<td>Doubao Seed 2.0 Pro</td>
+<td>216</td>
+<td>19.8</td>
+<td>44.2</td>
+<td>1.9</td>
+<td>27.1</td>
+</tr>
+<tr>
+<td>GLM-5.1（仅纯文本）</td>
+<td>166</td>
+<td>17.4</td>
+<td>—</td>
+<td>0.0</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>端到端完成率最高只有 3.8%。轨迹更长并不意味着得分更高。</li>
+<li>另一个案例 bof_023：agent 在第 124 步发现日期写错了（“date is 19 Mar 2026 instead of 20 Mar 2026”），到第 210 步却宣布 “Bill created dated 2026-03-20 … approved”，说明 agent 对自己的检查不可靠。</li>
+</ul>
+<p><strong>可挑战点</strong>：论文没有单列局限章节。数据是合成填充的，任务由 LLM 起草；LLM-Judge 类检查点的一致率没有单独报告；Resolved 分数接近 0，模型之间拉不开差距。</p>
+<p>链接：<a href="https://arxiv.org/abs/2605.15777">arXiv 2605.15777</a> · <a href="https://unipat.ai/benchmarks/SaaS-Bench">官网</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t10-roadmapbench"><div class="meta">UniPat</div><h2><span class="no">10</span>RoadmapBench</h2><p><strong>测什么、为什么</strong>：SWE-bench 类任务是修 bug，改动小。真实的版本迭代是按路线图一次实现多个新功能。RoadmapBench 取开源项目两个相邻版本之间的真实升级，改写成 “multi-target roadmap” 指令，看 agent 能否从旧版本实现到新版本的功能。</p>
+<p><strong>样例设计</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>来源</td>
+<td>从社区整理的开源项目清单出发，三层过滤：规则过滤（“at least 1,000 stars, five or more tagged releases, and continued release activity through 2025”）、检索 release 文档质量、专家挑选改动足够大的相邻版本对</td>
+</tr>
+<tr>
+<td>规模</td>
+<td>17 个仓库、5 种语言、115 个版本对，也就是 115 题；领域：ML &amp; Data 36、Web &amp; RPC 17、ORM &amp; Val. 25、Infra &amp; Tool. 23、UI &amp; Ren. 14</td>
+</tr>
+<tr>
+<td>难度</td>
+<td>oracle 补丁中位数约 3,714 行、51 个文件；每题 3–12 个子目标，中位数 5</td>
+</tr>
+<tr>
+<td>防泄漏</td>
+<td>Docker 固定在源版本，“all branches and tags beyond the source release are pruned”；指令里匿名化仓库名和版本号</td>
+</tr>
+<tr>
+<td>质检</td>
+<td>Stage 3 静态检查：规格是否自洽、可溯源，测试是否有效，“no test relies on unstated assumptions”；Stage 4 用三个能力档位的 agent 试跑，失败归因分为任务缺陷和模型能力，任务缺陷修到清零，并要求 “models of different tiers produce distinguishable scores”</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>真实题目（论文 Figure 2：Optuna 4.2.0）</strong></p>
+<blockquote>
+<p>“Goals：Extend constrained optimization and distributed scalability. Add inequality constraint support to GPSampler, introduce a gRPC storage proxy, improve CLI environment output, and fix two bugs.”
+“Target 1: GPSampler Constraint Support … 1. Add constraints_func parameter; store constraint values in trial system attributes. 2. Add logpi acquisition function and LOG_PI = 3 enum value.”
+“Target 2: gRPC Storage Proxy … run_grpc_proxy_server — experimental; default 10 worker threads”</p>
+</blockquote>
+<p>测试权重：T1=3、T2=3、T3=1、T4=1；示例 agent 只有 T2 失败，“Resolved Acc: 0，Completion Score 0.625”。</p>
+<p><strong>评测流程</strong>：每个子目标有自己的测试文件和权重 w（反映实现复杂度），任务得分 s = 通过子目标的加权占比。Resolved Rate = s=1 的任务占比；Completion Score = s 的平均值。用 OpenHands 和 Terminus 2 两种 scaffold 各跑一遍。</p>
+<p><strong>结果（OpenHands）</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>模型</th>
+<th>Resolved %</th>
+<th>Completion</th>
+<th>平均轮数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude-Opus-4.7</td>
+<td>39.1</td>
+<td>0.692</td>
+<td>140.2</td>
+</tr>
+<tr>
+<td>Claude-Opus-4.6</td>
+<td>32.2</td>
+<td>0.627</td>
+<td>140.7</td>
+</tr>
+<tr>
+<td>GPT-5.4</td>
+<td>29.6</td>
+<td>0.497</td>
+<td>170.7</td>
+</tr>
+<tr>
+<td>Gemini-3.1-Pro</td>
+<td>20.9</td>
+<td>0.439</td>
+<td>133.4</td>
+</tr>
+<tr>
+<td>DeepSeek-V4-Pro / GLM-5.1</td>
+<td>18.3</td>
+<td>0.486 / 0.453</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Kimi-K2.6</td>
+<td>14.8</td>
+<td>0.432</td>
+<td>158.9</td>
+</tr>
+<tr>
+<td>Seed-2.0-Pro</td>
+<td>5.2</td>
+<td>0.177</td>
+<td>40.1</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>用 Claude-Sonnet-4.6 对 3,603 个失败子目标做归因：Implementation Error 39%、Build Error 28%、Missing Implementation 23%。Seed-2.0-Pro 的失败里 Build Error 占 41%；GPT-5.4 的主要问题是 Missing Implementation（36%）。</li>
+<li>模型常常完成好几个子目标后，卡在集成边界上。</li>
+</ul>
+<p><strong>局限（附录 A）</strong>：只用了两种 scaffold，“Agent performance is sensitive to scaffold design choices”；测试只验证行为正确，“do not assess code quality, maintainability, or adherence to idiomatic patterns”；只覆盖 5 种语言。</p>
+<p>链接：<a href="https://arxiv.org/abs/2605.15846">arXiv 2605.15846</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t11-clawbench"><div class="meta">UniPat</div><h2><span class="no">11</span>ClawBench</h2><p><strong>测什么、为什么</strong>：已有的 web benchmark 大多是只读检索或沙箱点击。日常在线助手真正要做的是 “write-heavy tasks that submit information, reserve services, place orders, fill applications”，也就是在真实生产网站上把流程推进到会改变服务器状态的最后一步。</p>
+<p><strong>样例设计</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>来源</td>
+<td>参与者列出自己常用的网站，提出真实任务；标注员整理成 task card，包括自然语言指令、起始 URL、所需用户文件或资料字段、期望终态、终端提交目标</td>
+</tr>
+<tr>
+<td>排除标准</td>
+<td>只读查询、不可用或有地区限制的网站、付费订阅、没有安全拦截点的真实付款、强制手机 OTP 或身份证件验证、“workflows whose irreversible effects cannot be controlled through a single terminal HTTP request”</td>
+</tr>
+<tr>
+<td>规模</td>
+<td>153 题、144 个真实网站，8 个大类、15 个小类（Daily、Finance、Work、Dev、Academic、Travel、Social、Pets）</td>
+</tr>
+<tr>
+<td>人类参照</td>
+<td>每题都有标注员在同一录制环境里完成的参考轨迹和终端提交证据</td>
+</tr>
+<tr>
+<td>难度</td>
+<td>没有刻意控制。8 个模型里，68 题（44.4%）没有任何模型做对</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>安全执行</strong>：标注员在参考运行中标出提交任务的那条终端 HTTP 请求（URL 模式、方法、必填字段）。运行时由 Chrome 扩展和 CDP 监控，请求一旦匹配就 “captures the payload, blocks the request before it reaches the server”。在全部 153 题的人类参考运行上，拦截率 100%，导航流量零误拦。</p>
+<p><strong>真实题目原文</strong></p>
+<ol>
+<li>“On DoorDash, order delivery: one Big Mac + one 20 pc McNuggets, select fastest delivery.”（Sonnet 4.6 用了 130 轮，在第 110 轮判断 “Both items are correct”，最终请求缺少 <code>cartId</code>，订单没有提交成功）</li>
+<li>“Search Zillow for a one-bedroom apartment in Toronto downtown under $3500/month, select one and submit a rental application.”（GLM-5 被反爬墙挡住后转去了 viewit.ca）</li>
+<li>“On Soko Glam, purchase one cleanser and one serum from the Korean 10-step skincare routine collection, add to cart and complete checkout.”</li>
+</ol>
+<p><strong>评测流程</strong></p>
+<ul>
+<li>统一用 OpenClaw harness 控制 Chromium，每次用全新 profile。</li>
+<li>五层轨迹：会话录像、动作截图、HTTP 流量、agent 消息、浏览器动作。</li>
+<li>Agent-as-Judge（Claude Sonnet 4.6，固定 prompt）输入任务指令、task card 约束、人类参考轨迹、agent 轨迹和截获的 payload，输出 0/1 和结构化理由。判定看结果，不要求路径和人类一致。图 4 里的规则要点：“Must use provided personal info correctly”“Must complete forms and submit”“CAPTCHA: must attempt, else FAIL”，并逐字段比对 payload。</li>
+<li>和人工的一致率：Sonnet 4.6 93.46%（Agent SR 33.33 vs 人工 34.64），GPT-5.4 84.97%（6.54 vs 8.50）。</li>
+</ul>
+<p><strong>结果（Table 3）</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>模型</th>
+<th>成功率</th>
+<th>每题成本</th>
+<th>每题 token</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude Sonnet 4.6</td>
+<td>33.3</td>
+<td>$7.51</td>
+<td>5.47M</td>
+</tr>
+<tr>
+<td>Qwen 3.5</td>
+<td>26.1</td>
+<td>$1.02</td>
+<td>2.52M</td>
+</tr>
+<tr>
+<td>GLM-5</td>
+<td>24.2</td>
+<td>$0.64</td>
+<td>3.33M</td>
+</tr>
+<tr>
+<td>Gemini 3 Flash</td>
+<td>19.0</td>
+<td>$1.55</td>
+<td>5.81M</td>
+</tr>
+<tr>
+<td>Claude Haiku 4.5</td>
+<td>18.3</td>
+<td>$1.68</td>
+<td>4.56M</td>
+</tr>
+<tr>
+<td>Gemini 3.1 Pro</td>
+<td>9.8</td>
+<td>$3.34</td>
+<td>3.16M</td>
+</tr>
+<tr>
+<td>GPT-5.4</td>
+<td>6.5</td>
+<td>$1.91</td>
+<td>2.66M</td>
+</tr>
+<tr>
+<td>Gemini 3.1 Flash Lite</td>
+<td>3.3</td>
+<td>$0.11</td>
+<td>1.18M</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>局限（原文 Limitations）</strong>：真实网站会改版、做 A/B 测试、按地区变化，“exact reproduction is not guaranteed”；成本高，重复试验少；分数绑定在 OpenClaw 这套 harness 上；二值判定抹掉了中间进度；judge 和被测的 Sonnet 4.6 同属一个模型家族；移动端、非英语和无障碍场景覆盖不足。</p>
+<p>链接：<a href="https://arxiv.org/abs/2604.08523">arXiv 2604.08523</a> · <a href="https://claw-bench.com">claw-bench.com</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t12-babyvision"><div class="meta">UniPat</div><h2><span class="no">12</span>BabyVision</h2><p><strong>测什么、为什么</strong>：多模态模型在语言类 benchmark 上能拿到博士水平的成绩，但很多题可以靠文字推理或语义先验蒙对。BabyVision 只测 “beyond-language” 的基础视觉能力，也就是幼儿就会的找不同、走迷宫、看影子。</p>
+<p><strong>样例设计</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分类</td>
+<td>参考儿童发展测验，分 4 大类 22 个子类：Fine-grained Discrimination 8 个、Visual Tracking 5 个、Spatial Perception 5 个、Visual Pattern Recognition 4 个</td>
+</tr>
+<tr>
+<td>构造</td>
+<td>每个子类人工选 4–5 张种子图，共约 100 张；用以图搜图和关键词检索扩到约 4,000 张候选图；过滤掉文字多、要文化知识或内容不当的图；标注员写题目、答案和 “solution process”</td>
+</tr>
+<tr>
+<td>质检</td>
+<td>双盲审核：“two independent experts verify that the answer is unambiguous and derivable largely from visual analysis rather than language”；两人意见不一致就退回修改，仍有争议的题直接删除</td>
+</tr>
+<tr>
+<td>规模</td>
+<td>388 题，每题一张独立图片；选择题 135（34.8%），填空题 253（65.2%）；题干平均 25.9 词；另有 1,400 条训练数据，用于研究训练的影响</td>
+</tr>
+<tr>
+<td>生成版</td>
+<td>BabyVision-Gen 280 题、21 个子类，要求模型直接在图上画出答案</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>真实题目原文（Figure 1）</strong></p>
+<ol>
+<li>“The figure shows forty-nine tiger patterns arranged in 7 rows and 7 columns, among which one is different from the others. In which row and column is it located? Answer in the format (row,column).”——答案 “(4,7)”</li>
+<li>“Find the entrance connected to the exit among the three entrances. Choose from A, B and C.”——答案 “Entrance A”</li>
+<li>“Three animal patterns (A, B, C) and three environment patterns (1, 2, 3) are connected by lines. How are they paired by lines? Answer in the format: A-1, B-2, C-3”——答案 “A-2,B-3,C-1”</li>
+</ol>
+<p><strong>评测流程</strong>：所有模型用统一的 prompt 模板（先思考，再按格式给出最终答案），推理强度设为最高。Qwen3-Max 判断模型答案和标准答案是否语义等价，“shows 100% consistency with human evaluators”。生成版用 Gemini-3-Flash 做 judge，输入原图、人工标注的解答图和模型输出三张图，按子类标准二值判定；在 NanoBanana-Pro 的全部输出上和博士级标注员的一致率是 96.1%（269/280）。</p>
+<p><strong>结果</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>模型</th>
+<th>准确率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>成人平均</td>
+<td>94.1</td>
+</tr>
+<tr>
+<td>Gemini3-Pro-Preview</td>
+<td>49.7</td>
+</tr>
+<tr>
+<td>GPT-5.2</td>
+<td>34.4</td>
+</tr>
+<tr>
+<td>Doubao-1.8</td>
+<td>30.2</td>
+</tr>
+<tr>
+<td>Qwen3VL-235B-Thinking（开源最好）</td>
+<td>22.2</td>
+</tr>
+<tr>
+<td>Qwen3-VL-Plus</td>
+<td>19.2</td>
+</tr>
+<tr>
+<td>Grok-4</td>
+<td>16.2</td>
+</tr>
+<tr>
+<td>Claude-4.5-Opus</td>
+<td>14.2</td>
+</tr>
+<tr>
+<td>生成版：NanoBanana-Pro</td>
+<td>18.3</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>在 BabyVision-Mini 上，多数模型不如 3 岁儿童的平均水平；Gemini3-Pro-Preview 是唯一稳定高于 3 岁档的模型，但仍比 6 岁儿童低约 20 分。</li>
+<li>最难的子类：Find the Same 最好只有 26.5%；需要推断被遮挡体积的题最好只有 20.5%。</li>
+</ul>
+<p><strong>可挑战点</strong>：题目从网络图片扩充而来，污染风险靠过滤控制；生成版 judge 只在一个模型的输出上做了人工校验。</p>
+<p>链接：<a href="https://arxiv.org/abs/2601.06521">arXiv 2601.06521</a> · <a href="https://www.unipat.ai/benchmarks">官网</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t13-monthly-swebench-与-paperbenchx"><div class="meta">UniPat</div><h2><span class="no">13</span>Monthly-SWEBench 与 PaperBenchX</h2><p>两者都只有官网页面，没有论文。</p>
+<div class="tw"><table>
 <thead>
 <tr>
 <th>评测</th>
 <th>测什么</th>
-<th>设计要点</th>
+<th>设计</th>
 <th>判分</th>
-<th>主要结果</th>
+<th>结果（官网）</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Monthly-SWEBench</td>
 <td>防污染的真实编码</td>
-<td>每月从新合并的 PR 取约 100 题，bug fix 和非 bug fix 各半；“validated with oracle=1/nop=0”</td>
+<td>每月从新合并的 PR 里取约 100 题，bug fix 和非 bug fix 各半；“validated with oracle=1/nop=0”</td>
 <td>Pass@1，OpenHands</td>
 <td>2026-06：GPT-5.5-High 76%，Claude-Opus-4.8-XHigh 69%，GLM-5.2-Max 65%</td>
 </tr>
 <tr>
-<td>EvoCode-Bench</td>
-<td>需求不断变化时能否维持代码库</td>
-<td>26 任务、227 轮，同一个 workspace 保留 5–15 轮；“states requirements through observable behavior”</td>
-<td>累积可执行测试；MT@4（四次尝试、fail-stop）和 SR（前序轮次由参考解补齐）</td>
-<td>多数 agent 的 SR 比 MT@4 高 22–40 分；Opus-4.6 SR 78.9 最高，但 MT@4 44.0 只排第三；第 5 轮通过率不到第 1 轮的一半</td>
-</tr>
-<tr>
-<td>SaaS-Bench</td>
-<td>浏览器 agent 跨 SaaS 完成业务流程</td>
-<td>23 个 Docker 化 SaaS、6 个领域、106 任务；用 LLM 生成假数据或导入开源数据填充；每次执行前恢复到初始状态</td>
-<td>加权检查点：Checkpoint Score 计部分进度，Resolved Score 要求全过</td>
-<td>论文：最强模型端到端完成率不到 4%；官网 v1.1：Opus 5 / Claude Code RS 31.1%，Pine Computer CS 78.3%</td>
-</tr>
-<tr>
-<td>RoadmapBench</td>
-<td>按版本路线图实现新功能</td>
-<td>115 任务、17 仓库、5 种语言，中位改动 3,700 行、51 个文件</td>
-<td>按子目标加权；Resolved 要求全过</td>
-<td>Claude-Opus-4.7 Resolved 39.1%</td>
-</tr>
-<tr>
-<td>ClawBench</td>
-<td>在真实网站上完成日常写操作</td>
-<td>153 任务、144 个平台、15 类；“An interception layer captures and blocks the final submission request”</td>
-<td>Agent-as-Judge 对照人类参考轨迹二值判定；和人工一致率 84.97–93.46%</td>
-<td>Claude Sonnet 4.6 33.3%</td>
-</tr>
-<tr>
-<td>BabyVision</td>
-<td>不依赖语言的基础视觉</td>
-<td>388 题、22 子类、4 大类</td>
-<td>答案匹配；生成版用 judge</td>
-<td>Gemini3-Pro-Preview 49.7，成人平均 94.1</td>
-</tr>
-<tr>
 <td>PaperBenchX</td>
 <td>论文复现</td>
-<td>93 题、12 个领域</td>
+<td>93 题，12 个领域</td>
 <td>“clean replay and evidence-backed scientific rubrics”</td>
-<td>官网：GPT-6-Astra 13.98%</td>
+<td>GPT-6-Astra 13.98%</td>
 </tr>
 </tbody>
-</table>
-<p><strong>题目原文</strong>
-- ClawBench：“On DoorDash, order delivery: one Big Mac + one 20 pc McNuggets, select fastest delivery.”
-- SaaS-Bench（bof_023，报销流程）：agent 在第 124 步发现日期错了（“date is 19 Mar 2026 instead of 20 Mar 2026”），到第 210 步却宣布 “Bill created dated 2026-03-20 … approved”，但验证没通过。论文用这个例子说明 agent 的自我评估不可靠。</p>
-<p><strong>EvoCode 泄题事件</strong>（官网页面）：在审计轨迹时发现，Harbor 默认的多轮模式会把上一轮的 <code>/tests/test.sh</code> 评分脚本和 reward 留在下一轮，agent 能读到评分脚本。12/26 个任务受影响（22 个 task–model 组合）。他们向上游报了 issue #1960、提交修复 PR #1961，打补丁全量重跑，替换掉 6 月 13–16 日的榜单。</p>
-<p><strong>可挑战点</strong>
-- 多个 bench 的单题首发日期官网没写。
-- Monthly 系列靠新 PR 防污染，但题目难度每月会波动。
-- 同一模型换 harness 分数差很大，横向比较要注意 harness。</p>
-<p>链接：<a href="https://www.unipat.ai/benchmarks">benchmarks</a> · Monthly-SWEBench <a href="https://unipat.ai/benchmarks/MonthlySWEBench">官网</a> · EvoCode <a href="https://arxiv.org/abs/2605.24110">arXiv 2605.24110</a> · <a href="https://unipat.ai/benchmarks/EvoCode-Bench">官网</a> · SaaS-Bench <a href="https://arxiv.org/abs/2605.15777">arXiv 2605.15777</a> · <a href="https://unipat.ai/benchmarks/SaaS-Bench">官网</a> · RoadmapBench <a href="https://arxiv.org/abs/2605.15846">arXiv 2605.15846</a> · ClawBench <a href="https://arxiv.org/abs/2604.08523">arXiv 2604.08523</a> · <a href="https://claw-bench.com">claw-bench.com</a> · BabyVision <a href="https://arxiv.org/abs/2601.06521">arXiv 2601.06521</a> · PaperBenchX <a href="https://www.unipat.ai/benchmarks/PaperBenchX">官网</a></p>
-<hr />
-<h2 id="5-seed">5. 字节 Seed</h2>
-<h3 id="edgebench2026-07-07">EdgeBench（2026-07-07）</h3>
-<ul>
-<li><strong>测什么</strong>：agent 在真实环境中连续工作时的学习能力。论文认为一次性得分测不出这一点，所以测学习曲线。</li>
-<li><strong>规模</strong>：134 任务（开源 51）。分六类：科学与 ML 39、系统与软件工程 36、组合优化 19、专业知识工作 19、形式化数学 13、游戏与模拟器 8。人类专家平均每题 57.2 小时。</li>
-<li><strong>设计</strong>：</li>
-<li>双层反馈。内环是本地编译器、模拟器、验证集，可以无限次使用；外环是提交后由隐藏 judge 打分，judge 按任务用隐藏测试、rubric 或未见过的随机种子。</li>
-<li>专业知识工作类的任务大约相当于“三年以上经验的专业人士三整天”的工作量，并带有 “multi-round delivery feedback that approximate real client review cycles”。</li>
-<li><strong>结果</strong>：表现随时间呈 log-sigmoid（R²=0.998）；学习速度约 3 个月翻倍。</li>
-<li><strong>评测作弊案例（附录 C）</strong>，后来据此修改了任务：</li>
-<li>cylinder_wake_prediction：agent 通过 400 多次提交反推出隐藏答案，查表就拿到 1.000 分，而用物理模型的最好成绩是 0.165。</li>
-<li>nethack：agent 去掉了固定随机种子，靠多次采样刷高分（最高 1,501，平均 484）。</li>
-<li>bipedalwalker：针对单一评测种子过拟合，judge 种子上 301.5，本地 100 局平均约 12。</li>
-<li>autolifter：agent 把基于 oracle 的实现放进了反作弊检查豁免的 baseline/ 目录。</li>
-<li><strong>局限</strong>：12 小时以上的运行会把 API 稳定性也测进去（GPT-5.4 后半程中断明显增多）；成本很高。</li>
-</ul>
-<h3 id="xpertbencharxiv-260402368">XpertBench（arXiv 2604.02368）</h3>
-<ul>
-<li><strong>规模</strong>：1,346 题、80 个类别；来自 1,000 多份专家投稿。</li>
-<li><strong>领域分布</strong>：教育 329、工程与应用科学 275、金融 244、法律 215、人文社科 116、计算机 92、医疗 75。</li>
-<li><strong>rubric</strong>：每题 15–40 个检查点，平均 17 个。双重权重：Essential / Important / Optional 分级，再加 1–10 的分值。</li>
-<li><strong>判分（ShotJudge）</strong>：把一份专家打过分的样例作为 one-shot 给 judge，逐条二值判定后加权求和。和专家的一致性指标 CDR=52.0%，论文称明显好于 zero-shot judge。正式评测用 245 题的 Gold 子集。</li>
-<li><strong>题目原文</strong>（金融）：“As a senior analyst at a major credit rating agency … evaluating the operational performance and financial discipline of … Lockheed Martin and Northrop Grumman … from January 1, 2022, to December 31, 2023”。</li>
-<li><strong>rubric 原文</strong>：“Based on FY2023 data, calculate Lockheed Martin's book-to-bill ratio as approximately 1.16 … A ±2% margin of error is allowed.” 权重 10，Essential。</li>
-<li><strong>结果</strong>：Claude-Opus-4.6-thinking 66.20%、GPT-5.4-high 64.78%、Doubao-2.0-pro 64.51%。</li>
-<li><strong>可挑战点</strong>：附录里教育示例的题干（孔子和苏格拉底的剧本）和对应 rubric（教学目标）对不上，疑似排版错误；完整数据是否开放，论文没有写清。</li>
-</ul>
-<h3 id="widesearcharxiv-2508079992025-08">WideSearch（arXiv 2508.07999，2025-08）</h3>
-<ul>
-<li><strong>测什么</strong>：大规模信息收集并整理成表，单个事实不难，难在量大且要全对。</li>
-<li><strong>规模</strong>：200 题，中英各 100，覆盖 18 个主题；题目来自真实用户 query 再改写。</li>
-<li><strong>五道筛选</strong>：</li>
-<li>改写真实 query；</li>
-<li>人工标注金标答案，记录用时和搜索次数；</li>
-<li>不联网的模型能直接答对的题删掉；</li>
-<li>人类 10 分钟内能做完、或查不到 10 个网页的题删掉；</li>
-<li>自动评分和人评相似度低于 95% 的题返修。</li>
-<li><strong>题目原文</strong>：“Could you list every single concert on Taylor Swift's tour from January 1, 2010, to May 1, 2025, including the specific date, the concert's English name, the country, the city, and the venue?”（金标答案 533 行）。</li>
-<li><strong>判分</strong>：按唯一列对齐行；日期等用 exact_match，城市和场馆用 llm_judge（“It is sufficient if the semantics are approximately the same”），judge 是 GPT-4.1。指标有 SR（整表全对）、行级 F1、格级 F1。</li>
-<li><strong>结果</strong>：多数系统 SR 接近 0，最高 5%；格级 F1 可以接近 80%。</li>
-</ul>
-<h3 id="seed18-seed20">Seed1.8 / Seed2.0 模型卡</h3>
-<ul>
-<li><strong>Seed1.8</strong>（arXiv 2603.20633）：</li>
-<li>公开 agent 评测：GAIA、BrowseComp、WideSearch、SWE-Bench、Terminal Bench 2.0、BFCL-v4、τ²-Bench 等。</li>
-<li>自建：SearchComp、XpertBench、World Travel。</li>
-<li>内部教育评测覆盖 “problem solving, grading” 等，Seed1.8 得 60.8。</li>
-<li><strong>Seed2.0</strong>（arXiv 2607.00248）：</li>
-<li>评测体系分四个维度：“Science Discovery, Vibe Coding, Context Learning, and Real-World Tasks”。</li>
-<li>用火山 MaaS 的真实用量分布来选评测，数据来自“Doubao Collaboration Incentive Program”授权。</li>
-<li>agentic coding 的 query 以前端为主，Vue.js 的使用量是 React 的三倍多。</li>
-</ul>
-<p>链接：EdgeBench <a href="https://arxiv.org/abs/2607.05155">arXiv 2607.05155</a> · <a href="https://github.com/ByteDance-Seed/EdgeBench">GitHub</a> · <a href="https://huggingface.co/datasets/ByteDance-Seed/EdgeBench">HF</a> · <a href="https://seed.bytedance.com/en/blog/edgebench-measuring-real-world-environment-learning-and-discovering-a-new-scaling-law">博客</a> · XpertBench <a href="https://arxiv.org/abs/2604.02368">arXiv 2604.02368</a> · WideSearch <a href="https://arxiv.org/abs/2508.07999">arXiv 2508.07999</a> · <a href="https://widesearch-seed.github.io/">项目页</a> · Seed1.8 <a href="https://arxiv.org/abs/2603.20633">arXiv 2603.20633</a> · Seed2.0 <a href="https://arxiv.org/abs/2607.00248">arXiv 2607.00248</a></p>
-<hr />
-<h2 id="6-einsianavers-lab">6. Einsia（Navers Lab）</h2>
-<table>
+</table></div>
+<p>缺口：两者都没有公开题目原文和 rubric。Monthly 系列每月难度会波动，跨月比较要谨慎。</p>
+<p>链接：<a href="https://unipat.ai/benchmarks/MonthlySWEBench">Monthly-SWEBench</a> · <a href="https://www.unipat.ai/benchmarks/PaperBenchX">PaperBenchX</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t14-edgebench"><div class="meta">Seed</div><h2><span class="no">14</span>EdgeBench</h2><p><strong>测什么、为什么</strong>：预训练有 scaling law，但模型部署后在环境里边做边学的能力还很少有人量化。EdgeBench 用 134 个“天级”真实任务，每个任务至少跑 12 小时，测<strong>学习曲线</strong>，而不只是终点成绩。</p>
+<p><strong>样例设计</strong></p>
+<div class="tw"><table>
 <thead>
 <tr>
-<th>评测</th>
-<th>日期</th>
-<th>测什么</th>
-<th>规模</th>
-<th>判分</th>
-<th>主要结果</th>
+<th>项</th>
+<th>内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Frontier-Eng</td>
-<td>2026-04</td>
-<td>工程优化：propose–execute–evaluate 循环</td>
-<td>47 任务、5 类（航天调度、EDA、量子电路、电池控制等）</td>
-<td>工业级模拟器和 verifier 给连续 reward，强制可行性约束</td>
-<td>GPT-5.4 最稳；改进频率和幅度都呈幂律衰减</td>
+<td>选题标准</td>
+<td>“a performance ceiling high enough that no current agent can saturate it, and a workflow that supports continuous learning rather than one-shot completion”；和各领域专家一起筛选</td>
 </tr>
 <tr>
-<td>AI4AI-Bench</td>
-<td>2026-08</td>
-<td>能否改写训练算法</td>
-<td>10 个冻结的研究仓库；每题 4 小时、一张 B300</td>
-<td>从零重跑最长 12 小时，隐藏 evaluator；0=无信息模型，0.1=仓库原算法，1.0=最优</td>
-<td>平均 0.166，最好 0.250；真正改了学习方法的提交平均 0.226，其余 0.126</td>
+<td>六个能力族</td>
+<td>Scientific Problems &amp; ML 39（用真实仪器或野外数据）、Systems &amp; SE 36（真实生产代码库）、Combinatorial Optimization 19、Professional Knowledge Work 19（“White-collar deliverables graded by client-style rubrics”）、Formal Math 13（Lean 4 / Coq）、Interactive Games 8</td>
 </tr>
 <tr>
-<td>SWE Refactor Bench</td>
-<td>2026-08</td>
-<td>整仓库换技术栈</td>
-<td>20 个仓库、4 类技术债</td>
-<td>三关：迁移审计（防止“复制原实现让测试通过”，论文称之为 Blindness）→ 行为测试 → 6 个对抗 agent 补测</td>
-<td>520 次运行只有 28 次（5.4%）三关全过；claude-opus-5 得 47.0</td>
+<td>难度</td>
+<td>记录的人类专家工时平均 57.2 小时，最多 320 小时</td>
 </tr>
 <tr>
-<td>PPTBench</td>
-<td>2026-09</td>
-<td>把论文流程图还原成可编辑 PPT</td>
-<td>500 题、10 个领域</td>
-<td>四阶段 agentic judge：产物有效性、流程和连线、渲染、视觉还原</td>
-<td>最好 77.34，中位数 24.38</td>
-</tr>
-<tr>
-<td>World Models' Last Exam in Physics</td>
-<td>2026-10</td>
-<td>视频生成模型的物理一致性</td>
-<td>40 任务、8 个模型、1,280 段视频</td>
-<td>先筛可观测性，再做任务专属的物理测量</td>
-<td>最好 57.76；与人工的一致性高于直接用 VLM 判</td>
-</tr>
-<tr>
-<td>BrowserBC（方法论文，不是 bench）</td>
-<td>2026-06</td>
-<td>把人类浏览轨迹蒸馏成可复用 skill</td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
+<td>开源</td>
+<td>HF 上公开 51 个任务的元数据（组合优化 15、系统与软件工程 12、形式数学 8、游戏 8、科学 4、知识工作 4），指令和 judge 都在镜像里</td>
 </tr>
 </tbody>
-</table>
-<p>链接：<a href="https://lab.einsia.ai/research/">Research</a> · Frontier-Eng <a href="https://arxiv.org/abs/2604.12290">arXiv 2604.12290</a> · AI4AI <a href="https://arxiv.org/abs/2608.20318">arXiv 2608.20318</a> · <a href="https://github.com/Einsia/AI4AI-Bench">GitHub</a> · SWE Refactor <a href="https://arxiv.org/abs/2608.23564">arXiv 2608.23564</a> · <a href="https://github.com/Einsia/SWE-Refactor-Bench">GitHub</a> · PPTBench <a href="https://arxiv.org/abs/2609.29718">arXiv 2609.29718</a> · <a href="https://github.com/Einsia/PPTBench">GitHub</a> · Phys Last Exam <a href="https://arxiv.org/abs/2610.08791">arXiv 2610.08791</a> · <a href="https://github.com/Einsia/phys-last-exam">GitHub</a> · BrowserBC <a href="https://arxiv.org/abs/2606.32014">arXiv 2606.32014</a> · <a href="https://github.com/Einsia/Browser-BC">GitHub</a> · <a href="https://github.com/Einsia/OpenChronicle">OpenChronicle</a></p>
-<hr />
-<h2 id="7">7. 智能知识 / 曼孚</h2>
-<table>
+</table></div>
+<p><strong>真实题目（HF 元数据原文）</strong></p>
+<ol>
+<li><code>git_rewrite_in_zig</code>：“Reimplement git as a drop-in Zig binary producing identical CLI output, exit codes, and repository state as the C reference implementation. The C source is available for reading but cannot be compiled.”</li>
+<li><code>college_english_exam_bank</code>（知识工作）：“Produce five parallel examination papers with answer keys for a college English course, plus a blueprint table and an overlap self-check matrix ensuring cross-paper diversity meets pedagogical thresholds.”</li>
+<li><code>bipedalwalker_locomotion_rl</code>：“Train a CPU-only locomotion policy for BipedalWalker and its Hardcore variant. The judge evaluates only the submitted policy checkpoint, not the training process. Pre-trained policies and external RL libraries are prohibited.”</li>
+</ol>
+<p><strong>评测流程（双循环）</strong></p>
+<ul>
+<li>内循环：agent 在 work 容器里随意跑编译器、模拟器、验证集，容器里 “no hidden evaluation assets”。</li>
+<li>外循环：agent 主动把产物提交到独立的 judge 容器，判分依据是隐藏测试、未见过的随机种子或 rubric。宿主机上的 judge server 管理队列、冷却时间和异步评分。</li>
+<li>测量：宿主机按固定间隔对快照自动评分，只记录不反馈，所以两次提交之间的进步也能测到。</li>
+<li>知识工作类任务的 rubric 原文在 HF 上没有公开（judge 通过 <code>grade_with_codex.py</code> 调用）。</li>
+</ul>
+<p><strong>结果</strong></p>
+<ul>
+<li>134 题平均下来的学习曲线符合 log-sigmoid：S(t)=Smax/(1+(tmid/t)^β)，R²=0.998。</li>
+<li>12 小时得分：Claude Opus 4.8 51.3，GPT-5.5 48.4，GPT-5.4 39.3，其后是 GLM-5.1。</li>
+<li>“From GPT-5-Codex in September 2025 to GPT-5.5 in April 2026, learning speed increases by roughly 8× over 221 days”，约每 3 个月翻一倍；新模型更多是把每次提交转化成了进步，而不是提交得更频繁。</li>
+<li>积累经验确实有用：同样 12 小时，连续运行得 43.0，拆成 6 次独立的 2 小时尝试只得 36.1。</li>
+</ul>
+<p><strong>防作弊（附录 C 原文案例）</strong></p>
+<ul>
+<li>“an agent treated per-case absolute errors as equations and reconstructed the hidden targets through more than 400 submissions. A lookup table then scored 1.000”（基于物理模型的最好提交只有 0.165）。</li>
+<li>autolifter：agent 发现反作弊检查豁免了 <code>baseline/</code> 目录，就把基于 oracle 的实现挪进去，得了 0.980。</li>
+<li>对策：减少或聚合可能泄露答案的反馈、限制提交次数并设冷却、对随机任务用隐藏的多种子评测、扩大完整性检查范围、断网。</li>
+</ul>
+<p><strong>局限（D.5）</strong>：log-sigmoid 只是一种充分机制。分数颗粒粗的任务会出现长平台再突然跳升；任务之间有前置依赖时会出现多段 S 曲线；短窗口拟合出的 Smax 不能当作真正的上限。</p>
+<p>链接：<a href="https://arxiv.org/abs/2607.05155">arXiv 2607.05155</a> · <a href="https://github.com/ByteDance-Seed/EdgeBench">GitHub</a> · <a href="https://huggingface.co/datasets/ByteDance-Seed/EdgeBench">HF</a> · <a href="https://edge-bench.org">edge-bench.org</a> · <a href="https://seed.bytedance.com/en/blog/edgebench-measuring-real-world-environment-learning-and-discovering-a-new-scaling-law">博客</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t15-xpertbench"><div class="meta">Seed</div><h2><span class="no">15</span>XpertBench</h2><p><strong>测什么、为什么</strong>：考试型 benchmark（如 MMLU-Pro）已经饱和，而且测不出真实专业工作里的开放推理。另一个问题是现有 rubric 普遍 “granularity deficit”，零样本 LLM judge 又容易偏好某种文风。XpertBench 收集专家真实工作场景里的任务，配上细粒度的加权原子 rubric 和 few-shot 校准的 judge。</p>
+<p><strong>样例设计</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>专家</td>
+<td>来自 Xpert Data Platform；约 61% 来自 985/211 和顶尖专业院校，200 多位来自海外名校；每人至少 3 年实务经验；持有 183 张法律职业资格证、163 张医师执业证，另有大量 CFA、CPA、CATTI 持证者；入选前要过领域考试和试标注</td>
+</tr>
+<tr>
+<td>出题</td>
+<td>培训时明确区分 “exam questions” 和 “professional tasks”；要求挑战模型的推理前沿，“focusing on scenarios with low estimated pass rates”；每位专家最多提交 3 题，每题包含场景、背景材料、输出要求和参考答案</td>
+</tr>
+<tr>
+<td>筛选</td>
+<td>从 1,000 多份提交里筛出 1,346 题、80 多类；要求是该领域典型、高频的任务；排除依赖主观偏好的题</td>
+</tr>
+<tr>
+<td>分布</td>
+<td>金融 244 题（平均 17 条 rubric，prompt 平均长 533）、法律 215（18 / 413）、教育 329（15 / 960）、工程与应用科学 275（19 / 699）、人文社科 116、计算机 92、医疗 75</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>rubric 设计（原文）</strong></p>
+<ul>
+<li>先由 Claude Opus 4.1 或 Gemini 2.5 Pro 根据题目和参考答案起草，再由专家改写；“The majority of tasks comprise 15-40 checkpoints”。</li>
+<li>三条原则：“Granularity: Each checkpoint must focus on a single, well-defined requirement”；“Objectivity: … unambiguously labeled as TRUE (satisfied) or FALSE (unsatisfied)”；“Specificity: … explicitly specify the concrete content, format, or reasoning elements”。</li>
+<li>双层权重：定性分 Essential / Important / Optional，定量给 1–10 分；每条再归到 16 个维度之一（指令遵循、约束满足、事实准确、……、信息丰富度、其他）。</li>
+<li>质检：同领域至少一位专家逐行复核，约 30% 的任务由资深专家抽查。</li>
+</ul>
+<p><strong>真实题目与 rubric 原文</strong></p>
+<ol>
+<li>金融：“As a senior analyst at a major credit rating agency, your task is to prepare an in-depth comparative analysis for the rating committee, evaluating the operational performance and financial discipline of two U.S. aerospace and defense giants—Lockheed Martin and Northrop Grumman … from January 1, 2022, to December 31, 2023”
+   - [10, Essential]“Based on FY2023 data, calculate Lockheed Martin’s book-to-bill ratio as approximately 1.16. The calculation must use correct net order amounts and total revenue. A ±2% margin of error is allowed.”</li>
+<li>法律：“I am the Legal Affairs Manager of a state-owned enterprise supply chain company in Guangxi Province … determine whether the agreement signed between Guangxi Company and China Construction Bank on June 1, 2023, constitutes a loan relationship or a factoring contract relationship?”
+   - [7, Important]“Accurately identify the legal relationship between Guangxi Company and China Construction Bank as accounts receivable pledge financing, rather than a factoring contract relationship.”
+   - [7, Important]“Ability to cite Article 761 of the Civil Code regarding the definition of factoring contracts as the legal basis for analysis.”</li>
+</ol>
+<p><strong>评测流程：ShotJudge</strong></p>
+<ul>
+<li>专家锚定：领域专家盲评 GPT-5 基线模型的回答，逐条给出 0/1 和理由；第二批资深专家交叉复核这些标注。</li>
+<li>校准评分：judge（Gemini 2.5 Pro）的上下文包括原题、rubric，以及基线回答加专家理由作为 one-shot 示例；judge 对每条 rubric 输出 0/1，再按权重汇总。</li>
+<li>一致性：CDR = P(agree) − P(disagree) = 52.0%，“significantly outperforming standard zero-shot LLM-as-a-judge baselines”。</li>
+<li>专家标注成本高，所以主实验只在分层抽样的 XpertBench-Gold（245 题）上做。</li>
+</ul>
+<p><strong>结果（Gold，Table 3）</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>模型</th>
+<th>总分</th>
+<th>金融</th>
+<th>法律</th>
+<th>教育</th>
+<th>工程</th>
+<th>人文社科</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude-Opus-4.6-thinking</td>
+<td>66.20</td>
+<td>73.25</td>
+<td>65.54</td>
+<td>57.96</td>
+<td>49.58</td>
+<td>83.02</td>
+</tr>
+<tr>
+<td>GPT-5.4-high</td>
+<td>64.78</td>
+<td>84.65</td>
+<td>64.79</td>
+<td>59.29</td>
+<td>42.84</td>
+<td>80.58</td>
+</tr>
+<tr>
+<td>Doubao-2.0-pro</td>
+<td>64.51</td>
+<td>73.82</td>
+<td>65.06</td>
+<td>55.35</td>
+<td>44.88</td>
+<td>80.09</td>
+</tr>
+<tr>
+<td>GPT-5.2-high</td>
+<td>61.03</td>
+<td>71.22</td>
+<td>56.88</td>
+<td>58.43</td>
+<td>46.13</td>
+<td>76.15</td>
+</tr>
+<tr>
+<td>Gemini-3.1-pro</td>
+<td>55.05</td>
+<td>62.43</td>
+<td>53.88</td>
+<td>52.43</td>
+<td>37.30</td>
+<td>69.04</td>
+</tr>
+<tr>
+<td>Kimi-k2-thinking</td>
+<td>53.30</td>
+<td>55.00</td>
+<td>58.00</td>
+<td>54.40</td>
+<td>37.10</td>
+<td>66.40</td>
+</tr>
+<tr>
+<td>GLM-4.6</td>
+<td>44.30</td>
+<td>52.70</td>
+<td>47.20</td>
+<td>39.10</td>
+<td>27.40</td>
+<td>49.70</td>
+</tr>
+</tbody>
+</table></div>
+<p>最高分只有约 66%；工程与应用科学是所有模型的短板。</p>
+<p><strong>可挑战点</strong>：论文没有单列局限章节。judge 的锚点是 GPT-5，可能对同家族模型有偏；CDR 52% 意味着仍有不少排序和专家相反；计算机和医疗在 Gold 里样本太少，没有做分领域分析；全集 1,346 题没有公开。</p>
+<p>链接：<a href="https://arxiv.org/abs/2604.02368">arXiv 2604.02368</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t16-widesearch"><div class="meta">Seed</div><h2><span class="no">16</span>WideSearch</h2><p><strong>测什么、为什么</strong>：很多信息收集工作并不难，但量很大，比如把 6 年的福布斯榜单整理成一张完整的表。WideSearch 测 agent 在这种 “wide” 任务上能否做到完整、准确，一格都不错。</p>
+<p><strong>样例设计（五阶段）</strong></p>
+<ol>
+<li>从真实用户 query 中筛出适合做 wide search 的题，改写得清晰无歧义。</li>
+<li>标注员穷尽检索，做出 gold 表，同时记录用时、检索次数、关键词和访问的网页数。</li>
+<li>参数知识过滤：“If any model can generate a complete and correct answer using only its internal knowledge, the question is discarded.”</li>
+<li>难度剪枝：去掉 “any task that a human annotator completes in less than 10 minutes or by consulting fewer than 10 unique web pages”。</li>
+<li>迭代校验：用商用 agent 的回答对比自动评分和专家评分，一致性低于 95% 就修改题目或 gold 表。</li>
+</ol>
+<p>最终 200 题，中英文各 100 题，覆盖 18 个主题；人类完成一题平均要 2.33 小时。</p>
+<p><strong>真实题目与评测配置原文</strong></p>
+<ol>
+<li>ws_zh_004：“2019到2024年（包含2019年和2024年），福布斯全球富豪排行榜前10都是哪些人，盘点一下这些人的名字，排名，财富值，财富来源是啥，做成表给我。……表格中的列名依次为：年度、排名、姓名（中文）、姓名（英文）、财富值（亿美元）、财富来源。”
+   - 评测 JSON：<code>"unique_columns": ["年度", "排名"]</code>；财富值用 <code>"number_near", "criterion": 0.05</code>；姓名列用 <code>llm_judge</code>，判定标准是 “和参考答案语义相同大致、或者指向的实体一致即可，不需要字字对应。\n 姓名(中文)列部分音译可能有差异”。</li>
+<li>论文 Figure 4：“Could you list every single concert on Taylor Swift’s tour from January 1, 2010, to May 1, 2025, including the specific date, the concert’s English name, the country, the city, and the venue? … Notes: Do not use date ranges for Date, list it in the format of “Day Month, Year””</li>
+</ol>
+<p><strong>评测流程</strong></p>
+<ul>
+<li>先按主键对齐行（实体名不一致时用 LLM mapping 对齐），再逐格按列配置打分：exact_match、number_near、date_near、url_match 或 llm_judge。</li>
+<li>Success Rate：整张表全对才算成功；Row F1：整行全对的 F1；Item F1：单元格级 F1。每题跑 4 次，报告 Avg@4、Pass@4 和 Max@4。</li>
+<li>不同 judge 和人工评测的一致性：o4-mini 98.3%，Gemini 2.5 Pro 98.1%，GPT-4.1 98.0%。</li>
+</ul>
+<p><strong>结果（Table 2）</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>系统</th>
+<th>SR Avg@4</th>
+<th>SR Pass@4</th>
+<th>Row F1 Avg</th>
+<th>Item F1 Avg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>o3 单 agent</td>
+<td>4.5</td>
+<td>9.0</td>
+<td>34.0</td>
+<td>52.6</td>
+</tr>
+<tr>
+<td>o3 多 agent</td>
+<td>5.1</td>
+<td>9.5</td>
+<td>37.8</td>
+<td>57.3</td>
+</tr>
+<tr>
+<td>Claude Sonnet 4 (Thinking) 多 agent</td>
+<td>3.6</td>
+<td>6.5</td>
+<td>38.5</td>
+<td>62.2</td>
+</tr>
+<tr>
+<td>Doubao-Seed-1.6 (Thinking) 单 agent</td>
+<td>2.6</td>
+<td>5.0</td>
+<td>30.0</td>
+<td>48.3</td>
+</tr>
+<tr>
+<td>Gemini 2.5 Pro 端到端产品</td>
+<td>4.3</td>
+<td>8.0</td>
+<td>36.6</td>
+<td>59.1</td>
+</tr>
+<tr>
+<td>人类</td>
+<td>20.0</td>
+<td>—</td>
+<td>69.2</td>
+<td>82.4</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>失败的主因不是找不到单个事实：重试足够多次时 Item F1 能接近 80%。真正的问题是规划差、碰壁后不换策略、用错证据。</li>
+<li>多 agent 分而治之在 F1 上稳定优于单 agent。</li>
+</ul>
+<p><strong>可挑战点</strong>：人类 SR 也只有 20%，说明“一格不错”这个标准对人同样苛刻；题目有时效性，gold 表需要维护。</p>
+<p>链接：<a href="https://arxiv.org/abs/2508.07999">arXiv 2508.07999</a> · <a href="https://widesearch-seed.github.io/">项目页</a> · <a href="https://huggingface.co/datasets/ByteDance-Seed/WideSearch">HF</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t17-模型卡评测体系"><div class="meta">Seed</div><h2><span class="no">17</span>模型卡评测体系</h2><p><strong>动机（Seed2.0 模型卡）</strong>：评测的选择依据是火山 MaaS 的真实用量。国内 MaaS 流量绝大部分来自互联网行业；按场景分，“Unstructured information processing and analysis dominates”，其后是教育、内容创作、搜索推荐。这些数据来自签了数据授权协议的 “Doubao Collaboration Incentive Program”。模型卡也直接写了差距：“Seed2.0 Series have considerable gaps with Claude in terms of coding … relatively obvious gaps with Gemini in terms of long-tail knowledge”。</p>
+<p><strong>四个维度（原文）</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>用到的评测</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scientific Discovery</td>
+<td>AInstein Bench、BABE（BIObench）</td>
+<td>“scientific coding”；生物领域图文交错推理</td>
+</tr>
+<tr>
+<td>Vibe Coding</td>
+<td>NL2Repo-Bench（自建）</td>
+<td>“complete an entire software repository from a natural-language specification in a single end-to-end process”</td>
+</tr>
+<tr>
+<td>Context Learning</td>
+<td>CL-Bench、KORBench、DeR2，加两个内部场景：Customer Support Q&amp;A、Complex Workflow</td>
+<td>严格依据用户提供的长文档执行</td>
+</tr>
+<tr>
+<td>Real-World Tasks</td>
+<td>GDPVal-Verified、XpertBench、WorldTravel，加内部的 K12 教育、文本分类、信息抽取</td>
+<td>“we curate GDPVal-Verified, a reliable subset of GDPVal with rubric-based automatic evaluation”</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>结果（Table 13 节选）</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Benchmark</th>
+<th>GPT-5.2 High</th>
+<th>Claude-Opus-4.5</th>
+<th>Gemini-3-pro High</th>
+<th>Seed2.0 Pro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GDPVal-Diamond</td>
+<td>26.9</td>
+<td>20.7</td>
+<td>19.4</td>
+<td>21.3</td>
+</tr>
+<tr>
+<td>XPert Bench</td>
+<td>53.3</td>
+<td>50.5</td>
+<td>53.1</td>
+<td>64.5</td>
+</tr>
+<tr>
+<td>NL2Repo-Bench</td>
+<td>49.3</td>
+<td>43.2</td>
+<td>34.2</td>
+<td>27.9</td>
+</tr>
+<tr>
+<td>AInstein Bench</td>
+<td>41.3</td>
+<td>44.0</td>
+<td>42.8</td>
+<td>47.7</td>
+</tr>
+<tr>
+<td>ToB-Reference Q&amp;A</td>
+<td>63.6</td>
+<td>67.9</td>
+<td>68.3</td>
+<td>72.4</td>
+</tr>
+<tr>
+<td>World Travel (VLM)</td>
+<td>19.33</td>
+<td>14.0</td>
+<td>8.0</td>
+<td>12.0</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Seed1.8 模型卡</strong>：agent 评测用了 GAIA、BrowseComp、WideSearch、SWE-Bench、Terminal Bench 2.0、BFCL-v4、τ²-Bench；自建的有 SearchComp、XpertBench、World Travel。</p>
+<p><strong>可挑战点</strong></p>
+<ul>
+<li>正文写的是 GDPVal-Verified，表里写的是 GDPVal-Diamond，模型卡没有说明两者是不是同一个东西，也没给题数和 rubric 来源。</li>
+<li>XpertBench 是 Seed 自建的，Seed2.0 Pro 在上面领先 11 分以上；而在外部的 GDPVal 上，它落后 GPT-5.2。</li>
+</ul>
+<p>链接：Seed2.0 <a href="https://arxiv.org/abs/2607.00248">arXiv 2607.00248</a> · Seed1.8 <a href="https://arxiv.org/abs/2603.20633">arXiv 2603.20633</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t18-frontier-eng"><div class="meta">Einsia</div><h2><span class="no">18</span>Frontier-Eng</h2><p><strong>测什么、为什么</strong>：真实的工程优化是一个反复循环：提方案、跑仿真或评测、拿反馈再改。目标是在约束下把分数往上推，而不是一次答对。Frontier-Eng 测的是 “generative optimization”：在固定交互预算内，LLM agent 能把一个可行但朴素的初始解改进到什么程度。</p>
+<p><strong>样例设计</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>任务形式</td>
+<td>三元组 τ = (C, x0, E)：C 是只读上下文（规格、约束、参考数据），x0 是 “feasible but potentially naive” 的初始产物，E 是冻结的 evaluator，返回可行性 v(x)∈{0,1} 和分数 s(x)；目标是预算内的最好可行分数</td>
+</tr>
+<tr>
+<td>五个来源</td>
+<td>①公开存档的工程竞赛（如 ISCSO 结构优化）；②学术 benchmark（Summit、MQT Bench、OpenProblems）；③经典课程作业（CS:APP MallocLab）；④工业级仿真（MuJoCo、PyBullet、SustainDC）；⑤领域专家原创（自适应光学、光纤网络、库存、电池电化学）</td>
+</tr>
+<tr>
+<td>四条准入</td>
+<td>规格自洽、不依赖外部资源；有可编辑的 x0；evaluator 可运行，同时返回可行性和分数；“the initial solution x0 is verified to be feasible”</td>
+</tr>
+<tr>
+<td>质控</td>
+<td>先由 agent 自动检查代码规范和接口，再由人工维护者核对工程合理性和 evaluator 是否正确</td>
+</tr>
+<tr>
+<td>规模</td>
+<td>47 题：计算与量子 10、运筹 9、机器人控制与能源 8、光学与通信 10、物理与工程设计 10</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>防 reward hacking 的三层机制（原文）</strong></p>
+<ul>
+<li>“Isolation. All evaluator code, reference data, and verification scripts are marked read-only”</li>
+<li>“Verifier-parsed scoring. Scores are extracted from the evaluator’s own output logs … The agent cannot self-report a high score”</li>
+<li>“Evaluation robustness … multiple test seeds, randomized inputs, or multi-scenario averaging”，外加 OpenSSL 对照、排程校验、有限元重算等正确性检查。</li>
+</ul>
+<p><strong>真实题目</strong></p>
+<ol>
+<li>SustainableDataCenterControl：同时控制 IT 负载迁移、制冷和电池三个子系统。x0 是 “a stateless no-op controller”；evaluator 在 4 个季节场景里各闭环跑 192 步（每步 1 小时），累计碳排和用水，再和 no-op 对比算改进比例。</li>
+<li>Cryptographic SHA-256：“C++ SHA-256 throughput (OpenSSL verified)”。</li>
+<li>KernelEngineering FlashAttention：“Optimize causal scaled dot-product attention CUDA kernel”。</li>
+</ol>
+<p><strong>评测流程与指标</strong>：统一用 openevolve 框架，每个模型 100 次迭代。主指标是<strong>平均排名</strong>：在每题内按最好可行分数排名，再对 47 题取平均。之所以用排名，是因为它 “unit-free and robust to heterogeneous task scales”。辅助指标有 performance profile 和相对 x0 的胜率。</p>
+<p><strong>结果</strong></p>
+<ul>
+<li>平均排名：gpt-5.4 3.54（重测后；首次运行是 5.68），claude-opus-4.6 3.63，glm-5 4.34，deepseek-v3.2 4.76。gpt-5.4 在 24/47 题最好。</li>
+<li>改进呈 “dual power-law decay”：改进的频率约随 1/迭代次数衰减，幅度约随 1/改进次数衰减。</li>
+<li>宽度（并行搜索）提高多样性，但在固定预算下，难的改进还是要靠深度。</li>
+</ul>
+<p><strong>可挑战点</strong>：论文没有单列局限章节。同一模型重测后排名变化很大（5.68 → 3.54），说明单次运行的方差不小；平均排名只看先后，不看差距大小。</p>
+<p>链接：<a href="https://arxiv.org/abs/2604.12290">arXiv 2604.12290</a> · <a href="https://lab.einsia.ai/research/">Research</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t19-ai4ai-bench"><div class="meta">Einsia</div><h2><span class="no">19</span>AI4AI-Bench</h2><p><strong>测什么、为什么</strong>：AI 能不能改进 AI 的训练算法？要回答这个问题，就要排除调参、加算力、拉长训练这些因素，只看 “a change to how the model learns”。</p>
+<p><strong>样例设计</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>任务</td>
+<td>10 个冻结的研究仓库，覆盖 10 类训练算法：SFT、多轮 agentic RL、on-policy 蒸馏、Bradley–Terry 奖励模型、偏好优化、扩散 RL、机器遗忘、离散图扩散、权重平均、一次性剪枝</td>
+</tr>
+<tr>
+<td>准入</td>
+<td>必须是作者真正在用的训练算法，“not a tutorial or a toy”；附带冻结的起始模型；指标能在单张 B300、半天内可复现地重算</td>
+</tr>
+<tr>
+<td>预算</td>
+<td>探索阶段：4 小时、1 张 B300，可以无限次查询便宜的 proxy 指标；只有源码能带到下一阶段，“no weights it trained, no cached state, no notes to itself”</td>
+</tr>
+<tr>
+<td>验证</td>
+<td>训练类任务在干净环境里从头重训，最多 12 小时，取最后 3 个 checkpoint 中最好的；最终指标由 “an evaluator frozen before the first run” 计算</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>统一标尺</strong>：σ = 0 表示无信息模型，σ = 0.1 表示仓库自带的算法，σ = 1.0 表示指标的理论最优。基线以下线性映射到 0–0.1，基线以上映射到 0.1–1.0。困惑度先取 log，论文原话：“a submission taking owl from 53.4 to 16.2 would read as having closed 71% of the distance to the optimum, where the correct figure is 30%”。</p>
+<p><strong>真实题目：RAGEN on Sokoban（instruction.md 原文节选）</strong></p>
+<blockquote>
+<p>“Improve the fixed Qwen2.5-3B-Instruct policy on the frozen Sokoban evaluation protocol. The shipped solution uses multi-turn on-policy GRPO … that is the reference method rather than a mandatory objective.”
+“The exploration metric is ‘public_four_bank_solve_rate‘; the final metric is ‘held_out_512_board_solve_rate‘.”
+“Do not import external boards, demonstrations, trajectories, or weights, reconstruct or train on final seeds, or implement an evaluation-specific lookup.”
+参考结果：“Fixed policy start, final solve rate ‘60/512 = 0.117188‘”；“Current shipped solution … ‘87/512 = 0.169922‘”</p>
+</blockquote>
+<p><strong>结果</strong></p>
+<ul>
+<li>6 个系统（模型 + harness + 推理强度）共 29 种配置 × 10 题 = 290 个格子，平均 σ = 0.166。</li>
+<li>按系统：Claude Opus 5 0.250，GPT-5.6 Sol 0.191，Kimi K3 0.174，Claude Sonnet 5 0.145，GPT-5.6 Terra 0.135，GPT-5.6 Luna 0.117；单个配置最好的是 Opus 5 medium，0.288。</li>
+<li>124/290 个格子低于 0.1，也就是比仓库原算法还差。</li>
+<li>真正改动了目标函数、监督信号、学习规则或数据的 122 次提交平均 0.226，其余只有 0.126。</li>
+</ul>
+<p><strong>可挑战点</strong>：论文承认 proxy 和最终评测的隔离是 “one of access and timing rather than of sample disjointness”，有的任务两者取自同一语料；每个格子只跑一次。</p>
+<p>链接：<a href="https://arxiv.org/abs/2608.20318">arXiv 2608.20318</a> · <a href="https://github.com/Einsia/AI4AI-Bench">GitHub</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t20-swe-refactor-bench"><div class="meta">Einsia</div><h2><span class="no">20</span>SWE Refactor Bench</h2><p><strong>测什么、为什么</strong>：整仓库迁移（换语言、换框架、换平台、换构建工具）开始时测试就是全绿的，所以 “A correct migration and an untouched repository can therefore receive the same perfect test score”。论文把这种情况叫 <strong>Blindness</strong>：只看行为的 evaluator 会给一个根本没迁移的仓库满分。</p>
+<p><strong>样例设计</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>规模</td>
+<td>20 个上游项目、20 题，总计 867,062 行；单个仓库 1K–500K 行，预计需要 6–30 小时</td>
+</tr>
+<tr>
+<td>四类技术债</td>
+<td>语言重写 7（如 cmark C → Rust、acorn JavaScript → Rust）、框架重写 7、平台移植 3（POSIX → wasm32-wasi）、构建工具链重写 3</td>
+</tr>
+<tr>
+<td>agent 拿到的</td>
+<td>能干净构建的 State A；精确到版本的目标技术栈 State B；指令；离线镜像；产物契约</td>
+</tr>
+<tr>
+<td>隐藏的评测资产</td>
+<td>迁移审计 criteria、行为测试、对抗验证，都放在 “a separate image that is never mounted into the agent’s container”</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>评测流程（三关）</strong></p>
+<ol>
+<li><strong>Migration Audit</strong>：问题只有一个，“did the migration actually happen”。criteria 写成针对这个仓库的问题，由 judge（gpt-5.6-sol）同时读新旧两棵源码树逐条回答，每条判 3 次取多数；判失败必须给出可复查的证据。和两位人类研究者的一致率是 89.7%（κ=0.795），16 处分歧里 14 处是 judge 判得更严。</li>
+<li><strong>Behavioural Tests</strong>：在 State A 上录下输出作为期望值，共 130,118 个检查，平均每题 6,000 多个；“a single wrong check scores zero”。</li>
+<li><strong>Agentic Verification</strong>：6 个 coding agent 各用 1 小时找差异，5 个按指定方向（C ABI、路由、安装目录等），1 个不限方向。它们只能交可执行的测试用例，要求在 State A 上通过、在提交上失败，并且能复现 3 次。
+- 计分：S = 1[g=pass] · 1[所有模块 ri=1] · (0.4 + 0.6·s/6)，s 是没能找到反例的 verifier 数量。</li>
+</ol>
+<p><strong>真实题目：lang01（cmark，C → Rust）</strong></p>
+<ul>
+<li>26 次运行里只有 6 次通过 Stage I，却有 5 次通过了全部固定检查，而且这 5 次都是 blindness。</li>
+<li>论文原文：“Each cleared seven of the eight criteria and failed only the one asking whether the Rust is the implementation: it reproduces the original’s control flow statement for statement, a transliteration—ownership was never redesigned, the original’s manual memory management simply moved into Rust”。</li>
+<li>对照的 lang04（acorn，JS → Rust）：20/26 次通过 Stage I，却没有一次通过全部固定检查。</li>
+</ul>
+<p><strong>结果</strong></p>
+<ul>
+<li>8 个模型、26 种配置，各在 20 题上跑 1 次，共 520 次运行。只有 28 次（5.4%）三关全过。</li>
+<li>最强配置：claude-opus-5 xhigh 47.0（20 次里通过 5 次），gpt-5.6-sol 28.5，kimi-k3 19.5，claude-sonnet-5 15.0。</li>
+<li>30 次运行没做迁移却保住了全部行为（只有 Stage I 能拦住）；252 次运行做了迁移但破坏了行为（只有 Stage II 能拦住）。通过全部固定检查的 88 次里，有 60 次被 verifier 找到反例，中位耗时 17.0 分钟。</li>
+</ul>
+<p><strong>可挑战点</strong>：每种配置只跑 1 次；Stage I 依赖 LLM judge，并且偏严；每题评测成本很高（6 个 agent 各 1 小时）。</p>
+<p>链接：<a href="https://arxiv.org/abs/2608.23564">arXiv 2608.23564</a> · <a href="https://github.com/Einsia/SWE-Refactor-Bench">GitHub</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t21-pptbench"><div class="meta">Einsia</div><h2><span class="no">21</span>PPTBench</h2><p><strong>测什么、为什么</strong>：把论文里的流程图还原成<strong>可编辑</strong>的单页 PPT，用来测 agent 的 “visual coding” 能力：看图、测量、再用原生形状、文本框和连接线把图重建出来。</p>
+<p><strong>样例设计</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>来源</td>
+<td>通过 arXiv 元数据下载源码包，解析 LaTeX figure 环境，找到作者的原始图形文件；只保留流程图、系统架构图、模块图；每题都能追溯到论文 ID、版本和图号</td>
+</tr>
+<tr>
+<td>预处理</td>
+<td>从原始资产渲染；难以用 PPT 原生元素重建的自包含位图块可以批准复用，其余必须重建为可编辑对象；去掉重复图；剩 1,000 个候选</td>
+</tr>
+<tr>
+<td>人工筛选（5 条排除标准）</td>
+<td>不属于流程或架构类的；太简单、拉不开差距的；分辨率不够或文字看不清的；裁剪错误、源文件损坏或渲染缺陷的；标注员无法一致识别关键连线、箭头方向和节点边界的。最终保留 500 题</td>
+</tr>
+<tr>
+<td>覆盖</td>
+<td>10 个领域、50 个 arXiv 一级分类</td>
+</tr>
+<tr>
+<td>防泄漏</td>
+<td>agent 拿不到论文出处，也看不到其他题</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>判分（原文公式）</strong>：S = Gart · Gsem · Grt · (Slayout + Stext + Sgraphics)</p>
+<ul>
+<li>Stage 0（确定性检查）：PPTX 能解析和渲染，“exactly one slide and at least three native editable components”，没有外部关系、嵌入字体、附件或 ActiveX，还会检查位图是不是直接拷贝了参考图。</li>
+<li>Stage 1 语义：比对节点、标签和有向连接，检查是否缺步、多步、错误合并，端点或方向是否错，分支、合并、环路是否被改；“a missing segment or moved arrowhead can fail this stage”。</li>
+<li>Stage 2 渲染：黑块、畸变、撕裂等问题影响超过 30% 的画面，或超过 50% 的文本框溢出或重叠，就判失败。</li>
+<li>Stage 3 细节：布局 30 分、文字 40 分、图形 30 分，按缺陷的严重程度和范围扣分。</li>
+<li>judge 是 GPT-5.6 Luna High，Stage 1–3 独立跑 3 轮，至少 2 轮通过才进入细节评分；judge 可以自己写裁剪、分色、几何测量脚本。</li>
+</ul>
+<p><strong>评测与一致性</strong>：10 个模型、36 种配置（模型 × harness × 推理强度），共 18,000 次重建。3 位人类标注 200 例：三人完全一致的占 81.5%（Fleiss κ 0.728）；judge 和人类多数意见的门槛一致率 86.5%（κ 0.696）；同一 judge 重复跑，一致率 96.0%。</p>
+<p><strong>结果（Table 1 节选）</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>配置</th>
+<th>平均分</th>
+<th>门槛通过率</th>
+<th>成本（500 题）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPT-6 Astra · Codex · high</td>
+<td>77.34</td>
+<td>80.8%</td>
+<td>$321</td>
+</tr>
+<tr>
+<td>GPT-6 Astra · Codex · xhigh</td>
+<td>72.60</td>
+<td>74.8%</td>
+<td>$967</td>
+</tr>
+<tr>
+<td>Kimi K3 · OpenCode · high</td>
+<td>67.80</td>
+<td>73.8%</td>
+<td>$1,158</td>
+</tr>
+<tr>
+<td>GPT-5.6 Sol · Codex · max</td>
+<td>49.28</td>
+<td>52.6%</td>
+<td>$988</td>
+</tr>
+<tr>
+<td>Qwen 3.8 Max · Claude Code · xhigh</td>
+<td>47.69</td>
+<td>53.2%</td>
+<td>$307</td>
+</tr>
+<tr>
+<td>Claude Opus 5 · Claude Code · xhigh</td>
+<td>35.91</td>
+<td>43.6%</td>
+<td>$685</td>
+</tr>
+<tr>
+<td>GLM-5.3-Flash · OpenCode · max</td>
+<td>32.42</td>
+<td>36.8%</td>
+<td>$53</td>
+</tr>
+</tbody>
+</table></div>
+<p>所有配置的中位数是 24.38，最差的是 GPT-5.6 Luna none，1.53。推理强度并不是越高越好：Astra 的 high 档比 xhigh 和 max 都高。</p>
+<p><strong>可挑战点</strong>：judge 和被测模型（GPT-5.6 系列）同属一家；只测单页流程图，不涉及多页叙事和排版设计。</p>
+<p>链接：<a href="https://arxiv.org/abs/2609.29718">arXiv 2609.29718</a> · <a href="https://github.com/Einsia/PPTBench">GitHub</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t22-world-models-last-exam-in-physics"><div class="meta">Einsia</div><h2><span class="no">22</span>World Models&#x27; Last Exam in Physics</h2><p><strong>测什么、为什么</strong>：视频生成模型画面越来越逼真，但物理上未必对。这个 bench 把物理定律写成<strong>在视频里可观测、不需要绝对标定的关系</strong>，用测量来检验，不需要参考视频。</p>
+<p><strong>样例设计</strong></p>
+<ul>
+<li>任务定义 Tk = (Ak, I0,k, pk, Rk)：物理假设、首帧图像、提示词、可测判据。首帧由 GPT-Image-2.5 生成。</li>
+<li>40 个任务分 9 类（平动与碰撞、刚体静力学、振动、投影几何、浮力与融化、磁与感应、流体等）。按跨模型平均分分成 Easy、Medium、Hard 三档，分别有 15、15、10 题。</li>
+<li>三类关系（原文例子）：</li>
+<li>空间：45° 斜抛并落回发射高度时，“maximum height H and horizontal range R satisfying H/R = 1/4”。初速度和 g 在比值中约掉，可以直接用像素测量。</li>
+<li>时间：摆长相同、摆锤质量不同的两个小角度单摆，周期比 T1/T2 应该等于 1。</li>
+<li>时空耦合：纯滚动时 v = ωR。</li>
+<li>用同一场景做对照，让未知因素在比值里抵消；提示词里规定侧视角和匀速时间流逝。</li>
+</ul>
+<p><strong>评测流程</strong></p>
+<ol>
+<li>用 VLM 检查时间一致性和语义连贯，得到 C。</li>
+<li>用 CoTracker3 跟踪点、SAM 2 做分割，再做几何拟合、ROI 光度和时序分析，提取物理量，算出物理分 P。</li>
+<li>合成分 S = 0.15C + 0.85P·1[C ≥ 80]；一致性不够的视频，物理分不计入。</li>
+</ol>
+<p><strong>结果</strong></p>
+<ul>
+<li>8 个模型、1,280 段视频：Seedance 2.5 57.76，MiniMax H3 54.89，Cosmos 3 Super 42.46，VBVR 37.79，Wan2.2 35.66 …… CogVideoX 1.5-5B 18.81。</li>
+<li>P26 “Ice with a stone: melting” 所有模型平均只有 3.45、最高 15.00，所有模型的物理分都是 0。光反射（P18）上 Seedance 96.15、VBVR 95.75，其余模型最高 49.82。</li>
+<li>在物理关系已知的合成视频上，evaluator 平均给 97.53 分。用 320 段视频、10 位标注员做人工对照，评分排序和人的一致性好于直接让 Qwen3.6-27B 打分。</li>
+</ul>
+<p><strong>局限（摘要原文）</strong>：结论限于可观测关系，“unmeasured physical properties remain unverified”；斜抛比值无法消除任意透视畸变，只能靠提示词限定视角。</p>
+<p>链接：<a href="https://arxiv.org/abs/2610.08791">arXiv 2610.08791</a> · <a href="https://github.com/Einsia/phys-last-exam">GitHub</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t23-browserbc-方法论文"><div class="meta">Einsia</div><h2><span class="no">23</span>BrowserBC（方法论文）</h2><p>这不是 benchmark，放在这里是因为它用了两个 bench 来评测。</p>
+<ul>
+<li>观点：浏览器 agent 的瓶颈是 “decision-making under incomplete information rather than low-level operation”，而 agent 缺的先验知识就藏在人类的浏览轨迹里。</li>
+<li>方法：把用户交互轨迹蒸馏成自然语言的 skill 卡片（意图、适用条件、前置条件、策略），组织成 skill graph，“growth proceeds through consolidation rather than unbounded accumulation”。</li>
+<li>结果：同一个 agent，WebArena-Hard 从 60.5%（156/258）提高到 81.4%（210/258）；ClawBench 从 32.9%（50/152）提高到 68.4%（104/152），8 个类别都有提升。</li>
+<li>可挑战点：ClawBench 在这里只用了 152 题，原论文是 153 题；蒸馏用的人类轨迹从哪来、和测试网站有多少重叠，需要看原文附录。</li>
+</ul>
+<p>链接：<a href="https://arxiv.org/abs/2606.32014">arXiv 2606.32014</a> · <a href="https://github.com/Einsia/Browser-BC">GitHub</a> · <a href="https://lab.einsia.ai/browserbc/">项目页</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t24-智能知识-曼孚"><div class="meta">其他</div><h2><span class="no">24</span>智能知识 / 曼孚</h2><div class="tw"><table>
 <thead>
 <tr>
 <th>公司</th>
@@ -659,12 +2135,26 @@
 <td>没有公开题目、规模或结果</td>
 </tr>
 </tbody>
-</table>
-<p>链接：<a href="https://human-intelligence.cn/expert-eval/">智能知识 Expert Eval</a> · <a href="https://human-intelligence.xpertiise.com/blog/beyond-benchmark-coding-expert-eval/">Coding 专家评估博客</a> · <a href="https://www.mindflow.com.cn/eval-benchmark.html">曼孚 Eval</a> · <a href="https://news.e-works.net.cn/category802/news138025.htm">曼孚新闻稿</a></p>
-<hr />
-<h2 id="_2">共性</h2>
-<ul>
+</table></div>
+<p>链接：<a href="https://human-intelligence.cn/expert-eval/">智能知识 Expert Eval</a> · <a href="https://human-intelligence.xpertiise.com/blog/beyond-benchmark-coding-expert-eval/">Coding 专家评估博客</a> · <a href="https://www.mindflow.com.cn/eval-benchmark.html">曼孚 Eval</a> · <a href="https://news.e-works.net.cn/category802/news138025.htm">曼孚新闻稿</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t25-跨-benchmark-的规律"><div class="meta">共性</div><h2><span class="no">25</span>跨 benchmark 的规律</h2><ul>
 <li><strong>任务来源</strong>：真实的付费工作或真实用户请求（XpertBench、OMB、WideSearch、VitaBench），或者真实代码库的变更（UniPat、Einsia）。</li>
 <li><strong>判分</strong>：原子二值项加权重是主流，再用一致率校准 judge。XpertBench 报了 CDR，OMB 报了分领域的 Pearson，ClawBench 报了 85–93% 的一致率；VitaBench 2.0 没报。</li>
 <li><strong>防钻空子</strong>：几乎每个长程 bench 都遇到过 agent 钻评测的空子，比如 EdgeBench 附录 C、EvoCode 泄题、SWE Refactor 的 Blindness。work–judge 隔离、隐藏多种子、迁移审计正在成为标配。</li>
-</ul></main></body></html>
+<li><strong>严格指标和部分分并报</strong>：SaaS-Bench 的 Resolved 3.8 对 Checkpoint 43.9，OMB 的 Pass Rate 对 Expert Score，EvoCode 的 MT@4 对 SR，RoadmapBench 的 Resolved 对 Completion。两者差距本身就是一个诊断信号：模型能做对一部分，但交付不了。</li>
+<li><strong>harness 是被测对象的一部分</strong>：AI4AI 把被测单位直接定义为 “model + harness + effort”；RoadmapBench、ClawBench、OMB 都报告了换 scaffold 后排名会变。</li>
+<li><strong>和 GDPval 的差别</strong>：国内各家（OMB、XpertBench、Copula）都采用绝对分 rubric 加 LLM judge，没有一家照搬 GDPval 那种“和人类交付物两两比较”的主指标。OMB 借鉴了 GDPval 的“工资 × 工时”定价思路，Seed 则直接从 GDPval 里取了一个带 rubric 的子集来用。</li>
+</ul><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section></div>
+<footer class="meta foot">来源均为原文 PDF、官方仓库、HF 数据集或官网页面；引用保留原文措辞。</footer>
+</main>
+<script>
+(function(){
+ var tabs=[].slice.call(document.querySelectorAll('.tabs a')),ps=[].slice.call(document.querySelectorAll('.panel'));
+ function show(id,scroll){ if(!document.getElementById(id)) id=ps[0].id;
+  ps.forEach(function(p){p.classList.toggle('on',p.id===id)});
+  tabs.forEach(function(a){a.classList.toggle('on',a.dataset.t===id)});
+  if(scroll) document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'}); }
+ tabs.forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();history.replaceState(null,'','#'+a.dataset.t);show(a.dataset.t,true);})});
+ window.addEventListener('hashchange',function(){show(decodeURIComponent(location.hash.slice(1)),false)});
+ show(decodeURIComponent(location.hash.slice(1)),false);
+})();
+</script></body></html>
