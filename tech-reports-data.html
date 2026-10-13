@@ -1,0 +1,335 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>中国开源模型 tech report：数据部分</title><link rel="stylesheet" href="style.css"></head><body><main><h1 id="tech-report">中国开源模型 tech report：数据部分</h1>
+<blockquote>
+<p>2026-10-13 · 另一篇：<a href="index.html">Agent 评测论文精读</a>
+只收录能查到 tech report 的版本；数字和措辞来自原文，每行附链接。没有 report 的单独标注。</p>
+</blockquote>
+<h2 id="_1">总览</h2>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>发布</th>
+<th>预训练 tokens</th>
+<th>后训练主线</th>
+<th>agent 数据 / 环境规模</th>
+<th>报告</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DeepSeek-V3</td>
+<td>2024-12</td>
+<td>14.8T</td>
+<td>1.5M 条 SFT；从 R1 蒸馏推理；规则 RM + 模型 RM</td>
+<td>—</td>
+<td><a href="https://arxiv.org/abs/2412.19437">arXiv 2412.19437</a></td>
+</tr>
+<tr>
+<td>DeepSeek-R1</td>
+<td>2025-01</td>
+<td>基于 V3-Base</td>
+<td>R1-Zero 纯规则奖励；R1 用约 800k SFT（推理 600k + 非推理 200k）</td>
+<td>—</td>
+<td><a href="https://arxiv.org/abs/2501.12948">arXiv 2501.12948</a></td>
+</tr>
+<tr>
+<td>DeepSeek-V3.2</td>
+<td>2025-12</td>
+<td>基于 V3.1</td>
+<td>专家模型蒸馏 + 混合 RL</td>
+<td>1,800+ 环境、85,000+ prompts</td>
+<td><a href="https://arxiv.org/abs/2512.02556">arXiv 2512.02556</a></td>
+</tr>
+<tr>
+<td>DeepSeek-V4</td>
+<td>2026-04</td>
+<td>Flash 32T / Pro 33T</td>
+<td>专家模型训练 + on-policy 蒸馏</td>
+<td>中训练阶段加入 agentic 数据</td>
+<td><a href="https://arxiv.org/abs/2606.19348">arXiv 2606.19348</a></td>
+</tr>
+<tr>
+<td>Qwen3</td>
+<td>2025-05</td>
+<td>36T，119 种语言</td>
+<td>四阶段：长 CoT 冷启动 → 推理 RL → 思考模式融合 → 通用 RL；小模型用 strong-to-weak 蒸馏</td>
+<td>推理 RL 只用 3,995 个 query-verifier 对</td>
+<td><a href="https://arxiv.org/abs/2505.09388">arXiv 2505.09388</a></td>
+</tr>
+<tr>
+<td>Kimi K2</td>
+<td>2025-07</td>
+<td>15.5T</td>
+<td>RLVR + self-critique rubric reward</td>
+<td>3,000+ 真实 MCP 工具、20,000+ 合成工具</td>
+<td><a href="https://arxiv.org/abs/2507.20534">arXiv 2507.20534</a></td>
+</tr>
+<tr>
+<td>Kimi K2.5</td>
+<td>2026-02</td>
+<td>15T 图文混合 tokens</td>
+<td>zero-vision SFT，图文联合 RL</td>
+<td>Agent Swarm 并行编排</td>
+<td><a href="https://arxiv.org/abs/2602.02276">arXiv 2602.02276</a></td>
+</tr>
+<tr>
+<td>GLM-4.5</td>
+<td>2025-08</td>
+<td>23T</td>
+<td>专家模型迭代（推理 / agent / 通用）+ 自蒸馏 + RL</td>
+<td>搜索 QA 合成；GitHub PR/issue 构造 SWE 环境</td>
+<td><a href="https://arxiv.org/abs/2508.06471">arXiv 2508.06471</a></td>
+</tr>
+<tr>
+<td>GLM-5</td>
+<td>2026-02</td>
+<td>28.5T（含 27T 主语料）</td>
+<td>slime 异步 RL，异步 agent RL 算法</td>
+<td>10K+ 可验证 SWE / 终端 / 多跳搜索环境</td>
+<td><a href="https://arxiv.org/abs/2602.15763">arXiv 2602.15763</a></td>
+</tr>
+<tr>
+<td>MiniMax-M1</td>
+<td>2025-06</td>
+<td>在 Text-01 上继续训练 7.5T</td>
+<td>CISPO；可验证 + 不可验证任务</td>
+<td>基于 SWE-bench 构造的沙箱</td>
+<td><a href="https://arxiv.org/abs/2506.13585">arXiv 2506.13585</a></td>
+</tr>
+<tr>
+<td>MiniMax-M2 系列</td>
+<td>2026（报告 v1 2026-05）</td>
+<td>29.2T</td>
+<td>Forge agent-native RL</td>
+<td>Agentic Coding + Agentic Cowork 两条数据线</td>
+<td><a href="https://arxiv.org/abs/2605.26494">arXiv 2605.26494</a></td>
+</tr>
+<tr>
+<td>美团 LongCat-Flash-Thinking-2601</td>
+<td>2026-01</td>
+<td>—</td>
+<td>多环境 RL</td>
+<td>10,000+ 环境、20+ 领域</td>
+<td><a href="https://arxiv.org/abs/2601.16725">arXiv 2601.16725</a></td>
+</tr>
+<tr>
+<td>字节 Seed1.8 / Seed2.0</td>
+<td>2026</td>
+<td>未公开</td>
+<td>未公开</td>
+<td>只公开评测体系</td>
+<td><a href="https://arxiv.org/abs/2603.20633">2603.20633</a> · <a href="https://arxiv.org/abs/2607.00248">2607.00248</a></td>
+</tr>
+<tr>
+<td>字节 Seed-OSS-36B</td>
+<td>2025-08</td>
+<td>12T</td>
+<td>无 tech report</td>
+<td>README：发布了带 / 不带合成指令数据的两版 base</td>
+<td><a href="https://huggingface.co/ByteDance-Seed/Seed-OSS-36B-Instruct">HF</a></td>
+</tr>
+<tr>
+<td>GLM-4.6 / Qwen3.5</td>
+<td>—</td>
+<td>—</td>
+<td>没找到对应的完整 tech report（Qwen3.5 只有 Omni 报告）</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1">1. 预训练数据</h2>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>原文要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DeepSeek-V3</td>
+<td>“we train DeepSeek-V3 on 14.8T high-quality and diverse tokens”</td>
+</tr>
+<tr>
+<td>DeepSeek-V4</td>
+<td>在 V3 数据基础上过滤 “batched auto-generated and templated content”，以降低模型坍缩风险；“incorporating agentic data during the mid-training phase”；重点加长文档（论文、技术报告）；总量 “more than 32T tokens”</td>
+</tr>
+<tr>
+<td>Qwen3</td>
+<td>36T、119 种语言；用 Qwen2.5-VL 从 PDF 抽取文本，用 Qwen2.5-Math / Coder 合成数据；三阶段：约 30T 通用 → STEM 和代码 → 长上下文</td>
+</tr>
+<tr>
+<td>Kimi K2</td>
+<td>15.5T。针对知识和数学数据做改写（rephrasing），用分块自回归重写长文档并校验语义一致；论文用 SimpleQA 对比了“改写”和“多轮重复”，改写更好</td>
+</tr>
+<tr>
+<td>GLM-4.5 / 5</td>
+<td>4.5 是 23T，含仓库级代码拼接（学跨文件依赖）；5 是 “a massive 27 trillion token corpus, prioritizing code and reasoning early on”，之后的 mid-training 聚焦 “long-context agentic data”，总计 28.5T</td>
+</tr>
+<tr>
+<td>MiniMax-M1 / M2</td>
+<td>M1 在 Text-01 上用 7.5T 推理密集语料继续训练；M2 预训练 29.2T，上下文 192K</td>
+</tr>
+<tr>
+<td>Seed-OSS</td>
+<td>12T；同时发布带合成指令数据和不带的两版 base，原因是合成指令数据“may affect the post-training research”</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-sft">2. SFT 与合成数据</h2>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>原文要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DeepSeek-V3</td>
+<td>“instruction-tuning datasets to include 1.5M instances spanning multiple domains”；推理数据由专家模型生成</td>
+</tr>
+<tr>
+<td>DeepSeek-R1</td>
+<td>冷启动只用 “thousands of cold-start data”；随后拒绝采样得到约 600k 推理数据（只保留正确的），加约 200k 非推理数据，合计 800k，也用这批数据蒸馏小模型</td>
+</tr>
+<tr>
+<td>DeepSeek-V3.2 / V4</td>
+<td>每个领域先训一个专家模型（推理、agentic coding、agentic search 等），再蒸馏进统一模型；V4 把这一步“entirely replaced by On-Policy Distillation”</td>
+</tr>
+<tr>
+<td>Qwen3</td>
+<td>冷启动用过滤后的长 CoT；思考模式融合阶段把带推理和不带推理的数据合并训练</td>
+</tr>
+<tr>
+<td>GLM-4.5</td>
+<td>先训推理、Agent、通用对话三个专家模型，再用自蒸馏合并</td>
+</tr>
+<tr>
+<td>Kimi K2.5</td>
+<td>发现加入人工设计的视觉轨迹会损害泛化，改用纯文本 SFT（zero-vision SFT）再做联合 RL</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-rl">3. RL 环境与奖励</h2>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>环境</th>
+<th>奖励</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DeepSeek-R1</td>
+<td>数学、代码、逻辑</td>
+<td>accuracy reward + format reward；推理任务不用神经网络 RM，原因是 “neural reward models are susceptible to reward hacking”</td>
+</tr>
+<tr>
+<td>Qwen3</td>
+<td>推理 RL 的 query-verifier 对要满足：冷启动没用过、模型能学会、足够难、覆盖面广，共 3,995 对</td>
+<td>通用 RL “covering over 20 distinct tasks, each with customized scoring criteria”：规则、带参考答案的模型打分、不带参考答案的模型打分</td>
+</tr>
+<tr>
+<td>Kimi K2</td>
+<td>真实和合成工具环境，加上执行沙箱</td>
+<td>RLVR + self-critique：模型对照 “core rubrics”“prescriptive rubrics” 和人工标注的 rubric 自评</td>
+</tr>
+<tr>
+<td>GLM-4.5</td>
+<td>搜索：知识图谱多跳合成，加上人工从网页抽取并“selective obfuscation”；SWE：GitHub PR/issue 加可执行单元测试，在加固沙箱中运行</td>
+<td>搜索用最终答案正确性；SWE 用测试；工具调用格式错误给过程惩罚；按难度做课程学习，因为全对或全错的 batch 没有梯度</td>
+</tr>
+<tr>
+<td>GLM-5</td>
+<td>“over 10,000 verifiable training scenarios”（SWE 和终端），加可扩展的多步搜索合成</td>
+<td>异步 RL（slime），生成和训练解耦</td>
+</tr>
+<tr>
+<td>MiniMax-M1</td>
+<td>41 类逻辑推理任务（SynLogic），加基于 SWE-bench 的沙箱</td>
+<td>可验证任务用规则；问答、写作等不可验证任务用生成式 RM</td>
+</tr>
+<tr>
+<td>MiniMax-M2</td>
+<td>SWE-Scaling 流水线：爬 PR → agent 构建多语言 Docker 环境 → 按 PR 类型分流 → 抽取 F2P / P2P 测试 → 模型校验 → 增强</td>
+<td>“artifact-aligned reward”：奖励与交付物格式对齐，不用通用 judge</td>
+</tr>
+<tr>
+<td>LongCat-Flash-Thinking-2601</td>
+<td>“over 10,000 environments spanning more than 20 domains”</td>
+<td>论文的重点在环境扩展和噪声鲁棒性</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-agent">4. Agent 轨迹数据</h2>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>原文要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kimi K2</td>
+<td>三步：生成工具规格（3,000+ 真实 MCP 工具，演化出 20,000+ 合成工具）→ 生成 agent 和任务，任务配 rubric（“specifies success criteria, expected tool-use patterns, and evaluation checkpoints”）→ 多轮轨迹由 LLM 模拟用户（“LLM-generated user personas”）生成，再由 LLM judge 按 rubric 过滤</td>
+</tr>
+<tr>
+<td>DeepSeek-V3.2</td>
+<td>RL 任务表：code agent 24,667（真实环境、抽取的 prompt）、search agent 50,275（真实环境、合成 prompt）、general agent 4,417（环境和 prompt 都是合成的）、code interpreter 5,908；论文另有 RL 只用合成 general agent 数据的实验</td>
+</tr>
+<tr>
+<td>MiniMax-M2</td>
+<td>Agentic Cowork 有四个领域：深度搜索、知识工作者办公、金融表格、幻灯片。办公类“anchor the corpus to GDPval”，再按职业数据库层级合成任务，配真实 workspace 和不同具体程度的 query；验收用“multi-axis rubric covering positive behaviors, negative behaviors, critical errors, regional appropriateness, and depth of reasoning”；搜索题用“guide-and-rewrite”逐步隐去实体来调难度，要求答案有实际检索证据支撑；轨迹从轮换的 teacher 模型蒸馏，并扰动 scaffold</td>
+</tr>
+<tr>
+<td>GLM-4.5</td>
+<td>搜索 QA 结合自动合成（知识图谱多跳）和人工混淆；SWE 轨迹来自真实 PR</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5">5. 评测集选择</h2>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>主要评测</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GLM-4.5</td>
+<td>12 个 ARC 评测：MMLU-Pro、AIME 24、MATH-500、SciCode、GPQA、HLE、LCB、SWE-Bench Verified、Terminal-Bench、TAU-Bench、BFCL V3、BrowseComp</td>
+</tr>
+<tr>
+<td>GLM-5</td>
+<td>加入 Vending-Bench 2 和内部 CC-Bench-V2（前端、后端、长程）</td>
+</tr>
+<tr>
+<td>MiniMax-M2</td>
+<td>coding：SWE 系列、Terminal-Bench 2.0；cowork：BrowseComp、Wide Search、GDPval-AA、Toolathlon、MM-Claw</td>
+</tr>
+<tr>
+<td>Seed1.8 / 2.0</td>
+<td>公开集加内部集（XpertBench、World Travel、教育、客服问答）；2.0 用 MaaS 真实用量分布来定评测</td>
+</tr>
+<tr>
+<td>各家共同</td>
+<td>SWE-bench Verified、Terminal-Bench、τ²-Bench、BrowseComp、HLE 几乎都有；WideSearch、GDPval 开始进入主表</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="pm">对数据公司和评测 PM 意味着什么</h2>
+<ol>
+<li><strong>采购重心在可验证环境</strong>：GLM-5（10K+）、LongCat（10,000+ 环境）、V3.2（1,800+ 环境）都在比环境数量。能直接交付 Docker 环境、测试和 verifier 的供应商（智能知识的 Terminal/MCP 数据、Copula 的 RL 环境）站在需求最大的地方。</li>
+<li><strong>不可验证任务靠 rubric</strong>：Kimi K2 的 self-critique rubric、MiniMax M2 的多轴 rubric 验收、Qwen3 的 20 多类自定义打分标准，说明专家写的 rubric 本身就是产品，和 OMB、XpertBench 的评测方法是同一套能力。</li>
+<li><strong>GDPval 已成为 office 类任务的起点</strong>：MiniMax 直接拿 GDPval 做种子再扩展。Copula 的中文 GDPval 和金融长程题正好补中文和本地合规这块空白。</li>
+<li><strong>SWE 数据已经工业化</strong>：PR → Docker → F2P/P2P 测试，几家做法高度一致，差异化要靠多语言、非 bug-fix 类任务（feature、性能、迁移），对应 RoadmapBench、SWE Refactor Bench 这类评测。</li>
+<li><strong>防 reward hacking 是共识</strong>：R1 不用神经网络 RM 的理由、M2 要求答案有检索证据支撑、EdgeBench 和 EvoCode 的泄题案例都指向这一点。评测 PM 的价值在于设计 judge 隔离、隐藏测试和审计流程。</li>
+<li><strong>公开信息的缺口</strong>：字节 Seed 和 Qwen3.5 没有公开数据细节；各家都不报告 judge 和人工的一致率。面试时可以作为切入点。</li>
+</ol></main></body></html>
