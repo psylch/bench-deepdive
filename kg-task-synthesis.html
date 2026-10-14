@@ -1,0 +1,530 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>用知识图谱和分类树规模化造题：近一年论文与开源项目</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Reenie+Beanie&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"></head><body>
+<main class="pw wide" id="top">
+<div class="meta">NOTES · 2026-10 · <a class="sw" href="index.html">Agent 评测论文精读 →</a></div>
+<h1 class="ph1">用知识图谱和分类树规模化造题：近一年论文与开源项目</h1>
+<div class="art lead"><blockquote>
+<p>收录 2025-10 至 2026-10 期间用「知识图谱 / 概念树 / 层级 taxonomy / 工具图」来规模化合成 LLM 和 agent 训练或评测任务的工作，参照对象是 Kimi K3 技术报告 4.2.2 节。另附 2024–2025 年的奠基工作作为前史。每条的数字均出自原文；原文没写的标「未公开」。</p>
+</blockquote></div>
+<nav class="tabbar"><div class="grp"><span class="gl">总览</span><div class="tabs"><a href="#t0-归类与对比表" data-t="t0-归类与对比表">归类与对比表</a></div></div><div class="grp"><span class="gl">参照</span><div class="tabs"><a href="#t1-kimi-k3-4-2-2" data-t="t1-kimi-k3-4-2-2">Kimi K3 4.2.2</a></div></div><div class="grp"><span class="gl">A 分类树</span><div class="tabs"><a href="#t2-simula-google" data-t="t2-simula-google">Simula（Google）</a><a href="#t3-steps" data-t="t3-steps">STEPS</a><a href="#t4-cli-universe" data-t="t4-cli-universe">CLI-Universe</a><a href="#t5-nemotron-terminal" data-t="t5-nemotron-terminal">Nemotron-Terminal</a><a href="#t6-longcrafter" data-t="t6-longcrafter">LongCrafter</a><a href="#t7-benchbench-评测侧" data-t="t7-benchbench-评测侧">BenchBench（评测侧）</a><a href="#t8-nodesyn-评测侧开源" data-t="t8-nodesyn-评测侧开源">NodeSyn（评测侧开源）</a></div></div><div class="grp"><span class="gl">B 实体图</span><div class="tabs"><a href="#t9-searchart-华为云" data-t="t9-searchart-华为云">SearchArt（华为云）</a><a href="#t10-nemotron-3-ultra-搜索数据" data-t="t10-nemotron-3-ultra-搜索数据">Nemotron 3 Ultra 搜索数据</a><a href="#t11-graphwalker" data-t="t11-graphwalker">GraphWalker</a><a href="#t12-graph2eval" data-t="t12-graph2eval">Graph2Eval</a><a href="#t13-knight" data-t="t13-knight">KNIGHT</a></div></div><div class="grp"><span class="gl">C 工具图</span><div class="tabs"><a href="#t14-skillsynth-腾讯混元" data-t="t14-skillsynth-腾讯混元">SkillSynth（腾讯混元）</a><a href="#t15-toolverse-美团-longcat" data-t="t15-toolverse-美团-longcat">ToolVerse（美团 LongCat）</a><a href="#t16-gais-firefly-envfactory-astra" data-t="t16-gais-firefly-envfactory-astra">GAIS / FireFly / EnvFactory / ASTRA</a></div></div><div class="grp"><span class="gl">D 自动建树</span><div class="tabs"><a href="#t17-atlas" data-t="t17-atlas">ATLAS</a></div></div><div class="grp"><span class="gl">前史</span><div class="tabs"><a href="#t18-2024-2025-奠基工作" data-t="t18-2024-2025-奠基工作">2024–2025 奠基工作</a></div></div><div class="grp"><span class="gl">开源工具</span><div class="tabs"><a href="#t19-可直接用的框架" data-t="t19-可直接用的框架">可直接用的框架</a></div></div><div class="grp"><span class="gl">类比</span><div class="tabs"><a href="#t20-和植物识别数据全集" data-t="t20-和植物识别数据全集">和植物识别数据全集</a></div></div><div class="grp"><span class="gl">面试</span><div class="tabs"><a href="#t21-可以讲的观点" data-t="t21-可以讲的观点">可以讲的观点</a></div></div></nav>
+<div class="art"><section class="panel" id="t0-归类与对比表"><div class="meta">总览</div><h2><span class="no">00</span>归类与对比表</h2><h3>按方法归类</h3>
+<ul>
+<li><strong>A. 概念 / 能力分类树驱动出题</strong>（和 K3 最像：先画覆盖地图，再按配额采样）：Simula（Google）、STEPS、CLI-Universe、Nemotron-Terminal、LongCrafter、BenchBench（评测侧）、NodeSyn（评测侧开源）。</li>
+<li><strong>B. 实体图 / 证据图驱动深度搜索题</strong>：SearchArt（华为云）、Nemotron 3 Ultra 搜索数据、GraphWalker、Graph2Eval、KNIGHT；前史是 WebSailor、DeepDive、WebShaper。</li>
+<li><strong>C. 工具图 / 技能图驱动 agent 任务</strong>：SkillSynth（腾讯混元）、ToolVerse（美团 LongCat）、GAIS、FireFly、EnvFactory、ASTRA（贝壳）。</li>
+<li><strong>D. 由 agent 自动长出分类树</strong>（只建树，不造题，但方法可直接借用）：ATLAS。</li>
+</ul>
+<h3>对比表</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>机构</th>
+<th>时间</th>
+<th>图 / 树是什么</th>
+<th>谁来建</th>
+<th>取素材</th>
+<th>怎么验题</th>
+<th>规模 / 效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kimi K3 4.2.2</td>
+<td>Moonshot</td>
+<td>2026-07</td>
+<td>自增长 DAG 知识图谱</td>
+<td>agent 递归拆分</td>
+<td>关键词 + 祖先上下文检索网页、论文、代码</td>
+<td>本节未写</td>
+<td>未公开</td>
+</tr>
+<tr>
+<td>Simula</td>
+<td>Google / EPFL</td>
+<td>2026-03</td>
+<td>多个「变化因子」各自展开成分类树</td>
+<td>LLM 推理，用户定深度</td>
+<td>无需种子数据</td>
+<td>LLM 批评、复核</td>
+<td>多个数据集实验</td>
+</tr>
+<tr>
+<td>STEPS</td>
+<td>北航 / 智源</td>
+<td>2026-01</td>
+<td>技能分层 taxonomy</td>
+<td>从技能共现图按结构熵自动归并</td>
+<td>组合技能节点</td>
+<td>未单列</td>
+<td>对比 Instruct-SkillMix 36.3 vs 30.8</td>
+</tr>
+<tr>
+<td>CLI-Universe</td>
+<td>南大 / 阶跃 / 上海 AI Lab 等</td>
+<td>2026-06</td>
+<td>四维能力 taxonomy</td>
+<td>人定领域 + 预定义取值池</td>
+<td>deep research 查仓库、文档、issue</td>
+<td>Docker 执行，fail-to-pass，约 2/3 被淘汰</td>
+<td>6K 轨迹；Qwen3-32B 在 TB2 达 33.4%</td>
+</tr>
+<tr>
+<td>Nemotron-Terminal</td>
+<td>NVIDIA</td>
+<td>2026-02</td>
+<td>原子技能 taxonomy + 多领域</td>
+<td>未公开细节</td>
+<td>现有数据集改写 + 按技能生成</td>
+<td>未单列</td>
+<td>32B 在 TB2 从 3.4% 到 27.4%</td>
+</tr>
+<tr>
+<td>SearchArt</td>
+<td>华为云</td>
+<td>2026-07</td>
+<td>web 扩展的知识图谱 + 层级领域 taxonomy</td>
+<td>explorer agent 迭代扩图</td>
+<td>抽难子图做上下文</td>
+<td>QA 一致性、轨迹质量、证据相关性三重校验</td>
+<td>27B 在 BrowseComp 70.06</td>
+</tr>
+<tr>
+<td>Nemotron 3 Ultra 搜索数据</td>
+<td>NVIDIA</td>
+<td>2026-06</td>
+<td>Wikidata</td>
+<td>现成知识图谱</td>
+<td>选枢纽实体，走 4–8 跳</td>
+<td>未单列</td>
+<td>未公开</td>
+</tr>
+<tr>
+<td>GraphWalker</td>
+<td>中科院自动化所</td>
+<td>2026-03</td>
+<td>KG</td>
+<td>现成 KG</td>
+<td>约束随机游走</td>
+<td>EM 奖励</td>
+<td>15k + 6k 轨迹</td>
+</tr>
+<tr>
+<td>Graph2Eval</td>
+<td>浙大 / 蚂蚁</td>
+<td>2025-10</td>
+<td>多源数据建的 KG</td>
+<td>自动抽取</td>
+<td>子图采样 + 模板 + meta-path</td>
+<td>可达性、LLM 打分、相似度过滤</td>
+<td>1,319 题；一致性 +20%，可解性 +17%</td>
+</tr>
+<tr>
+<td>SkillSynth</td>
+<td>腾讯混元</td>
+<td>2026-04</td>
+<td>场景为节点、技能为边的图</td>
+<td>从 ClawHub 和 GitHub 收技能后自动连边</td>
+<td>采样路径 → 多 agent 实例化</td>
+<td>oracle 可解 + rubric 质量</td>
+<td>82,073 场景 / 57,214 技能；3,560 题，95.7% 通过；用于 Hy3 Preview</td>
+</tr>
+<tr>
+<td>ToolVerse</td>
+<td>美团 LongCat</td>
+<td>2026-07</td>
+<td>工具依赖 DAG</td>
+<td>LLM 推断依赖</td>
+<td>动态解锁采样</td>
+<td>轨迹打分不满分即丢弃</td>
+<td>422 环境 / 4,438 工具 / 2,987 条</td>
+</tr>
+<tr>
+<td>GAIS</td>
+<td>人大 / 腾讯</td>
+<td>2026-06</td>
+<td>工具依赖图</td>
+<td>从真实 MCP 服务器建</td>
+<td>锚点工具出发走图 + 对抗策略</td>
+<td>单元测试</td>
+<td>707 仓库 / 9,488 工具</td>
+</tr>
+<tr>
+<td>FireFly</td>
+<td>东北大学等</td>
+<td>2026-05</td>
+<td>工具两两兼容图</td>
+<td>按 schema 判断</td>
+<td>采样子 DAG，先探索真实 API 再倒推题目</td>
+<td>结果先观察后出题，构造即正确</td>
+<td>5,144 题 / 993 工具；4B 模型追平 Sonnet 4.6（自测集）</td>
+</tr>
+<tr>
+<td>EnvFactory</td>
+<td>港科广 / 华为</td>
+<td>2026-05</td>
+<td>工具依赖图</td>
+<td>语义匹配 + LLM 修正</td>
+<td>拓扑感知采样</td>
+<td>沙盒执行</td>
+<td>85 环境 / 842 工具；BFCLv3 最多 +15%</td>
+</tr>
+<tr>
+<td>ASTRA</td>
+<td>贝壳</td>
+<td>2026-01</td>
+<td>工具调用图</td>
+<td>基于真实 MCP</td>
+<td>静态拓扑生成轨迹</td>
+<td>规则可验证环境</td>
+<td>已开源</td>
+</tr>
+<tr>
+<td>ATLAS</td>
+<td>中科院软件所等</td>
+<td>2026-06</td>
+<td>GitHub 仓库层级 taxonomy</td>
+<td>Designer + Classifier 两个 agent 迭代修树</td>
+<td>54,387 个仓库</td>
+<td>分类失败驱动修维度</td>
+<td>TQF 83.13%，超最强基线 15 个点</td>
+</tr>
+</tbody>
+</table></div><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t1-kimi-k3-4-2-2"><div class="meta">参照</div><h2><span class="no">01</span>Kimi K3 4.2.2</h2><p><strong>做法（原文）</strong>：建一张「自我演化、层级组织」的知识图谱，覆盖知识密集和编程领域。</p>
+<ul>
+<li>结构是 DAG，人只给粗种子节点，例如 CS/AI、生物医学、编程、数学、物理、化学、人文。</li>
+<li>每个节点交给一个 agent，先多轮联网搜索把概念查清，再加更细的子概念；加之前先在图里找相同或相近的节点复用；边永远从粗指向细；新节点再分给新 agent，直到 agent 判断概念「足够原子」。</li>
+<li>造题三步：按领域和题型比例在不同粒度采样关键词（可多个相关关键词一起抽）→ 关键词拼上祖先节点的上下文作为检索词，去网上取公开论文、博客、代码仓库 → 合成 agent 按指定题型（编程、知识、视觉等）出题。</li>
+</ul>
+<p><strong>未公开</strong>：节点数、层数、每类题量、合成题的校验方法。</p>
+<p>下面每条都和这四个要素对照：<strong>图谱怎么建 / 怎么采样 / 素材从哪来 / 怎么验题</strong>。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t2-simula-google"><div class="meta">A 分类树</div><h2><span class="no">02</span>Simula（Google）</h2><ul>
+<li><strong>全称</strong>：Reasoning-Driven Synthetic Data Generation and Evaluation</li>
+<li><strong>机构 / 时间</strong>：Google、Google DeepMind、EPFL；TMLR 2026-03，arXiv 2026-03-31</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2603.29791">arXiv 2603.29791</a></li>
+</ul>
+<p><strong>图谱怎么建</strong>：不需要种子数据。先由推理模型根据用户对数据集的描述，列出若干「变化因子」，每个因子按用户指定的深度，用广度优先展开成一棵分类树。树越深，覆盖控制越细。</p>
+<p><strong>怎么采样</strong>：在多棵树的叶子节点上组合采样，再生成数据；论文把多样性拆成「全局多样性」（树覆盖了多少）和「局部多样性」（同一组合下的变化）。</p>
+<p><strong>怎么验题</strong>：生成后用模型做批评和复核。论文的结论之一是不同数据集需要的东西不一样，有的更依赖质量控制，有的更依赖复杂度或局部多样性。</p>
+<p><strong>与 K3 的异同</strong>：同样是「先画覆盖地图、再按地图采样」。区别在于 Simula 的树来自模型推理，不联网取真实素材；K3 每个节点都由 agent 联网查证，素材也来自真实网页。</p>
+<p><strong>开源</strong>：社区复现 <a href="https://github.com/Mercity-AI/Simula">Mercity-AI/Simula</a>，6⭐，最近更新 2026-09-10，README 自述「受 Simula 式流程启发」，不是 Google 官方代码。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t3-steps"><div class="meta">A 分类树</div><h2><span class="no">03</span>STEPS</h2><ul>
+<li><strong>全称</strong>：Towards Compositional Generalization of LLMs via Skill Taxonomy Guided Data Synthesis</li>
+<li><strong>机构 / 时间</strong>：北航、智源、北理工、中科院计算所；arXiv 2026-01</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2601.03676">arXiv 2601.03676</a></li>
+</ul>
+<p><strong>图谱怎么建</strong>：先建技能共现图，再按「最小化结构熵」递归把内部连接紧密的技能归成组，得到一棵可解释的层级技能树。人不手画分类。</p>
+<p><strong>怎么采样</strong>：把出题当成约束下的信息最大化问题，挑选在树上「结构信息增益」最大、语义仍然连贯的技能组合。原文的意思是：只在一小块区域里组合技能是冗余的，跨区域组合才有新信息。</p>
+<p><strong>效果</strong>：在复杂指令遵循评测上，比 Instruct-SkillMix 高（36.3 vs 30.8），在下游 agent 评测上组合泛化也更好。</p>
+<p><strong>与 K3 的异同</strong>：K3 的树是「知识概念」，STEPS 的树是「技能」；两者都关心多个节点组合出题。STEPS 给了一个怎么挑组合的数学准则，K3 没写。</p>
+<p><strong>缺口</strong>：论文写的代码地址 <code>github.com/STEPS</code> 不是有效仓库。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t4-cli-universe"><div class="meta">A 分类树</div><h2><span class="no">04</span>CLI-Universe</h2><ul>
+<li><strong>机构 / 时间</strong>：南京大学、阶跃星辰、ZODA、上海 AI Lab、华中科大；arXiv 2026-06-22</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2606.22883">arXiv 2606.22883</a></li>
+</ul>
+<p><strong>图谱怎么建</strong>：四维能力 taxonomy。领域由人策划，作为入口；另外三维各有预定义的取值池：</p>
+<ul>
+<li>技能类型：算法、系统、配置、密码学等</li>
+<li>能力：探索、错误恢复、约束满足、长程规划等</li>
+<li>工程形态：写新功能、调试、DevOps、重构等</li>
+</ul>
+<p><strong>怎么采样和取素材</strong>：在四维里抽组合作为锚点，围绕锚点头脑风暴任务，按创意、技术依据、可行性打分；高分候选再做「证据引导的 deep research」，去查仓库、文档、issue 讨论和用例，把抽象规格变成有真实工具和真实坑的任务蓝图。</p>
+<p><strong>怎么验题</strong>：蓝图实例化成 Docker 环境，经过 rubric 门控的测试构造、带提示过滤、严格的 fail-to-pass 检查；测试 agent 和解题 agent 独立验证。全流程淘汰约三分之二的候选。</p>
+<p><strong>效果</strong>：CLI-Universe-6K（6,000 条轨迹）微调 Qwen3-32B，Terminal-Bench 2.0 达 33.4%；去掉任何一个组件掉 3–6 个点。</p>
+<p><strong>与 K3 的异同</strong>：这是和 K3「采样 → 联网取真实素材 → 出题」最接近的一条，而且把 K3 没写的校验写全了。区别是它的 taxonomy 是人定的多维网格，不是 agent 长出来的树。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t5-nemotron-terminal"><div class="meta">A 分类树</div><h2><span class="no">05</span>Nemotron-Terminal</h2><ul>
+<li><strong>全称</strong>：On Data Engineering for Scaling LLM Terminal Capabilities</li>
+<li><strong>机构 / 时间</strong>：NVIDIA；arXiv 2026-02-24</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2602.21193">arXiv 2602.21193</a>；数据 <a href="https://huggingface.co/collections/nvidia/nemotron-terminal">HF nemotron-terminal</a></li>
+</ul>
+<p><strong>做法</strong>：提出 Terminal-Task-Gen，两路数据：一路把现有数据集（竞赛编程、数学、SWE）改写成终端任务；另一路用「原子技能 taxonomy」加多个领域（科学计算、软件工程、机器学习、安全、系统等）构造定向场景，可以控制难度、领域覆盖和原子技能。</p>
+<p><strong>效果</strong>：基于 Qwen3 训练，Terminal-Bench 2.0 上 8B 从 2.5% 到 13.0%，14B 从 4.0% 到 20.2%，32B 从 3.4% 到 27.4%。</p>
+<p><strong>未公开</strong>：taxonomy 的节点数和层数。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t6-longcrafter"><div class="meta">A 分类树</div><h2><span class="no">06</span>LongCrafter</h2><ul>
+<li><strong>机构 / 时间</strong>：中科院大学、中科院自动化所；arXiv 2026-07（v2 2026-08-03）</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2607.06160">arXiv 2607.06160</a></li>
+</ul>
+<p><strong>做法</strong>：把长文本理解分成「局部 / 浅层」和「全局 / 深层」两级，细到 32 种任务类型，作为出题的全局先验；再按任务类型构造长上下文，拆成显式的证据图（跨段依赖），只依据定位到的证据片段出问答。</p>
+<p><strong>效果</strong>：在 Qwen2.5-7B 和 LLaMA-3.1-8B 上，LongBench、LongBench v2、LooGLE 超过所有 SFT 基线，也超过官方后训练模型，难题上提升最大。</p>
+<p><strong>与 K3 的异同</strong>：K3 4.1 节说过 1M 长上下文要拼「不读完全文做不出来」的合成任务；LongCrafter 是公开论文里把这件事拆成任务分类树 + 证据图的做法。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t7-benchbench-评测侧"><div class="meta">A 分类树</div><h2><span class="no">07</span>BenchBench（评测侧）</h2><ul>
+<li><strong>机构 / 时间</strong>：南洋理工；arXiv 2026-03-21</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2603.20807">arXiv 2603.20807</a></li>
+</ul>
+<p><strong>做法</strong>：评的是「模型出题的能力」。三步：从种子 benchmark 抽结构化的「领域卡片」→ 让多个设计者模型按配额生成题集 → 多个答题模型组成评审组验证，能精确判分的用精确、数值、符号校验，否则用 rubric 评判。</p>
+<p><strong>规模</strong>：9 个变体（计算机、数学、医学、心智理论，含多语言多模态），生成 16.7K 题，过滤后约 15K，约 152K 条打分记录。</p>
+<p><strong>结论</strong>：出题能力和答题能力只中等相关（Spearman ρ≈0.37）；题目无效率和区分度负相关（Pearson r≈−0.62）。</p>
+<p><strong>开源</strong>：论文给的 <code>github.com/koanatakiyo/BenchBench</code> 目前打不开（404）。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t8-nodesyn-评测侧开源"><div class="meta">A 分类树</div><h2><span class="no">08</span>NodeSyn（评测侧开源）</h2><ul>
+<li><strong>机构</strong>：Google Research</li>
+<li><strong>链接</strong>：<a href="https://github.com/google-research/nodesyn">google-research/nodesyn</a>，6⭐，最近更新 2026-10-13</li>
+</ul>
+<p><strong>做法（README）</strong>：把安全政策（如骚扰）和敏感领域（如教育）的主题，用一个微调过的分类生成器拆成细粒度 taxonomy，再找出受影响人群、地区、使用场景之间的关系，生成有证据依据的评测查询。定位是研究原型。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t9-searchart-华为云"><div class="meta">B 实体图</div><h2><span class="no">09</span>SearchArt（华为云）</h2><ul>
+<li><strong>机构 / 时间</strong>：Huawei Cloud Post-Training Team；arXiv 2026-07（v2 2026-08-11）</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2607.24850">arXiv 2607.24850</a></li>
+</ul>
+<p><strong>图谱怎么建</strong>：</p>
+<ol>
+<li>选种子实体：按三个维度挑长尾实体，其中一条是「模型参数里见得少」。种子要同时兼顾知识新颖度、结构连通性和领域覆盖。对每个候选实体做多次随机游走，能稳定走到结构丰富子图的优先。</li>
+<li>扩图：explorer agent 迭代地联网检索、抽取知识、建图、发现知识缺口，每轮生成的查询要超出当前图里已有的信息，比如相关实体、历史事件、组织关系、时间、地理和跨领域关系。</li>
+<li>覆盖控制：种子实体挂在一棵「层级领域 taxonomy」下，预定义类别加上扩图过程中动态发现的新区域；各领域的采样配额实时调整，防止题目塌缩到少数热门话题。原文明确说，图采样天然会集中在连接稠密的领域，所以要用 taxonomy 拉平。</li>
+</ol>
+<p><strong>怎么采样和出题</strong>：批量采子图，按结构复杂度和证据分散度排序，留难子图作为出题上下文。</p>
+<p><strong>怎么验题</strong>：QA 一致性、轨迹质量、检索证据相关性三者联合校验。</p>
+<p><strong>规模与效果</strong>：DeepSearch QA 轨迹 20–149 轮，21.16% 在 80 轮以上；DeepResearch QA 覆盖 11 个领域，AI 与数据智能占 40.08%。Qwen3.5-27B 训练后：BrowseComp 70.06、BrowseComp-ZH 74.39、BrowseComp-Plus 63.49、WideSearch 64.0、DeepResearch-Bench 52.55。</p>
+<p><strong>与 K3 的异同</strong>：这是近一年里和 K3 思路最接近的公开工作：agent 主动扩图、用 taxonomy 管覆盖、用长尾概念对抗同质化。区别是 SearchArt 的节点是实体（人、机构、事件），K3 是概念（RoPE、GPU kernel）；SearchArt 只做搜索题，K3 覆盖多题型。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t10-nemotron-3-ultra-搜索数据"><div class="meta">B 实体图</div><h2><span class="no">10</span>Nemotron 3 Ultra 搜索数据</h2><ul>
+<li><strong>机构 / 时间</strong>：NVIDIA；技术报告 2026-06-09</li>
+<li><strong>链接</strong>：<a href="https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Ultra-Technical-Report.pdf">技术报告 PDF</a></li>
+</ul>
+<p><strong>做法（原文）</strong>：SFT 搜索数据沿用 Nemotron 3 Super 的轨迹，种子 prompt 基于 Wikidata：选连接多的枢纽实体，沿事实关系走 4–8 跳随机游走，构造多跳搜索题，用 Tavily 搜索求解，教师模型是 MiniMax 2.1。另外加了 OpenResearcher 的可商用子集（97K+ 条轨迹，离线浏览环境，1,500 万 FineWeb 文档的本地索引）。</p>
+<p><strong>与 K3 的异同</strong>：用现成知识图谱、按跳数控难度，是 2025 年 WebSailor / DeepDive 路线在大厂报告里的落地；没有 agent 扩图，也没有概念层级。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t11-graphwalker"><div class="meta">B 实体图</div><h2><span class="no">11</span>GraphWalker</h2><ul>
+<li><strong>机构 / 时间</strong>：中科院大学、中科院自动化所、清华；COLM 2026，arXiv 2026-03</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2603.28533">arXiv 2603.28533</a>；<a href="https://github.com/XuShuwenn/GraphWalker">GitHub</a> 35⭐，最近更新 2026-07-28</li>
+</ul>
+<p><strong>做法</strong>：在 KG 上做约束随机游走，合成 15k 条结构多样的轨迹（GraphSynth），先 SFT 建立探索先验；再用 6k 条专家轨迹（GraphRoll）教反思和纠错；最后用 EM 稀疏奖励做轻量 RL。</p>
+<p><strong>效果</strong>：CWQ、WebQSP 达 SOTA，CWQ 上比 GPT-4 驱动的 GoG 高 4.4% EM；在 GrailQA 和自建的 GraphWalkerBench（含训练里没见过的推理结构）上验证了泛化。</p>
+<p><strong>与 K3 的异同</strong>：图谱只是答题环境，不是素材索引；参考价值在于「先用图游走铺广度、再用少量专家数据补质量」的两段式。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t12-graph2eval"><div class="meta">B 实体图</div><h2><span class="no">12</span>Graph2Eval</h2><ul>
+<li><strong>机构 / 时间</strong>：浙大、蚂蚁集团等；CVPR 2026，arXiv 2025-10（v3 2026-03）</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2510.00507">arXiv 2510.00507</a>；<a href="https://github.com/YurunChen/Graph2Eval">GitHub</a> 28⭐，最近更新 2026-01-10</li>
+</ul>
+<p><strong>做法</strong>：从多源外部数据建知识图谱当「任务空间」，用子图采样、任务模板和 meta-path 生成多模态文档理解和网页交互任务。</p>
+<p><strong>怎么验题</strong>：节点可达性分析、LLM 打分、相似度去重三级过滤。</p>
+<p><strong>效果</strong>：Graph2Eval-Bench 共 1,319 题；语义一致性平均提升 20%，可解性提升 17%。</p>
+<p><strong>与 K3 的异同</strong>：用于评测而不是训练；图谱是从给定数据里抽出来的，不是 agent 联网扩出来的。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t13-knight"><div class="meta">B 实体图</div><h2><span class="no">13</span>KNIGHT</h2><ul>
+<li><strong>机构 / 时间</strong>：德黑兰大学等；arXiv 2026-02-23</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2602.20135">arXiv 2602.20135</a>；<a href="https://github.com/ErfanShm/knight-mcq">GitHub</a> 1⭐</li>
+</ul>
+<p><strong>做法</strong>：给定主题和深度，检索证据，建一个主题小 KG（类型体系基于 Wikipedia/Wikidata 本体），在 KG 上生成多跳选择题。KG 每个主题只建一次，之后反复使用，比每题重新读长证据省 token。</p>
+<p><strong>怎么验题</strong>：五条标准，包括语法、唯一正确答案、选项不重复、能从证据中答出、切题；「答不出」被当作幻觉的代理指标。难度用熵和人类错误模式校准。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t14-skillsynth-腾讯混元"><div class="meta">C 工具图</div><h2><span class="no">14</span>SkillSynth（腾讯混元）</h2><ul>
+<li><strong>全称</strong>：Toward Scalable Terminal Task Synthesis via Skill Graphs</li>
+<li><strong>机构 / 时间</strong>：腾讯混元团队；arXiv 2026-04-28</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2604.25727">arXiv 2604.25727</a></li>
+</ul>
+<p><strong>图谱怎么建</strong>：从 ClawHub 和公开 GitHub 仓库收集真实技能；为每个技能推出「前置场景」（什么时候能用）和「后置场景」（用完处于什么状态）；把语义兼容的场景连起来。场景是节点，技能是有向边。现有规模：去重合并后 82,073 个场景、57,214 个技能、185,529 条经 LLM 验证的连接。</p>
+<p><strong>怎么采样和出题</strong>：从图上采一条有向路径，就是一个真实工作流；多 agent 把路径实例化成可执行的终端任务，预期解法正好走这条路径。</p>
+<p><strong>怎么验题</strong>：oracle 验证可解，rubric 评质量，失败的回到合成环节修复。</p>
+<p><strong>效果</strong>：一次全自动运行，从 3,721 条路径得到 3,560 个通过验证的任务，oracle 通过率 95.7%，平均每个 $27.3；Terminal-Bench 1.0 和 2.0 上各尺寸模型都有提升；已用于训练 Hy3 Preview。</p>
+<p><strong>与 K3 的异同</strong>：K3 控制的是「知识覆盖」，SkillSynth 控制的是「解题轨迹的多样性」。原文还批评 LLM 生成的 taxonomy 常常偏离真实使用，所以它的节点全部来自真实技能。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t15-toolverse-美团-longcat"><div class="meta">C 工具图</div><h2><span class="no">15</span>ToolVerse（美团 LongCat）</h2><ul>
+<li><strong>机构 / 时间</strong>：美团 LongCat Interaction Team、北大、复旦、武大；arXiv 2026-07-17</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2607.15660">arXiv 2607.15660</a></li>
+</ul>
+<p><strong>做法</strong>：从约 422 个真实 MCP 环境、4,438 个工具自动生成可执行环境（约 20% 初始工具集因无法 mock 被过滤）；对每个场景建工具依赖图，从入度为 0 的根节点出发，用「动态解锁采样」逐步解锁后继工具，组合出长程任务，得到 GUST 数据集。</p>
+<p><strong>怎么验题</strong>：每个任务多次尝试，轨迹分不满即丢弃。</p>
+<p><strong>规模</strong>：2,987 条数据，每条平均 3.8 个子任务（3–7 个），每个环境平均 12.2 个工具；工具分布覆盖 8 个大领域。</p>
+<p><strong>相关</strong>：和你看过的美团 VitaBench 同属美团 LongCat。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t16-gais-firefly-envfactory-astra"><div class="meta">C 工具图</div><h2><span class="no">16</span>GAIS / FireFly / EnvFactory / ASTRA</h2><p><strong>GAIS</strong>（人大、北大、腾讯；arXiv 2026-06-01；<a href="https://arxiv.org/abs/2606.02001">arXiv 2606.02001</a>；<a href="https://github.com/Eric8932/GAIS">GitHub</a> 0⭐）</p>
+<ul>
+<li>从 1,174 个仓库、14,395 个工具中筛出 707 个仓库、9,488 个工具，基于真实 MCP 服务器建环境。</li>
+<li>每个环境建工具依赖图（A 的输出是 B 的输入），从复杂或中心的「锚点工具」出发规划有向游走，作为任务骨架，并加入对抗策略。</li>
+<li>在 BFCL、τ²-Bench、ACEBench 上超过基线，基座模型能追平甚至超过官方指令模型。</li>
+</ul>
+<p><strong>FireFly</strong>（东北大学等；arXiv 2026-05-17；<a href="https://arxiv.org/abs/2605.17558">arXiv 2605.17558</a>）</p>
+<ul>
+<li>按工具 schema 判断两两输入输出兼容，建有向工具图；采子 DAG，让强模型在真实 API 上先探索，再按观察到的结果倒推题目，所以答案构造即正确。</li>
+<li>用检索增强的模拟器缓存探索结果，离线可复现 RL。</li>
+<li>5,144 个验证任务、9,749 条轨迹、240 个服务器、993 个工具；4B 模型 GRPO 后在自建测试集上追平 Claude Sonnet 4.6，Tau2-Bench、MCPMark、MCP-Atlas 也有提升。</li>
+</ul>
+<p><strong>EnvFactory</strong>（港科广、华为等；arXiv 2026-05-18；<a href="https://arxiv.org/abs/2605.18703">arXiv 2605.18703</a>；<a href="https://github.com/LARK-AI-Lab/EnvFactory">GitHub</a> 96⭐，最近更新 2026-08-28）</p>
+<ul>
+<li>工具图用语义匹配加 LLM 修正建成；拓扑感知采样会递归补齐一个工具需要的所有上游输入。</li>
+<li>85 个验证环境、842 个工具；Qwen3 系列在 BFCLv3 上最多 +15%。</li>
+</ul>
+<p><strong>ASTRA</strong>（贝壳；arXiv 2026-01；<a href="https://arxiv.org/abs/2601.21558">arXiv 2601.21558</a>；<a href="https://github.com/LianjiaTech/astra">GitHub</a> 156⭐，最近更新 2026-01-30）</p>
+<ul>
+<li>SFT 用基于真实 MCP 的工具调用图静态拓扑生成轨迹；RL 把分解后的问答链转成可执行、规则可验证的独立环境。</li>
+<li>流水线、环境和模型全部开源。</li>
+</ul><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t17-atlas"><div class="meta">D 自动建树</div><h2><span class="no">17</span>ATLAS</h2><ul>
+<li><strong>全称</strong>：Agentic Taxonomy of LArge-Scale Software Ecosystems</li>
+<li><strong>机构 / 时间</strong>：中科院软件所、南洋理工、南开等；ASE 2026，arXiv 2026-06</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2606.21597">arXiv 2606.21597</a></li>
+</ul>
+<p><strong>做法</strong>：Designer agent 结合模型知识和真实仓库样本，提出每个节点的「切分维度」；Classifier agent 把仓库分进去；分不进去的失败案例反过来驱动修改维度。按广度优先逐节点构建，每个节点只需带祖先链的维度信息，而不是整棵树，所以成本随树的大小而不是语料大小增长。最后做层级对齐，保证不同分支的粒度一致。</p>
+<p><strong>效果</strong>：54,387 个 GitHub 仓库；在 2,001 个仓库的分层样本上 TQF 83.13%，比最强基线高 15 个点；用于找替代软件 P@1 85.71%，高于人工整理列表的 62.34%。</p>
+<p><strong>与 K3 的异同</strong>：只建树不造题，但它补上了 K3 没写的部分：怎么判断一棵 agent 长出来的树好不好、怎么让各分支粒度一致。「每个节点只带祖先链」和 K3「检索词拼祖先上下文」是同一个思路。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t18-2024-2025-奠基工作"><div class="meta">前史</div><h2><span class="no">18</span>2024–2025 奠基工作</h2><div class="tw"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>机构 / 时间</th>
+<th>要点</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GLAN</td>
+<td>微软，2024-02</td>
+<td>把人类知识半自动拆成领域 → 子领域 → 学科，再为每门学科生成课程和教学大纲，按每节课的关键概念出指令；不用种子数据，加新节点就能扩展</td>
+<td><a href="https://arxiv.org/abs/2402.13064">arXiv 2402.13064</a></td>
+</tr>
+<tr>
+<td>Condor</td>
+<td>上海 AI Lab，2025-01</td>
+<td>用 LLM 自回归生成由粗到细的「世界知识树」标签链，按标签出题，再自我反思精修；开源 Condor-SFT-20K</td>
+<td><a href="https://arxiv.org/abs/2501.12273">arXiv 2501.12273</a> · <a href="https://github.com/InternLM/Condor">GitHub</a> 41⭐</td>
+</tr>
+<tr>
+<td>SHARP</td>
+<td>蚂蚁，2025-05</td>
+<td>学科 → 类别 → 主题三级层级，出研究生和奥赛难度的可验证 STEM 题用于 RLVR</td>
+<td><a href="https://arxiv.org/abs/2505.14147">arXiv 2505.14147</a></td>
+</tr>
+<tr>
+<td>TaskCraft</td>
+<td>OPPO，2025-06</td>
+<td>从原子任务出发，按深度和宽度扩展成多工具、可验证的 agent 任务，约 36,000 题</td>
+<td><a href="https://arxiv.org/abs/2506.10055">arXiv 2506.10055</a> · <a href="https://github.com/OPPO-PersonalAI/TaskCraft">GitHub</a> 200⭐</td>
+</tr>
+<tr>
+<td>WebSailor</td>
+<td>阿里通义，2025-07</td>
+<td>从 Wikidata 取模糊实体做种子，在真实网页上随机游走建图，采子图并混淆信息，造高不确定性题 SailorFog-QA</td>
+<td><a href="https://arxiv.org/abs/2507.02592">arXiv 2507.02592</a></td>
+</tr>
+<tr>
+<td>WebShaper</td>
+<td>阿里通义，2025-07</td>
+<td>用集合论的「知识投影」形式化搜索题，agent Expander 按形式结构逐步把题变复杂</td>
+<td><a href="https://arxiv.org/abs/2507.15061">arXiv 2507.15061</a></td>
+</tr>
+<tr>
+<td>DeepDive</td>
+<td>清华 / 智谱，2025-09</td>
+<td>KG 上走 5 跳以上的长路径，模糊实体属性，再让 LLM 混淆线索；3,250 题（SFT 1,016 / RL 2,234）</td>
+<td><a href="https://arxiv.org/abs/2509.10446">arXiv 2509.10446</a> · <a href="https://github.com/THUDM/DeepDive">GitHub</a> 348⭐</td>
+</tr>
+</tbody>
+</table></div>
+<p>WebSailor 和 WebShaper 的代码在 <a href="https://github.com/Alibaba-NLP/DeepResearch">Alibaba-NLP/DeepResearch</a>（原 WebAgent 仓库已重定向到这里），20,047⭐，最近更新 2026-02-27。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t19-可直接用的框架"><div class="meta">开源工具</div><h2><span class="no">19</span>可直接用的框架</h2><div class="tw"><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>和本主题的关系</th>
+<th>⭐</th>
+<th>最近更新</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/NVIDIA-NeMo/DataDesigner">NVIDIA-NeMo/DataDesigner</a></td>
+<td>声明式合成数据框架，有采样器、LLM 列、校验器；能用类别采样器实现分类树配额，但不是以 taxonomy 为核心</td>
+<td>2,333</td>
+<td>2026-10-14</td>
+</tr>
+<tr>
+<td><a href="https://github.com/argilla-io/distilabel">argilla-io/distilabel</a></td>
+<td>通用合成数据和 AI 反馈流水线</td>
+<td>3,418</td>
+<td>2026-10-12</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Mercity-AI/Simula">Mercity-AI/Simula</a></td>
+<td>Simula 式流程的社区实现：建 taxonomy → 采样分支 → 生成 → 批评 → 保留谱系</td>
+<td>6</td>
+<td>2026-09-10</td>
+</tr>
+<tr>
+<td><a href="https://github.com/google-research/nodesyn">google-research/nodesyn</a></td>
+<td>用于评测的 taxonomy 驱动查询生成</td>
+<td>6</td>
+<td>2026-10-13</td>
+</tr>
+<tr>
+<td><a href="https://github.com/microsoft/LMOps">microsoft/LMOps</a></td>
+<td>GLAN 所在的微软仓库集合</td>
+<td>4,480</td>
+<td>2026-09-15</td>
+</tr>
+<tr>
+<td><a href="https://github.com/THUDM/DeepDive">THUDM/DeepDive</a></td>
+<td>KG 游走造深度搜索题 + 多轮 RL</td>
+<td>348</td>
+<td>2026-06-17</td>
+</tr>
+<tr>
+<td><a href="https://github.com/OPPO-PersonalAI/TaskCraft">OPPO-PersonalAI/TaskCraft</a></td>
+<td>原子任务扩展的 agent 任务生成库</td>
+<td>200</td>
+<td>2025-07-06</td>
+</tr>
+<tr>
+<td><a href="https://github.com/LianjiaTech/astra">LianjiaTech/astra</a></td>
+<td>工具图轨迹合成 + 可验证 RL 环境</td>
+<td>156</td>
+<td>2026-01-30</td>
+</tr>
+<tr>
+<td><a href="https://github.com/LARK-AI-Lab/EnvFactory">LARK-AI-Lab/EnvFactory</a></td>
+<td>工具依赖图 + 可执行环境合成</td>
+<td>96</td>
+<td>2026-08-28</td>
+</tr>
+<tr>
+<td><a href="https://github.com/XuShuwenn/GraphWalker">XuShuwenn/GraphWalker</a></td>
+<td>KG 随机游走轨迹</td>
+<td>35</td>
+<td>2026-07-28</td>
+</tr>
+<tr>
+<td><a href="https://github.com/YurunChen/Graph2Eval">YurunChen/Graph2Eval</a></td>
+<td>KG 子图采样生成评测任务</td>
+<td>28</td>
+<td>2026-01-10</td>
+</tr>
+</tbody>
+</table></div>
+<p>⭐ 和更新时间为 2026-10-14 的数据。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t20-和植物识别数据全集"><div class="meta">类比</div><h2><span class="no">20</span>和植物识别数据全集</h2><p>植物识别的做法：先用物种分类（界门纲目科属种）定义「全集」，再在每个叶子上找图片，按类目补齐数量，长尾物种单独补采。对照下来：</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>植物识别</th>
+<th>K3 / 本页的工作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>物种分类树（现成，生物学定好）</td>
+<td>概念图谱（K3、SearchArt 由 agent 长出来）或能力 taxonomy（CLI-Universe 人定）</td>
+</tr>
+<tr>
+<td>叶子是「种」</td>
+<td>叶子是「足够原子的概念」（K3）、技能（SkillSynth）、实体（SearchArt）</td>
+</tr>
+<tr>
+<td>按物种搜图，搜索词带上科属避免同名</td>
+<td>关键词拼祖先上下文检索（K3）；只带祖先链做决策（ATLAS）</td>
+</tr>
+<tr>
+<td>每类保证最少样本数，长尾单独补</td>
+<td>按领域配额采样并动态调整（SearchArt、BenchBench）；专挑模型见得少的长尾实体（SearchArt）</td>
+</tr>
+<tr>
+<td>图片人工审核、去重</td>
+<td>可执行校验、fail-to-pass、多模型评审组（CLI-Universe、SkillSynth、BenchBench）</td>
+</tr>
+<tr>
+<td>分类本身有争议时要修树</td>
+<td>分类失败反过来修维度（ATLAS）</td>
+</tr>
+</tbody>
+</table></div>
+<p>两点不同：</p>
+<ol>
+<li>物种树是现成的、公认的；LLM 训练的知识树没有标准答案，所以 K3、SearchArt、ATLAS 都让 agent 边查边长树，树本身也成了产出。</li>
+<li>植物数据是「一个叶子对应一堆样本」；造题经常要「多个节点组合」（K3 的 RoPE + GPU kernel、STEPS 的技能组合、工具图上的路径），组合怎么挑是新的问题。</li>
+</ol><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t21-可以讲的观点"><div class="meta">面试</div><h2><span class="no">21</span>可以讲的观点</h2><ol>
+<li><strong>覆盖率要靠结构管，不能靠模型自由发挥。</strong> 让模型自由出题会集中在它熟悉的热门知识上。SearchArt 原文直说图采样会偏向稠密区域，所以要用 taxonomy 和动态配额拉平；SkillSynth 则批评 LLM 生成的 taxonomy 偏离真实使用，改从真实技能建图。面试可以讲：覆盖地图从哪来（人定、模型推、agent 联网长、真实日志），各有什么偏差。</li>
+<li><strong>「采样 → 真实素材 → 出题」的关键在中间一步。</strong> K3 和 CLI-Universe 都要求先拿到真实网页、仓库、issue，再出题。这一步决定题目是否有据可查、是否有真实的坑，也是数据公司能和模型公司自产数据拉开差距的地方。</li>
+<li><strong>验证成本才是大头。</strong> CLI-Universe 淘汰约三分之二候选；SkillSynth 每个合格任务约 $27.3、通过率 95.7%；FireFly 用「先观察结果再倒推题目」让答案构造即正确。谈数据生产线时，应该先讲淘汰率和单题成本，再讲产量。</li>
+<li><strong>图的节点类型决定能练什么能力。</strong> 概念节点练知识覆盖（K3），实体节点练多跳搜索（SearchArt、DeepDive），工具或技能节点练执行轨迹（SkillSynth、ToolVerse）。设计评测时先问清楚：要测的是知识面、搜索深度，还是工作流执行。</li>
+<li><strong>评测集本身也可以这样生成和体检。</strong> BenchBench 发现出题能力和答题能力只中等相关（ρ≈0.37），无效题会拉低区分度（r≈−0.62）；Graph2Eval 用可达性分析保证可解。做评测岗可以讲：自动生成的评测集要报告无效率和区分度，而不只是模型分数。</li>
+</ol><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section></div>
+<footer class="meta foot">来源均为原文 PDF、官方仓库、HF 数据集或官网页面；引用保留原文措辞。</footer>
+</main>
+<script>
+(function(){
+ var tabs=[].slice.call(document.querySelectorAll('.tabs a')),ps=[].slice.call(document.querySelectorAll('.panel'));
+ function show(id,scroll){ if(!document.getElementById(id)) id=ps[0].id;
+  ps.forEach(function(p){p.classList.toggle('on',p.id===id)});
+  tabs.forEach(function(a){a.classList.toggle('on',a.dataset.t===id)});
+  if(scroll) document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'}); }
+ tabs.forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();history.replaceState(null,'','#'+a.dataset.t);show(a.dataset.t,true);})});
+ window.addEventListener('hashchange',function(){show(decodeURIComponent(location.hash.slice(1)),false)});
+ show(decodeURIComponent(location.hash.slice(1)),false);
+})();
+</script></body></html>
