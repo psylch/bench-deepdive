@@ -48,10 +48,10 @@
 <td>Google / EPFL</td>
 <td>2026-03</td>
 <td>多个「变化因子」各自展开成分类树</td>
-<td>LLM 推理，用户定深度</td>
-<td>无需种子数据</td>
-<td>LLM 批评、复核</td>
-<td>多个数据集实验</td>
+<td>LLM Best-of-N 提案 + 批评者修树，用户定深度</td>
+<td>无需种子数据，按采样策略组合节点</td>
+<td>逐条批评 + 双重批评，不过则拒绝或修改</td>
+<td>Gemma 3 4B 在 GSM8k、Global MMLU、CTI、LEXam 上验证；每条推理调用最多为基线 5 倍</td>
 </tr>
 <tr>
 <td>STEPS</td>
@@ -60,8 +60,8 @@
 <td>技能分层 taxonomy</td>
 <td>从技能共现图按结构熵自动归并</td>
 <td>组合技能节点</td>
-<td>未单列</td>
-<td>对比 Instruct-SkillMix 36.3 vs 30.8</td>
+<td>无单独质量过滤</td>
+<td>4K 条；Mistral-7B AlpacaEval 2.0 LC 24.42（Instruct-SkillMix 22.63，Alpaca 52K 5.38）</td>
 </tr>
 <tr>
 <td>CLI-Universe</td>
@@ -70,18 +70,48 @@
 <td>四维能力 taxonomy</td>
 <td>人定领域 + 预定义取值池</td>
 <td>deep research 查仓库、文档、issue</td>
-<td>Docker 执行，fail-to-pass，约 2/3 被淘汰</td>
-<td>6K 轨迹；Qwen3-32B 在 TB2 达 33.4%</td>
+<td>Docker 执行 + hint 过滤 + fail-to-pass，保留 33.6%</td>
+<td>6K 轨迹；Qwen3-32B 在 TB2 达 33.4%（用全部 10K 轨迹只有 28.2）</td>
 </tr>
 <tr>
 <td>Nemotron-Terminal</td>
 <td>NVIDIA</td>
 <td>2026-02</td>
-<td>原子技能 taxonomy + 多领域</td>
-<td>未公开细节</td>
+<td>原子技能 taxonomy + 9 个领域</td>
+<td>每个领域一套专门技能</td>
 <td>现有数据集改写 + 按技能生成</td>
-<td>未单列</td>
-<td>32B 在 TB2 从 3.4% 到 27.4%</td>
+<td>只做质量过滤；轨迹过滤反而有害（不过滤 12.4，只留成功 5.06）</td>
+<td>32B 在 TB2 从 3.4% 到 27.4%，超过 Qwen3-Coder-480B</td>
+</tr>
+<tr>
+<td>LongCrafter</td>
+<td>中科院</td>
+<td>2026-07</td>
+<td>文档内事件证据图</td>
+<td>LLM 抽取</td>
+<td>多源网页语料</td>
+<td>GPT-5 判难度和答案，500 条人机一致性检验</td>
+<td>去掉证据图难度分 2.59 → 1.74；数据量未公开</td>
+</tr>
+<tr>
+<td>BenchBench（评测侧）</td>
+<td>南洋理工</td>
+<td>2026-03</td>
+<td>评测规格 taxonomy</td>
+<td>模型当出题者</td>
+<td>按规格出题</td>
+<td>多标准校验，无效题标 skip_core</td>
+<td>16.7K 题，过滤后约 15K；出题与答题能力 ρ≈0.37</td>
+</tr>
+<tr>
+<td>NodeSyn（评测侧开源）</td>
+<td>Google Research</td>
+<td>—</td>
+<td>主题分类树</td>
+<td>LLM 逐层展开</td>
+<td>未公开</td>
+<td>未公开</td>
+<td>无论文，仓库 6⭐</td>
 </tr>
 <tr>
 <td>SearchArt</td>
@@ -90,8 +120,8 @@
 <td>web 扩展的知识图谱 + 层级领域 taxonomy</td>
 <td>explorer agent 迭代扩图</td>
 <td>抽难子图做上下文</td>
-<td>QA 一致性、轨迹质量、证据相关性三重校验</td>
-<td>27B 在 BrowseComp 70.06</td>
+<td>闭卷全错 → 基线带工具 → 强模型可解，五阶段过滤</td>
+<td>Qwen3.5-27B BrowseComp 61.00 → 70.06，BrowseComp-ZH 62.10 → 74.39</td>
 </tr>
 <tr>
 <td>Nemotron 3 Ultra 搜索数据</td>
@@ -101,7 +131,7 @@
 <td>现成知识图谱</td>
 <td>选枢纽实体，走 4–8 跳</td>
 <td>未单列</td>
-<td>未公开</td>
+<td>沿用 OpenResearcher 轨迹约 2.17 万条；最难的题外购；随机游走题量未公开</td>
 </tr>
 <tr>
 <td>GraphWalker</td>
@@ -110,8 +140,8 @@
 <td>KG</td>
 <td>现成 KG</td>
 <td>约束随机游走</td>
-<td>EM 奖励</td>
-<td>15k + 6k 轨迹</td>
+<td>拒绝采样：答案正确且有 KG 依据</td>
+<td>15K + 6K 轨迹；CWQ 比 GoG 高 4.4% EM，迁移 WebQSP 91.5%</td>
 </tr>
 <tr>
 <td>Graph2Eval</td>
@@ -121,7 +151,17 @@
 <td>自动抽取</td>
 <td>子图采样 + 模板 + meta-path</td>
 <td>可达性、LLM 打分、相似度过滤</td>
-<td>1,319 题；一致性 +20%，可解性 +17%</td>
+<td>1,319 题（文档 1,002 + 网页 317）；一致性 +20%，可解性 +17%</td>
+</tr>
+<tr>
+<td>KNIGHT（评测侧）</td>
+<td>德黑兰大学等</td>
+<td>2026-02</td>
+<td>按主题建的 KG</td>
+<td>LLM 检索 + 生成，固定深度上限</td>
+<td>Wikipedia 稠密检索</td>
+<td>可追溯重合度 ≥ 0.35 + 五条验证标准</td>
+<td>3 个领域 6 个选择题集；模型排名与 MMLU 类一致</td>
 </tr>
 <tr>
 <td>SkillSynth</td>
@@ -129,9 +169,9 @@
 <td>2026-04</td>
 <td>场景为节点、技能为边的图</td>
 <td>从 ClawHub 和 GitHub 收技能后自动连边</td>
-<td>采样路径 → 多 agent 实例化</td>
+<td>访问计数加权游走 → 规划 / 实现分开</td>
 <td>oracle 可解 + rubric 质量</td>
-<td>82,073 场景 / 57,214 技能；3,560 题，95.7% 通过；用于 Hy3 Preview</td>
+<td>82,073 场景 / 57,214 技能；3,560 题，95.7% 过 oracle、92.0% 双过；每题 $27.3</td>
 </tr>
 <tr>
 <td>ToolVerse</td>
@@ -140,8 +180,8 @@
 <td>工具依赖 DAG</td>
 <td>LLM 推断依赖</td>
 <td>动态解锁采样</td>
-<td>轨迹打分不满分即丢弃</td>
-<td>422 环境 / 4,438 工具 / 2,987 条</td>
+<td>单测过滤约 20% 工具集；Pass@8 至少一次满分</td>
+<td>422 环境 / 4,438 工具 / 2,987 条；ACEBench-Agent +15.15</td>
 </tr>
 <tr>
 <td>GAIS</td>
@@ -150,8 +190,8 @@
 <td>工具依赖图</td>
 <td>从真实 MCP 服务器建</td>
 <td>锚点工具出发走图 + 对抗策略</td>
-<td>单元测试</td>
-<td>707 仓库 / 9,488 工具</td>
+<td>单元测试 + 状态和回复双检查</td>
+<td>707 仓库 / 9,488 工具（原 1,174 / 14,395）</td>
 </tr>
 <tr>
 <td>FireFly</td>
@@ -160,8 +200,8 @@
 <td>工具两两兼容图</td>
 <td>按 schema 判断</td>
 <td>采样子 DAG，先探索真实 API 再倒推题目</td>
-<td>结果先观察后出题，构造即正确</td>
-<td>5,144 题 / 993 工具；4B 模型追平 Sonnet 4.6（自测集）</td>
+<td>LLM 五条标准，约淘汰一半</td>
+<td>5,144 题 / 993 工具；约 $47K、235 亿 token；4B pass@1 28.1% → 41.5%（Sonnet 4.6 为 42.2%，自测集）</td>
 </tr>
 <tr>
 <td>EnvFactory</td>
@@ -171,27 +211,27 @@
 <td>语义匹配 + LLM 修正</td>
 <td>拓扑感知采样</td>
 <td>沙盒执行</td>
-<td>85 环境 / 842 工具；BFCLv3 最多 +15%</td>
+<td>85 环境 / 842 工具 / 2,575 条轨迹；BFCLv3 最多 +15%</td>
 </tr>
 <tr>
 <td>ASTRA</td>
 <td>贝壳</td>
 <td>2026-01</td>
 <td>工具调用图</td>
-<td>基于真实 MCP</td>
+<td>基于真实 MCP（1,585 服务器 / 19,036 工具）</td>
 <td>静态拓扑生成轨迹</td>
-<td>规则可验证环境</td>
-<td>已开源</td>
+<td>依赖验证 + 规则可验证环境</td>
+<td>Qwen3-14B/32B 在 BFCL-MT、τ²-Bench、ACEBench 同参数量最好；已开源</td>
 </tr>
 <tr>
 <td>ATLAS</td>
 <td>中科院软件所等</td>
-<td>2026-06</td>
+<td>2026-10（ASE 2026）</td>
 <td>GitHub 仓库层级 taxonomy</td>
 <td>Designer + Classifier 两个 agent 迭代修树</td>
 <td>54,387 个仓库</td>
-<td>分类失败驱动修维度</td>
-<td>TQF 83.13%，超最强基线 15 个点</td>
+<td>分类失败驱动修维度，MECE 校验</td>
+<td>36,986 节点；TQF 83.13%，超最强基线 15 个点；全量约 $1,500</td>
 </tr>
 </tbody>
 </table></div><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t1-kimi-k3-4-2-2"><div class="meta">参照</div><h2><span class="no">01</span>Kimi K3 4.2.2</h2><p><strong>做法（原文）</strong>：建一张「自我演化、层级组织」的知识图谱，覆盖知识密集和编程领域。</p>
