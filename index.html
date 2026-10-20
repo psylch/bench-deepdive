@@ -14,7 +14,6 @@
 .panel>.meta{margin-top:28px}
 .report .panel>h2{margin-top:.3em;padding-top:0;border-top:0}
 .report h2 .no{margin-right:10px;font:500 13px var(--sans);color:var(--faint);vertical-align:.2em}
-.totop{display:inline-block;margin-top:40px;font:500 11px var(--sans);color:var(--mute)!important;border:0!important}
 .art td:first-child{color:var(--ink)}
 .art .table-wrap>table{min-width:680px}
 .art blockquote p{margin:6px 0}
@@ -223,7 +222,7 @@
 <td>只有服务页</td>
 </tr>
 </tbody>
-</table></div><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t1-vitabench-2-0"><div class="meta">美团</div><h2><span class="no">01</span>VitaBench 2.0</h2><p><strong>测什么、为什么</strong>：论文认为现有 agent benchmark “largely overlook personalization”，默认任务信息都写在当前上下文里。2.0 要测 agent 能否从零碎的历史里推断偏好、在偏好变化时更新，并在缺信息时主动去问。</p>
+</table></div></section><section class="panel" id="t1-vitabench-2-0"><div class="meta">美团</div><h2><span class="no">01</span>VitaBench 2.0</h2><p><strong>测什么、为什么</strong>：论文认为现有 agent benchmark “largely overlook personalization”，默认任务信息都写在当前上下文里。2.0 要测 agent 能否从零碎的历史里推断偏好、在偏好变化时更新，并在缺信息时主动去问。</p>
 <p><strong>任务设计</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -387,7 +386,7 @@
 <ul>
 <li>2.0：<a href="https://arxiv.org/abs/2605.27141">arXiv 2605.27141</a> · <a href="https://github.com/meituan-longcat/vitabench-2.0">GitHub</a> · <a href="https://huggingface.co/datasets/meituan-longcat/VitaBench-2.0">HF</a> · <a href="https://vitabench2.github.io/">项目页</a> · <a href="https://tech.meituan.com/2026/06/29/LongCat-VitaBench-2.0.html">美团技术博客</a></li>
 <li>1.0：<a href="https://arxiv.org/abs/2509.26490">arXiv 2509.26490</a> · <a href="https://github.com/meituan-longcat/vitabench">GitHub</a> · <a href="https://huggingface.co/datasets/meituan-longcat/VitaBench">HF</a></li>
-</ul><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t2-数据产品"><div class="meta">Copula</div><h2><span class="no">02</span>数据产品</h2><p><strong>结论</strong>：Copula 没有论文、公开数据集，也没有榜单。能逐字核对的只有官网 9 个页面：Benchmark 页和 8 个数据产品页。金融和法律两页公开了完整的 prompt、rubric 和参考材料清单，是最能看出它方法的材料；其余几页只有产品描述和样例名。“中文版 GDPval”这个说法只出现在第三方报道里（称“按中国官方 GDP 产业结构加权”），官网现在没有这一页。</p>
+</ul></section><section class="panel" id="t2-数据产品"><div class="meta">Copula</div><h2><span class="no">02</span>数据产品</h2><p><strong>结论</strong>：Copula 没有论文、公开数据集，也没有榜单。能逐字核对的只有官网 9 个页面：Benchmark 页和 8 个数据产品页。金融和法律两页公开了完整的 prompt、rubric 和参考材料清单，是最能看出它方法的材料；其余几页只有产品描述和样例名。“中文版 GDPval”这个说法只出现在第三方报道里（称“按中国官方 GDP 产业结构加权”），官网现在没有这一页。</p>
 <p><strong>Benchmark 页原文</strong></p>
 <ul>
 <li>在研两个：3D（“A verifiable measure of 3D scene and asset generation”）和金融长程 agent。</li>
@@ -551,7 +550,7 @@
 <li>金融题 “截止 2026-08-06” 是对模型的约束，但答案来自公开年报，训练数据泄漏没法排除。</li>
 <li>WebDev 和 3D 的审美分是专家打的，评分者人数、分歧处理和数据规模都没公开。</li>
 </ul>
-<p>链接：<a href="https://www.copulalab.com/products/benchmark">Benchmark</a> · <a href="https://www.copulalab.com/products/data-products/long-horizon-finance">金融长程</a> · <a href="https://www.copulalab.com/products/data-products/long-horizon-legal">法律长程</a> · <a href="https://www.copulalab.com/products/data-products/webdev-aesthetics">WebDev</a> · <a href="https://www.copulalab.com/products/data-products/vision2web">Vision2Web</a> · <a href="https://www.copulalab.com/products/data-products/Web3D-with-three.js">Three.js</a> · <a href="https://www.copulalab.com/products/data-products/Web3D-with-blender">Blender</a> · <a href="https://www.copulalab.com/products/data-products/godot-gamecraft">Godot</a> · <a href="https://www.copulalab.com/products/data-products/game3d-native">Game3D</a> · 第三方 GDPval 报道：<a href="https://ai-bot.cn/copula-lab/">ai-bot.cn</a> · <a href="https://finance.sina.com.cn/stock/t/2026-08-16/doc-ininnkfv8014751.shtml">新浪</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t3-参照-openai-gdpval"><div class="meta">Copula</div><h2><span class="no">03</span>参照：OpenAI GDPval</h2><p><strong>测什么、为什么</strong>：用模型能力直接衡量 AI 对经济的潜在影响，不等采用率、GDP 这类滞后指标。论文原话：“these methods are lagging indicators of AI impacts. We consider an alternate method … directly measuring AI model capabilities.”</p>
+<p>链接：<a href="https://www.copulalab.com/products/benchmark">Benchmark</a> · <a href="https://www.copulalab.com/products/data-products/long-horizon-finance">金融长程</a> · <a href="https://www.copulalab.com/products/data-products/long-horizon-legal">法律长程</a> · <a href="https://www.copulalab.com/products/data-products/webdev-aesthetics">WebDev</a> · <a href="https://www.copulalab.com/products/data-products/vision2web">Vision2Web</a> · <a href="https://www.copulalab.com/products/data-products/Web3D-with-three.js">Three.js</a> · <a href="https://www.copulalab.com/products/data-products/Web3D-with-blender">Blender</a> · <a href="https://www.copulalab.com/products/data-products/godot-gamecraft">Godot</a> · <a href="https://www.copulalab.com/products/data-products/game3d-native">Game3D</a> · 第三方 GDPval 报道：<a href="https://ai-bot.cn/copula-lab/">ai-bot.cn</a> · <a href="https://finance.sina.com.cn/stock/t/2026-08-16/doc-ininnkfv8014751.shtml">新浪</a></p></section><section class="panel" id="t3-参照-openai-gdpval"><div class="meta">Copula</div><h2><span class="no">03</span>参照：OpenAI GDPval</h2><p><strong>测什么、为什么</strong>：用模型能力直接衡量 AI 对经济的潜在影响，不等采用率、GDP 这类滞后指标。论文原话：“these methods are lagging indicators of AI impacts. We consider an alternate method … directly measuring AI model capabilities.”</p>
 <p><strong>样例设计</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -617,7 +616,7 @@
 <li>少给上下文的版本：prompt 长度只有原来的 42%，GPT-5 表现下降。</li>
 </ul>
 <p><strong>论文自述的局限</strong>：只覆盖 44 个职业、每职业 30 题；只测能在电脑上完成的知识工作；“Tasks are precisely-specified and one-shot, not interactive”；自动 grader 不如专家；专家评分成本高。</p>
-<p>链接：<a href="https://arxiv.org/abs/2510.04374">arXiv 2510.04374</a> · <a href="https://huggingface.co/datasets/openai/gdpval">HF openai/gdpval</a> · <a href="https://evals.openai.com">evals.openai.com</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t4-参照-finance-agent-benchmark"><div class="meta">Copula</div><h2><span class="no">04</span>参照：Finance Agent Benchmark</h2><p><strong>测什么</strong>：入门级金融分析师用 SEC 文件做研究的工作，agent 可以用 EDGAR 和网页搜索。这是 Copula Benchmark 页明确写出的参照对象。</p>
+<p>链接：<a href="https://arxiv.org/abs/2510.04374">arXiv 2510.04374</a> · <a href="https://huggingface.co/datasets/openai/gdpval">HF openai/gdpval</a> · <a href="https://evals.openai.com">evals.openai.com</a></p></section><section class="panel" id="t4-参照-finance-agent-benchmark"><div class="meta">Copula</div><h2><span class="no">04</span>参照：Finance Agent Benchmark</h2><p><strong>测什么</strong>：入门级金融分析师用 SEC 文件做研究的工作，agent 可以用 EDGAR 和网页搜索。这是 Copula Benchmark 页明确写出的参照对象。</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -660,7 +659,7 @@
 <li>论文里的拆点示例：“How has Carvana’s (NYSE: CVNA) gross profit per unit changed from 2019-2024?” 拆成 5 个检查点，例如 “CVNA gross profit per unit in 2019 was $2,852”。</li>
 </ol>
 <p><strong>结果</strong>：o3 准确率 46.8%，每题 $3.79；Claude 3.7 Sonnet（Thinking）45.9%；Gemini 2.5 Pro Preview 28.4%；专家平均每题 16.8 分钟、$25.66。Vals 官网的 v2 版本扩到 927 题，榜首 60.60%。</p>
-<p>链接：<a href="https://arxiv.org/abs/2508.00828">arXiv 2508.00828</a> · <a href="https://github.com/vals-ai/finance-agent">GitHub</a> · <a href="https://vals.ai/benchmarks/fabv2">Finance Agent v2</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t5-参照-webdev-arena-与-vision2web"><div class="meta">Copula</div><h2><span class="no">05</span>参照：WebDev Arena 与 Vision2Web</h2><p><strong>WebDev Arena（LMArena）</strong>：没有论文，下面只依据官方博客。</p>
+<p>链接：<a href="https://arxiv.org/abs/2508.00828">arXiv 2508.00828</a> · <a href="https://github.com/vals-ai/finance-agent">GitHub</a> · <a href="https://vals.ai/benchmarks/fabv2">Finance Agent v2</a></p></section><section class="panel" id="t5-参照-webdev-arena-与-vision2web"><div class="meta">Copula</div><h2><span class="no">05</span>参照：WebDev Arena 与 Vision2Web</h2><p><strong>WebDev Arena（LMArena）</strong>：没有论文，下面只依据官方博客。</p>
 <ul>
 <li>流程：用户提交一个 prompt，两个匿名模型各生成一个 React/TypeScript + Tailwind 的单文件应用，在 E2B 沙箱里并排渲染，用户投票（A 胜、B 胜、平局、都不好）。</li>
 <li>打分：用 Bradley-Terry 模型从两两对战结果算出 Arena Score；截至博客发布时 “over 80,000 community votes”。</li>
@@ -702,7 +701,7 @@
 </tr>
 </tbody>
 </table></div>
-<p>链接：<a href="https://arena.ai/blog/webdev-arena">WebDev Arena 博客</a> · Vision2Web <a href="https://arxiv.org/abs/2603.26648">arXiv 2603.26648</a> · <a href="https://github.com/zai-org/Vision2Web">GitHub</a> · <a href="https://huggingface.co/datasets/zai-org/Vision2Web">HF</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t6-与原版逐项对比"><div class="meta">Copula</div><h2><span class="no">06</span>与原版逐项对比</h2><div class="table-wrap"><table>
+<p>链接：<a href="https://arena.ai/blog/webdev-arena">WebDev Arena 博客</a> · Vision2Web <a href="https://arxiv.org/abs/2603.26648">arXiv 2603.26648</a> · <a href="https://github.com/zai-org/Vision2Web">GitHub</a> · <a href="https://huggingface.co/datasets/zai-org/Vision2Web">HF</a></p></section><section class="panel" id="t6-与原版逐项对比"><div class="meta">Copula</div><h2><span class="no">06</span>与原版逐项对比</h2><div class="table-wrap"><table>
 <thead>
 <tr>
 <th>维度</th>
@@ -819,7 +818,7 @@
 <li>Copula 的金融和法律线在任务颗粒度上比 GDPval 更大（一个工作包对一个请求），rubric 比 FAB 更细（46–67 条对 3–10 条），而且加了一票否决类条目。这些设计针对的是长程交付里“一个根本性错误就全盘作废”的问题。</li>
 <li>它没有采用 GDPval 的核心设计：拿人类交付物做两两比较、报告胜率。好处是绝对分可复现；代价是没法回答“离人类专家还有多远”。</li>
 <li>“中文版 GDPval”在官网上找不到对应页面，按什么分布选职业、多少题、谁来评都未公开。面试时可以直接问这几点。</li>
-</ul><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t7-onemillion-bench"><div class="meta">Humanlaya</div><h2><span class="no">07</span>$OneMillion-Bench</h2><p><strong>测什么、为什么</strong>：问答类 benchmark “lack clarity and provide limited insight into whether they can perform professional work and reliably create value”。OMB 把每道题的价值折算成资深专业人士完成它所需的工资，全部题目总价值超过 100 万美元，模型的成绩就表示为“能挣到多少钱”。</p>
+</ul></section><section class="panel" id="t7-onemillion-bench"><div class="meta">Humanlaya</div><h2><span class="no">07</span>$OneMillion-Bench</h2><p><strong>测什么、为什么</strong>：问答类 benchmark “lack clarity and provide limited insight into whether they can perform professional work and reliably create value”。OMB 把每道题的价值折算成资深专业人士完成它所需的工资，全部题目总价值超过 100 万美元，模型的成绩就表示为“能挣到多少钱”。</p>
 <p><strong>样例设计</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -938,7 +937,7 @@
 <li>换用专门的 agent 框架会改变排名；多次采样的 pass^k 随 k 增大明显衰减。</li>
 </ul>
 <p><strong>局限（论文 G 节）</strong>：只覆盖五个领域；rubric “are less objective than the equivalency checker of a single expression or number, and relies on the model judge’s capabilities”；自然科学领域 judge 和人工的一致性低。</p>
-<p>链接：<a href="https://arxiv.org/abs/2603.07980">arXiv 2603.07980</a> · <a href="https://github.com/humanlaya/OneMillion-Bench">GitHub</a> · <a href="https://huggingface.co/datasets/humanlaya-data-lab/OneMillion-Bench">HF</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t8-evocode-bench"><div class="meta">UniPat</div><h2><span class="no">08</span>EvoCode-Bench</h2><p><strong>测什么、为什么</strong>：现有编码 benchmark 大多一次给齐需求、一次判分。真实开发是需求一轮轮演进、互相冲突，前面写下的代码会约束后面的工作。EvoCode 把一个任务做成 5–15 轮的连续会话，同一个 workspace 一直保留，测 agent 能不能“maintain a valid evolving workspace”。</p>
+<p>链接：<a href="https://arxiv.org/abs/2603.07980">arXiv 2603.07980</a> · <a href="https://github.com/humanlaya/OneMillion-Bench">GitHub</a> · <a href="https://huggingface.co/datasets/humanlaya-data-lab/OneMillion-Bench">HF</a></p></section><section class="panel" id="t8-evocode-bench"><div class="meta">UniPat</div><h2><span class="no">08</span>EvoCode-Bench</h2><p><strong>测什么、为什么</strong>：现有编码 benchmark 大多一次给齐需求、一次判分。真实开发是需求一轮轮演进、互相冲突，前面写下的代码会约束后面的工作。EvoCode 把一个任务做成 5–15 轮的连续会话，同一个 workspace 一直保留，测 agent 能不能“maintain a valid evolving workspace”。</p>
 <p><strong>样例设计</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -1049,7 +1048,7 @@
 <li>官网自曝：Harbor 的多轮模式会把上一轮的 <code>/tests/test.sh</code> 和 reward 留在 workspace 里，影响 12/26 个任务；修复后全部重跑，上游 issue #1960、PR #1961。</li>
 </ul>
 <p><strong>局限（附录 A）</strong>：只有 26 题，扩展受限于人工成本；“The fail-stop model may underestimate agents capable of recovery”；只覆盖能用可执行测试验证的任务，主观的设计决策和代码质量不测。</p>
-<p>链接：<a href="https://arxiv.org/abs/2605.24110">arXiv 2605.24110</a> · <a href="https://unipat.ai/benchmarks/EvoCode-Bench">官网</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t9-saas-bench"><div class="meta">UniPat</div><h2><span class="no">09</span>SaaS-Bench</h2><p><strong>测什么、为什么</strong>：computer-use agent 在真实工作里要跨多个 SaaS 完成一整条业务流程，比如在 CRM 建商机、到财务系统开票、再去票务系统建活动。SaaS-Bench 把 23 个开源 SaaS 部署到本地，测这种 “professional, cross-application, long-horizon, and verifiable” 的任务。</p>
+<p>链接：<a href="https://arxiv.org/abs/2605.24110">arXiv 2605.24110</a> · <a href="https://unipat.ai/benchmarks/EvoCode-Bench">官网</a></p></section><section class="panel" id="t9-saas-bench"><div class="meta">UniPat</div><h2><span class="no">09</span>SaaS-Bench</h2><p><strong>测什么、为什么</strong>：computer-use agent 在真实工作里要跨多个 SaaS 完成一整条业务流程，比如在 CRM 建商机、到财务系统开票、再去票务系统建活动。SaaS-Bench 把 23 个开源 SaaS 部署到本地，测这种 “professional, cross-application, long-horizon, and verifiable” 的任务。</p>
 <p><strong>样例设计</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -1163,7 +1162,7 @@
 <li>另一个案例 bof_023：agent 在第 124 步发现日期写错了（“date is 19 Mar 2026 instead of 20 Mar 2026”），到第 210 步却宣布 “Bill created dated 2026-03-20 … approved”，说明 agent 对自己的检查不可靠。</li>
 </ul>
 <p><strong>可挑战点</strong>：论文没有单列局限章节。数据是合成填充的，任务由 LLM 起草；LLM-Judge 类检查点的一致率没有单独报告；Resolved 分数接近 0，模型之间拉不开差距。</p>
-<p>链接：<a href="https://arxiv.org/abs/2605.15777">arXiv 2605.15777</a> · <a href="https://unipat.ai/benchmarks/SaaS-Bench">官网</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t10-roadmapbench"><div class="meta">UniPat</div><h2><span class="no">10</span>RoadmapBench</h2><p><strong>测什么、为什么</strong>：SWE-bench 类任务是修 bug，改动小。真实的版本迭代是按路线图一次实现多个新功能。RoadmapBench 取开源项目两个相邻版本之间的真实升级，改写成 “multi-target roadmap” 指令，看 agent 能否从旧版本实现到新版本的功能。</p>
+<p>链接：<a href="https://arxiv.org/abs/2605.15777">arXiv 2605.15777</a> · <a href="https://unipat.ai/benchmarks/SaaS-Bench">官网</a></p></section><section class="panel" id="t10-roadmapbench"><div class="meta">UniPat</div><h2><span class="no">10</span>RoadmapBench</h2><p><strong>测什么、为什么</strong>：SWE-bench 类任务是修 bug，改动小。真实的版本迭代是按路线图一次实现多个新功能。RoadmapBench 取开源项目两个相邻版本之间的真实升级，改写成 “multi-target roadmap” 指令，看 agent 能否从旧版本实现到新版本的功能。</p>
 <p><strong>样例设计</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -1263,7 +1262,7 @@
 <li>模型常常完成好几个子目标后，卡在集成边界上。</li>
 </ul>
 <p><strong>局限（附录 A）</strong>：只用了两种 scaffold，“Agent performance is sensitive to scaffold design choices”；测试只验证行为正确，“do not assess code quality, maintainability, or adherence to idiomatic patterns”；只覆盖 5 种语言。</p>
-<p>链接：<a href="https://arxiv.org/abs/2605.15846">arXiv 2605.15846</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t11-clawbench"><div class="meta">UniPat</div><h2><span class="no">11</span>ClawBench</h2><p><strong>测什么、为什么</strong>：已有的 web benchmark 大多是只读检索或沙箱点击。日常在线助手真正要做的是 “write-heavy tasks that submit information, reserve services, place orders, fill applications”，也就是在真实生产网站上把流程推进到会改变服务器状态的最后一步。</p>
+<p>链接：<a href="https://arxiv.org/abs/2605.15846">arXiv 2605.15846</a></p></section><section class="panel" id="t11-clawbench"><div class="meta">UniPat</div><h2><span class="no">11</span>ClawBench</h2><p><strong>测什么、为什么</strong>：已有的 web benchmark 大多是只读检索或沙箱点击。日常在线助手真正要做的是 “write-heavy tasks that submit information, reserve services, place orders, fill applications”，也就是在真实生产网站上把流程推进到会改变服务器状态的最后一步。</p>
 <p><strong>样例设计</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -1371,7 +1370,7 @@
 </tbody>
 </table></div>
 <p><strong>局限（原文 Limitations）</strong>：真实网站会改版、做 A/B 测试、按地区变化，“exact reproduction is not guaranteed”；成本高，重复试验少；分数绑定在 OpenClaw 这套 harness 上；二值判定抹掉了中间进度；judge 和被测的 Sonnet 4.6 同属一个模型家族；移动端、非英语和无障碍场景覆盖不足。</p>
-<p>链接：<a href="https://arxiv.org/abs/2604.08523">arXiv 2604.08523</a> · <a href="https://claw-bench.com">claw-bench.com</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t12-babyvision"><div class="meta">UniPat</div><h2><span class="no">12</span>BabyVision</h2><p><strong>测什么、为什么</strong>：多模态模型在语言类 benchmark 上能拿到博士水平的成绩，但很多题可以靠文字推理或语义先验蒙对。BabyVision 只测 “beyond-language” 的基础视觉能力，也就是幼儿就会的找不同、走迷宫、看影子。</p>
+<p>链接：<a href="https://arxiv.org/abs/2604.08523">arXiv 2604.08523</a> · <a href="https://claw-bench.com">claw-bench.com</a></p></section><section class="panel" id="t12-babyvision"><div class="meta">UniPat</div><h2><span class="no">12</span>BabyVision</h2><p><strong>测什么、为什么</strong>：多模态模型在语言类 benchmark 上能拿到博士水平的成绩，但很多题可以靠文字推理或语义先验蒙对。BabyVision 只测 “beyond-language” 的基础视觉能力，也就是幼儿就会的找不同、走迷宫、看影子。</p>
 <p><strong>样例设计</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -1462,7 +1461,7 @@
 <li>最难的子类：Find the Same 最好只有 26.5%；需要推断被遮挡体积的题最好只有 20.5%。</li>
 </ul>
 <p><strong>可挑战点</strong>：题目从网络图片扩充而来，污染风险靠过滤控制；生成版 judge 只在一个模型的输出上做了人工校验。</p>
-<p>链接：<a href="https://arxiv.org/abs/2601.06521">arXiv 2601.06521</a> · <a href="https://www.unipat.ai/benchmarks">官网</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t13-monthly-swebench-与-paperbenchx"><div class="meta">UniPat</div><h2><span class="no">13</span>Monthly-SWEBench 与 PaperBenchX</h2><p>两者都只有官网页面，没有论文。</p>
+<p>链接：<a href="https://arxiv.org/abs/2601.06521">arXiv 2601.06521</a> · <a href="https://www.unipat.ai/benchmarks">官网</a></p></section><section class="panel" id="t13-monthly-swebench-与-paperbenchx"><div class="meta">UniPat</div><h2><span class="no">13</span>Monthly-SWEBench 与 PaperBenchX</h2><p>两者都只有官网页面，没有论文。</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -1491,7 +1490,7 @@
 </tbody>
 </table></div>
 <p>缺口：两者都没有公开题目原文和 rubric。Monthly 系列每月难度会波动，跨月比较要谨慎。</p>
-<p>链接：<a href="https://unipat.ai/benchmarks/MonthlySWEBench">Monthly-SWEBench</a> · <a href="https://www.unipat.ai/benchmarks/PaperBenchX">PaperBenchX</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t14-edgebench"><div class="meta">Seed</div><h2><span class="no">14</span>EdgeBench</h2><p><strong>测什么、为什么</strong>：预训练有 scaling law，但模型部署后在环境里边做边学的能力还很少有人量化。EdgeBench 用 134 个“天级”真实任务，每个任务至少跑 12 小时，测<strong>学习曲线</strong>，而不只是终点成绩。</p>
+<p>链接：<a href="https://unipat.ai/benchmarks/MonthlySWEBench">Monthly-SWEBench</a> · <a href="https://www.unipat.ai/benchmarks/PaperBenchX">PaperBenchX</a></p></section><section class="panel" id="t14-edgebench"><div class="meta">Seed</div><h2><span class="no">14</span>EdgeBench</h2><p><strong>测什么、为什么</strong>：预训练有 scaling law，但模型部署后在环境里边做边学的能力还很少有人量化。EdgeBench 用 134 个“天级”真实任务，每个任务至少跑 12 小时，测<strong>学习曲线</strong>，而不只是终点成绩。</p>
 <p><strong>样例设计</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -1546,7 +1545,7 @@
 <li>对策：减少或聚合可能泄露答案的反馈、限制提交次数并设冷却、对随机任务用隐藏的多种子评测、扩大完整性检查范围、断网。</li>
 </ul>
 <p><strong>局限（D.5）</strong>：log-sigmoid 只是一种充分机制。分数颗粒粗的任务会出现长平台再突然跳升；任务之间有前置依赖时会出现多段 S 曲线；短窗口拟合出的 Smax 不能当作真正的上限。</p>
-<p>链接：<a href="https://arxiv.org/abs/2607.05155">arXiv 2607.05155</a> · <a href="https://github.com/ByteDance-Seed/EdgeBench">GitHub</a> · <a href="https://huggingface.co/datasets/ByteDance-Seed/EdgeBench">HF</a> · <a href="https://edge-bench.org">edge-bench.org</a> · <a href="https://seed.bytedance.com/en/blog/edgebench-measuring-real-world-environment-learning-and-discovering-a-new-scaling-law">博客</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t15-xpertbench"><div class="meta">Seed</div><h2><span class="no">15</span>XpertBench</h2><p><strong>测什么、为什么</strong>：考试型 benchmark（如 MMLU-Pro）已经饱和，而且测不出真实专业工作里的开放推理。另一个问题是现有 rubric 普遍 “granularity deficit”，零样本 LLM judge 又容易偏好某种文风。XpertBench 收集专家真实工作场景里的任务，配上细粒度的加权原子 rubric 和 few-shot 校准的 judge。</p>
+<p>链接：<a href="https://arxiv.org/abs/2607.05155">arXiv 2607.05155</a> · <a href="https://github.com/ByteDance-Seed/EdgeBench">GitHub</a> · <a href="https://huggingface.co/datasets/ByteDance-Seed/EdgeBench">HF</a> · <a href="https://edge-bench.org">edge-bench.org</a> · <a href="https://seed.bytedance.com/en/blog/edgebench-measuring-real-world-environment-learning-and-discovering-a-new-scaling-law">博客</a></p></section><section class="panel" id="t15-xpertbench"><div class="meta">Seed</div><h2><span class="no">15</span>XpertBench</h2><p><strong>测什么、为什么</strong>：考试型 benchmark（如 MMLU-Pro）已经饱和，而且测不出真实专业工作里的开放推理。另一个问题是现有 rubric 普遍 “granularity deficit”，零样本 LLM judge 又容易偏好某种文风。XpertBench 收集专家真实工作场景里的任务，配上细粒度的加权原子 rubric 和 few-shot 校准的 judge。</p>
 <p><strong>样例设计</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -1677,7 +1676,7 @@
 </table></div>
 <p>最高分只有约 66%；工程与应用科学是所有模型的短板。</p>
 <p><strong>可挑战点</strong>：论文没有单列局限章节。judge 的锚点是 GPT-5，可能对同家族模型有偏；CDR 52% 意味着仍有不少排序和专家相反；计算机和医疗在 Gold 里样本太少，没有做分领域分析；全集 1,346 题没有公开。</p>
-<p>链接：<a href="https://arxiv.org/abs/2604.02368">arXiv 2604.02368</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t16-widesearch"><div class="meta">Seed</div><h2><span class="no">16</span>WideSearch</h2><p><strong>测什么、为什么</strong>：很多信息收集工作并不难，但量很大，比如把 6 年的福布斯榜单整理成一张完整的表。WideSearch 测 agent 在这种 “wide” 任务上能否做到完整、准确，一格都不错。</p>
+<p>链接：<a href="https://arxiv.org/abs/2604.02368">arXiv 2604.02368</a></p></section><section class="panel" id="t16-widesearch"><div class="meta">Seed</div><h2><span class="no">16</span>WideSearch</h2><p><strong>测什么、为什么</strong>：很多信息收集工作并不难，但量很大，比如把 6 年的福布斯榜单整理成一张完整的表。WideSearch 测 agent 在这种 “wide” 任务上能否做到完整、准确，一格都不错。</p>
 <p><strong>样例设计（五阶段）</strong></p>
 <ol>
 <li>从真实用户 query 中筛出适合做 wide search 的题，改写得清晰无歧义。</li>
@@ -1760,7 +1759,7 @@
 <li>多 agent 分而治之在 F1 上稳定优于单 agent。</li>
 </ul>
 <p><strong>可挑战点</strong>：人类 SR 也只有 20%，说明“一格不错”这个标准对人同样苛刻；题目有时效性，gold 表需要维护。</p>
-<p>链接：<a href="https://arxiv.org/abs/2508.07999">arXiv 2508.07999</a> · <a href="https://widesearch-seed.github.io/">项目页</a> · <a href="https://huggingface.co/datasets/ByteDance-Seed/WideSearch">HF</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t17-模型卡评测体系"><div class="meta">Seed</div><h2><span class="no">17</span>模型卡评测体系</h2><p><strong>动机（Seed2.0 模型卡）</strong>：评测的选择依据是火山 MaaS 的真实用量。国内 MaaS 流量绝大部分来自互联网行业；按场景分，“Unstructured information processing and analysis dominates”，其后是教育、内容创作、搜索推荐。这些数据来自签了数据授权协议的 “Doubao Collaboration Incentive Program”。模型卡也直接写了差距：“Seed2.0 Series have considerable gaps with Claude in terms of coding … relatively obvious gaps with Gemini in terms of long-tail knowledge”。</p>
+<p>链接：<a href="https://arxiv.org/abs/2508.07999">arXiv 2508.07999</a> · <a href="https://widesearch-seed.github.io/">项目页</a> · <a href="https://huggingface.co/datasets/ByteDance-Seed/WideSearch">HF</a></p></section><section class="panel" id="t17-模型卡评测体系"><div class="meta">Seed</div><h2><span class="no">17</span>模型卡评测体系</h2><p><strong>动机（Seed2.0 模型卡）</strong>：评测的选择依据是火山 MaaS 的真实用量。国内 MaaS 流量绝大部分来自互联网行业；按场景分，“Unstructured information processing and analysis dominates”，其后是教育、内容创作、搜索推荐。这些数据来自签了数据授权协议的 “Doubao Collaboration Incentive Program”。模型卡也直接写了差距：“Seed2.0 Series have considerable gaps with Claude in terms of coding … relatively obvious gaps with Gemini in terms of long-tail knowledge”。</p>
 <p><strong>四个维度（原文）</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -1855,7 +1854,7 @@
 <li>正文写的是 GDPVal-Verified，表里写的是 GDPVal-Diamond，模型卡没有说明两者是不是同一个东西，也没给题数和 rubric 来源。</li>
 <li>XpertBench 是 Seed 自建的，Seed2.0 Pro 在上面领先 11 分以上；而在外部的 GDPVal 上，它落后 GPT-5.2。</li>
 </ul>
-<p>链接：Seed2.0 <a href="https://arxiv.org/abs/2607.00248">arXiv 2607.00248</a> · Seed1.8 <a href="https://arxiv.org/abs/2603.20633">arXiv 2603.20633</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t18-frontier-eng"><div class="meta">Einsia</div><h2><span class="no">18</span>Frontier-Eng</h2><p><strong>测什么、为什么</strong>：真实的工程优化是一个反复循环：提方案、跑仿真或评测、拿反馈再改。目标是在约束下把分数往上推，而不是一次答对。Frontier-Eng 测的是 “generative optimization”：在固定交互预算内，LLM agent 能把一个可行但朴素的初始解改进到什么程度。</p>
+<p>链接：Seed2.0 <a href="https://arxiv.org/abs/2607.00248">arXiv 2607.00248</a> · Seed1.8 <a href="https://arxiv.org/abs/2603.20633">arXiv 2603.20633</a></p></section><section class="panel" id="t18-frontier-eng"><div class="meta">Einsia</div><h2><span class="no">18</span>Frontier-Eng</h2><p><strong>测什么、为什么</strong>：真实的工程优化是一个反复循环：提方案、跑仿真或评测、拿反馈再改。目标是在约束下把分数往上推，而不是一次答对。Frontier-Eng 测的是 “generative optimization”：在固定交互预算内，LLM agent 能把一个可行但朴素的初始解改进到什么程度。</p>
 <p><strong>样例设计</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -1907,7 +1906,7 @@
 <li>宽度（并行搜索）提高多样性，但在固定预算下，难的改进还是要靠深度。</li>
 </ul>
 <p><strong>可挑战点</strong>：论文没有单列局限章节。同一模型重测后排名变化很大（5.68 → 3.54），说明单次运行的方差不小；平均排名只看先后，不看差距大小。</p>
-<p>链接：<a href="https://arxiv.org/abs/2604.12290">arXiv 2604.12290</a> · <a href="https://lab.einsia.ai/research/">Research</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t19-ai4ai-bench"><div class="meta">Einsia</div><h2><span class="no">19</span>AI4AI-Bench</h2><p><strong>测什么、为什么</strong>：AI 能不能改进 AI 的训练算法？要回答这个问题，就要排除调参、加算力、拉长训练这些因素，只看 “a change to how the model learns”。</p>
+<p>链接：<a href="https://arxiv.org/abs/2604.12290">arXiv 2604.12290</a> · <a href="https://lab.einsia.ai/research/">Research</a></p></section><section class="panel" id="t19-ai4ai-bench"><div class="meta">Einsia</div><h2><span class="no">19</span>AI4AI-Bench</h2><p><strong>测什么、为什么</strong>：AI 能不能改进 AI 的训练算法？要回答这个问题，就要排除调参、加算力、拉长训练这些因素，只看 “a change to how the model learns”。</p>
 <p><strong>样例设计</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -1951,7 +1950,7 @@
 <li>真正改动了目标函数、监督信号、学习规则或数据的 122 次提交平均 0.226，其余只有 0.126。</li>
 </ul>
 <p><strong>可挑战点</strong>：论文承认 proxy 和最终评测的隔离是 “one of access and timing rather than of sample disjointness”，有的任务两者取自同一语料；每个格子只跑一次。</p>
-<p>链接：<a href="https://arxiv.org/abs/2608.20318">arXiv 2608.20318</a> · <a href="https://github.com/Einsia/AI4AI-Bench">GitHub</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t20-swe-refactor-bench"><div class="meta">Einsia</div><h2><span class="no">20</span>SWE Refactor Bench</h2><p><strong>测什么、为什么</strong>：整仓库迁移（换语言、换框架、换平台、换构建工具）开始时测试就是全绿的，所以 “A correct migration and an untouched repository can therefore receive the same perfect test score”。论文把这种情况叫 <strong>Blindness</strong>：只看行为的 evaluator 会给一个根本没迁移的仓库满分。</p>
+<p>链接：<a href="https://arxiv.org/abs/2608.20318">arXiv 2608.20318</a> · <a href="https://github.com/Einsia/AI4AI-Bench">GitHub</a></p></section><section class="panel" id="t20-swe-refactor-bench"><div class="meta">Einsia</div><h2><span class="no">20</span>SWE Refactor Bench</h2><p><strong>测什么、为什么</strong>：整仓库迁移（换语言、换框架、换平台、换构建工具）开始时测试就是全绿的，所以 “A correct migration and an untouched repository can therefore receive the same perfect test score”。论文把这种情况叫 <strong>Blindness</strong>：只看行为的 evaluator 会给一个根本没迁移的仓库满分。</p>
 <p><strong>样例设计</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -1999,7 +1998,7 @@
 <li>30 次运行没做迁移却保住了全部行为（只有 Stage I 能拦住）；252 次运行做了迁移但破坏了行为（只有 Stage II 能拦住）。通过全部固定检查的 88 次里，有 60 次被 verifier 找到反例，中位耗时 17.0 分钟。</li>
 </ul>
 <p><strong>可挑战点</strong>：每种配置只跑 1 次；Stage I 依赖 LLM judge，并且偏严；每题评测成本很高（6 个 agent 各 1 小时）。</p>
-<p>链接：<a href="https://arxiv.org/abs/2608.23564">arXiv 2608.23564</a> · <a href="https://github.com/Einsia/SWE-Refactor-Bench">GitHub</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t21-pptbench"><div class="meta">Einsia</div><h2><span class="no">21</span>PPTBench</h2><p><strong>测什么、为什么</strong>：把论文里的流程图还原成<strong>可编辑</strong>的单页 PPT，用来测 agent 的 “visual coding” 能力：看图、测量、再用原生形状、文本框和连接线把图重建出来。</p>
+<p>链接：<a href="https://arxiv.org/abs/2608.23564">arXiv 2608.23564</a> · <a href="https://github.com/Einsia/SWE-Refactor-Bench">GitHub</a></p></section><section class="panel" id="t21-pptbench"><div class="meta">Einsia</div><h2><span class="no">21</span>PPTBench</h2><p><strong>测什么、为什么</strong>：把论文里的流程图还原成<strong>可编辑</strong>的单页 PPT，用来测 agent 的 “visual coding” 能力：看图、测量、再用原生形状、文本框和连接线把图重建出来。</p>
 <p><strong>样例设计</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -2097,7 +2096,7 @@
 </table></div>
 <p>所有配置的中位数是 24.38，最差的是 GPT-5.6 Luna none，1.53。推理强度并不是越高越好：Astra 的 high 档比 xhigh 和 max 都高。</p>
 <p><strong>可挑战点</strong>：judge 和被测模型（GPT-5.6 系列）同属一家；只测单页流程图，不涉及多页叙事和排版设计。</p>
-<p>链接：<a href="https://arxiv.org/abs/2609.29718">arXiv 2609.29718</a> · <a href="https://github.com/Einsia/PPTBench">GitHub</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t22-world-models-last-exam-in-physics"><div class="meta">Einsia</div><h2><span class="no">22</span>World Models&#x27; Last Exam in Physics</h2><p><strong>测什么、为什么</strong>：视频生成模型画面越来越逼真，但物理上未必对。这个 bench 把物理定律写成<strong>在视频里可观测、不需要绝对标定的关系</strong>，用测量来检验，不需要参考视频。</p>
+<p>链接：<a href="https://arxiv.org/abs/2609.29718">arXiv 2609.29718</a> · <a href="https://github.com/Einsia/PPTBench">GitHub</a></p></section><section class="panel" id="t22-world-models-last-exam-in-physics"><div class="meta">Einsia</div><h2><span class="no">22</span>World Models&#x27; Last Exam in Physics</h2><p><strong>测什么、为什么</strong>：视频生成模型画面越来越逼真，但物理上未必对。这个 bench 把物理定律写成<strong>在视频里可观测、不需要绝对标定的关系</strong>，用测量来检验，不需要参考视频。</p>
 <p><strong>样例设计</strong></p>
 <ul>
 <li>任务定义 Tk = (Ak, I0,k, pk, Rk)：物理假设、首帧图像、提示词、可测判据。首帧由 GPT-Image-2.5 生成。</li>
@@ -2121,14 +2120,14 @@
 <li>在物理关系已知的合成视频上，evaluator 平均给 97.53 分。用 320 段视频、10 位标注员做人工对照，评分排序和人的一致性好于直接让 Qwen3.6-27B 打分。</li>
 </ul>
 <p><strong>局限（摘要原文）</strong>：结论限于可观测关系，“unmeasured physical properties remain unverified”；斜抛比值无法消除任意透视畸变，只能靠提示词限定视角。</p>
-<p>链接：<a href="https://arxiv.org/abs/2610.08791">arXiv 2610.08791</a> · <a href="https://github.com/Einsia/phys-last-exam">GitHub</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t23-browserbc-方法论文"><div class="meta">Einsia</div><h2><span class="no">23</span>BrowserBC（方法论文）</h2><p>这不是 benchmark，放在这里是因为它用了两个 bench 来评测。</p>
+<p>链接：<a href="https://arxiv.org/abs/2610.08791">arXiv 2610.08791</a> · <a href="https://github.com/Einsia/phys-last-exam">GitHub</a></p></section><section class="panel" id="t23-browserbc-方法论文"><div class="meta">Einsia</div><h2><span class="no">23</span>BrowserBC（方法论文）</h2><p>这不是 benchmark，放在这里是因为它用了两个 bench 来评测。</p>
 <ul>
 <li>观点：浏览器 agent 的瓶颈是 “decision-making under incomplete information rather than low-level operation”，而 agent 缺的先验知识就藏在人类的浏览轨迹里。</li>
 <li>方法：把用户交互轨迹蒸馏成自然语言的 skill 卡片（意图、适用条件、前置条件、策略），组织成 skill graph，“growth proceeds through consolidation rather than unbounded accumulation”。</li>
 <li>结果：同一个 agent，WebArena-Hard 从 60.5%（156/258）提高到 81.4%（210/258）；ClawBench 从 32.9%（50/152）提高到 68.4%（104/152），8 个类别都有提升。</li>
 <li>可挑战点：ClawBench 在这里只用了 152 题，原论文是 153 题；蒸馏用的人类轨迹从哪来、和测试网站有多少重叠，需要看原文附录。</li>
 </ul>
-<p>链接：<a href="https://arxiv.org/abs/2606.32014">arXiv 2606.32014</a> · <a href="https://github.com/Einsia/Browser-BC">GitHub</a> · <a href="https://lab.einsia.ai/browserbc/">项目页</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t24-kimi-k3-自建评测"><div class="meta">Moonshot</div><h2><span class="no">24</span>Kimi K3 自建评测</h2><p><strong>来源</strong>：Kimi K3 tech report 第 6.2 节。报告只给了描述和分数，<strong>没有公开题目、rubric 或数据</strong>。这些评测 “are refreshed and expanded frequently, so that they can closely track the model’s evolving failure modes and directly guide data and training iterations”。</p>
+<p>链接：<a href="https://arxiv.org/abs/2606.32014">arXiv 2606.32014</a> · <a href="https://github.com/Einsia/Browser-BC">GitHub</a> · <a href="https://lab.einsia.ai/browserbc/">项目页</a></p></section><section class="panel" id="t24-kimi-k3-自建评测"><div class="meta">Moonshot</div><h2><span class="no">24</span>Kimi K3 自建评测</h2><p><strong>来源</strong>：Kimi K3 tech report 第 6.2 节。报告只给了描述和分数，<strong>没有公开题目、rubric 或数据</strong>。这些评测 “are refreshed and expanded frequently, so that they can closely track the model’s evolving failure modes and directly guide data and training iterations”。</p>
 <p><strong>和本页 benchmark 的交集</strong>：K3 的公开评测里用到了 SaaS-Bench（60.1，GPT-5.6 Sol 61.4）、BabyVision w/ Python（85.7，Claude Fable 5 90.5）、Finance Agent v2（54.4）、GDPval-AA v2（Elo 1686）。</p>
 <div class="table-wrap"><table>
 <thead>
@@ -2211,7 +2210,7 @@
 <p><strong>Kimi Webdev Bench（专家盲评两两比较，K3 对 Claude Opus 4.8，均用 Claude Code）</strong>：专家从代码质量、功能完整度、视觉还原、交互体验打分，不知道是哪个模型。总体胜 58.6% / 平 13.8% / 负 27.6%；3D/WebGL/Shader 胜 72.7%；游戏胜 55.6%、负 40.7%。这是本页唯一一个由模型厂商自己采用 GDPval / WebDev Arena 式两两比较的例子。</p>
 <p><strong>训练侧对应</strong>：4.2.5 节的个人助理环境（Gmail/Notion/Slack/Canvas mock，多模拟天、“Each event carries its own evaluation criterion”）对应 24/7 ClawBench 2.0；4.2.6 节的 Autonomous Execution Tasks 对应 KAET。也就是说，内部评测和 RL 环境是同一套任务形式。</p>
 <p><strong>可挑战点</strong>：全部是自建、未公开的评测；部分对照模型有拒答或 fallback（如 Claude Fable 5 在 KCB 2.0 上 80 题里 13 次 fallback、1 次拒答），分数不完全可比。</p>
-<p>链接：<a href="https://arxiv.org/abs/2607.24653">arXiv 2607.24653</a> · <a href="https://github.com/MoonshotAI/Kimi-K3">GitHub</a> · <a href="https://www.kimi.com/blog/kimi-k3">博客</a> · <a href="https://huggingface.co/moonshotai/Kimi-K3">HF</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t25-智能知识-曼孚"><div class="meta">其他</div><h2><span class="no">25</span>智能知识 / 曼孚</h2><div class="table-wrap"><table>
+<p>链接：<a href="https://arxiv.org/abs/2607.24653">arXiv 2607.24653</a> · <a href="https://github.com/MoonshotAI/Kimi-K3">GitHub</a> · <a href="https://www.kimi.com/blog/kimi-k3">博客</a> · <a href="https://huggingface.co/moonshotai/Kimi-K3">HF</a></p></section><section class="panel" id="t25-智能知识-曼孚"><div class="meta">其他</div><h2><span class="no">25</span>智能知识 / 曼孚</h2><div class="table-wrap"><table>
 <thead>
 <tr>
 <th>公司</th>
@@ -2235,14 +2234,14 @@
 </tr>
 </tbody>
 </table></div>
-<p>链接：<a href="https://human-intelligence.cn/expert-eval/">智能知识 Expert Eval</a> · <a href="https://human-intelligence.xpertiise.com/blog/beyond-benchmark-coding-expert-eval/">Coding 专家评估博客</a> · <a href="https://www.mindflow.com.cn/eval-benchmark.html">曼孚 Eval</a> · <a href="https://news.e-works.net.cn/category802/news138025.htm">曼孚新闻稿</a></p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t26-跨-benchmark-的规律"><div class="meta">共性</div><h2><span class="no">26</span>跨 benchmark 的规律</h2><ul>
+<p>链接：<a href="https://human-intelligence.cn/expert-eval/">智能知识 Expert Eval</a> · <a href="https://human-intelligence.xpertiise.com/blog/beyond-benchmark-coding-expert-eval/">Coding 专家评估博客</a> · <a href="https://www.mindflow.com.cn/eval-benchmark.html">曼孚 Eval</a> · <a href="https://news.e-works.net.cn/category802/news138025.htm">曼孚新闻稿</a></p></section><section class="panel" id="t26-跨-benchmark-的规律"><div class="meta">共性</div><h2><span class="no">26</span>跨 benchmark 的规律</h2><ul>
 <li><strong>任务来源</strong>：真实的付费工作或真实用户请求（XpertBench、OMB、WideSearch、VitaBench），或者真实代码库的变更（UniPat、Einsia）。</li>
 <li><strong>判分</strong>：原子二值项加权重是主流，再用一致率校准 judge。XpertBench 报了 CDR，OMB 报了分领域的 Pearson，ClawBench 报了 85–93% 的一致率；VitaBench 2.0 没报。</li>
 <li><strong>防钻空子</strong>：几乎每个长程 bench 都遇到过 agent 钻评测的空子，比如 EdgeBench 附录 C、EvoCode 泄题、SWE Refactor 的 Blindness。work–judge 隔离、隐藏多种子、迁移审计正在成为标配。</li>
 <li><strong>严格指标和部分分并报</strong>：SaaS-Bench 的 Resolved 3.8 对 Checkpoint 43.9，OMB 的 Pass Rate 对 Expert Score，EvoCode 的 MT@4 对 SR，RoadmapBench 的 Resolved 对 Completion。两者差距本身就是一个诊断信号：模型能做对一部分，但交付不了。</li>
 <li><strong>harness 是被测对象的一部分</strong>：AI4AI 把被测单位直接定义为 “model + harness + effort”；RoadmapBench、ClawBench、OMB 都报告了换 scaffold 后排名会变。</li>
 <li><strong>和 GDPval 的差别</strong>：国内各家（OMB、XpertBench、Copula）都采用绝对分 rubric 加 LLM judge，没有一家照搬 GDPval 那种“和人类交付物两两比较”的主指标。OMB 借鉴了 GDPval 的“工资 × 工时”定价思路，Seed 则直接从 GDPval 里取了一个带 rubric 的子集来用。</li>
-</ul><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section></div>
+</ul></section></div>
 <footer class="foot">来源均为原文 PDF、官方仓库、HF 数据集或官网页面；引用保留原文措辞。</footer>
 </main>
 <script>

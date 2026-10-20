@@ -14,7 +14,6 @@
 .panel>.meta{margin-top:28px}
 .report .panel>h2{margin-top:.3em;padding-top:0;border-top:0}
 .report h2 .no{margin-right:10px;font:500 13px var(--sans);color:var(--faint);vertical-align:.2em}
-.totop{display:inline-block;margin-top:40px;font:500 11px var(--sans);color:var(--mute)!important;border:0!important}
 .art td:first-child{color:var(--ink)}
 .art .table-wrap>table{min-width:680px}
 .art blockquote p{margin:6px 0}
@@ -170,7 +169,7 @@
 </tr>
 </tbody>
 </table></div>
-<hr /><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t1-预训练数据"><div class="meta">主题</div><h2><span class="no">01</span>预训练数据</h2><div class="table-wrap"><table>
+<hr /></section><section class="panel" id="t1-预训练数据"><div class="meta">主题</div><h2><span class="no">01</span>预训练数据</h2><div class="table-wrap"><table>
 <thead>
 <tr>
 <th>模型</th>
@@ -211,7 +210,7 @@
 <td>报告没给总 token 数。四个文本领域（Web Text、Code、Mathematics、Knowledge）加大规模视觉语料；沿用 K2 的改写（“style and perspective-diverse prompting, chunk-wise autoregressive generation, and fidelity verification”）；大幅扩充“程序化多模态数据”（代码与渲染结果配对：SVG、3D、网页、游戏、CAD）；长上下文数据做精确 / 模糊去重和视频帧感知哈希，上采样真实长文档，并把多模态文档和子任务置换拼接，让任务“can be solved only by attending to information scattered across the full 1M-token context”；上下文 8K→64K（预训练），256K→1M（cooldown）；相对 K2 的扩展效率提升约 2.5×</td>
 </tr>
 </tbody>
-</table></div><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t2-sft-与合成数据"><div class="meta">主题</div><h2><span class="no">02</span>SFT 与合成数据</h2><div class="table-wrap"><table>
+</table></div></section><section class="panel" id="t2-sft-与合成数据"><div class="meta">主题</div><h2><span class="no">02</span>SFT 与合成数据</h2><div class="table-wrap"><table>
 <thead>
 <tr>
 <th>模型</th>
@@ -248,7 +247,7 @@
 <td>用前代 Kimi 的领域专精模型合成轨迹，“followed by multi-stage verification and human-in-the-loop annotation”；所有数据用 XTML 聊天模板序列化；从 SFT 起就做 MXFP4 量化感知训练；RL 后不同推理强度专家的轨迹再收集起来做 SFT 和多教师蒸馏。knowledge-graph-guided 合成：agent 递归扩展知识图谱（DAG），按节点采样关键词检索真实材料，再合成编程、知识、视觉等任务</td>
 </tr>
 </tbody>
-</table></div><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t3-rl-环境与奖励"><div class="meta">主题</div><h2><span class="no">03</span>RL 环境与奖励</h2><div class="table-wrap"><table>
+</table></div></section><section class="panel" id="t3-rl-环境与奖励"><div class="meta">主题</div><h2><span class="no">03</span>RL 环境与奖励</h2><div class="table-wrap"><table>
 <thead>
 <tr>
 <th>模型</th>
@@ -303,7 +302,7 @@
 <td>kernel：超误差阈值得 0，追平专家实现得 0.5，逼近 roofline 趋近 1，另有防作弊检测（CUDA graph replay、输入缓存、降精度）；个人助理：每个事件有规则或 LLM 判据；AET：公开 verifier 给诊断，隐藏 verifier 测留出场景，限提交次数；webdev：确定性检查 + 内部奖励模型，构建失败或“fakes rather than implements”记 0；不可验证任务用 Agentic GRM：先生成 rubric 再逐候选打分，超长输出直接判负；超出 token 预算的轨迹奖励记 −1</td>
 </tr>
 </tbody>
-</table></div><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t4-agent-轨迹"><div class="meta">主题</div><h2><span class="no">04</span>Agent 轨迹</h2><div class="table-wrap"><table>
+</table></div></section><section class="panel" id="t4-agent-轨迹"><div class="meta">主题</div><h2><span class="no">04</span>Agent 轨迹</h2><div class="table-wrap"><table>
 <thead>
 <tr>
 <th>模型</th>
@@ -332,7 +331,7 @@
 <td>部分 rollout：一个 iteration 中 λ 比例完成就开始更新，未完成轨迹暂停入队、下轮恢复，所以单条长轨迹可能跨多个 iteration，用逐 token 正则容忍 off-policy；可验证 agent 任务包括多步检索、投行/数据分析/法律等专业工作（“dozens to hundreds of steps”）、带 Python 沙箱的多步视觉推理（裁剪、缩放、计算）</td>
 </tr>
 </tbody>
-</table></div><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t5-评测集选择"><div class="meta">主题</div><h2><span class="no">05</span>评测集选择</h2><div class="table-wrap"><table>
+</table></div></section><section class="panel" id="t5-评测集选择"><div class="meta">主题</div><h2><span class="no">05</span>评测集选择</h2><div class="table-wrap"><table>
 <thead>
 <tr>
 <th>模型</th>
@@ -366,14 +365,14 @@
 </tr>
 </tbody>
 </table></div>
-<hr /><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t6-对数据公司和评测-pm"><div class="meta">启示</div><h2><span class="no">06</span>对数据公司和评测 PM</h2><ol>
+<hr /></section><section class="panel" id="t6-对数据公司和评测-pm"><div class="meta">启示</div><h2><span class="no">06</span>对数据公司和评测 PM</h2><ol>
 <li><strong>采购重心在可验证环境</strong>：GLM-5（10K+）、LongCat（10,000+ 环境）、V3.2（1,800+ 环境）都在比环境数量。能直接交付 Docker 环境、测试和 verifier 的供应商（智能知识的 Terminal/MCP 数据、Copula 的 RL 环境）站在需求最大的地方。</li>
 <li><strong>不可验证任务靠 rubric</strong>：Kimi K2 的 self-critique rubric、MiniMax M2 的多轴 rubric 验收、Qwen3 的 20 多类自定义打分标准，说明专家写的 rubric 本身就是产品，和 OMB、XpertBench 的评测方法是同一套能力。</li>
 <li><strong>GDPval 已成为 office 类任务的起点</strong>：MiniMax 直接拿 GDPval 做种子再扩展。Copula 的中文 GDPval 和金融长程题正好补中文和本地合规这块空白。</li>
 <li><strong>SWE 数据已经工业化</strong>：PR → Docker → F2P/P2P 测试，几家做法高度一致，差异化要靠多语言、非 bug-fix 类任务（feature、性能、迁移），对应 RoadmapBench、SWE Refactor Bench 这类评测。</li>
 <li><strong>防 reward hacking 是共识</strong>：R1 不用神经网络 RM 的理由、M2 要求答案有检索证据支撑、EdgeBench 和 EvoCode 的泄题案例都指向这一点。评测 PM 的价值在于设计 judge 隔离、隐藏测试和审计流程。</li>
 <li><strong>公开信息的缺口</strong>：字节 Seed 和 Qwen3.5 没有公开数据细节；各家都不报告 judge 和人工的一致率。面试时可以作为切入点。</li>
-</ol><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section></div>
+</ol></section></div>
 <footer class="foot">来源均为原文 PDF、官方仓库、HF 数据集或官网页面；引用保留原文措辞。</footer>
 </main>
 <script>

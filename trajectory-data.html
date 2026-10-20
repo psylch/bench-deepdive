@@ -14,7 +14,6 @@
 .panel>.meta{margin-top:28px}
 .report .panel>h2{margin-top:.3em;padding-top:0;border-top:0}
 .report h2 .no{margin-right:10px;font:500 13px var(--sans);color:var(--faint);vertical-align:.2em}
-.totop{display:inline-block;margin-top:40px;font:500 11px var(--sans);color:var(--mute)!important;border:0!important}
 .art td:first-child{color:var(--ink)}
 .art .table-wrap>table{min-width:680px}
 .art blockquote p{margin:6px 0}
@@ -87,7 +86,7 @@
 <td>未公开</td>
 </tr>
 </tbody>
-</table></div><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t1-rollout-过滤"><div class="meta">构建方式</div><h2><span class="no">01</span>rollout + 过滤</h2><p><strong>做法</strong>：先有可执行的环境和能自动判对错的任务，再让强模型（或正在训练的模型）多次采样，只保留判为成功的轨迹，也就是拒绝采样。判官可以是单元测试、规则、LLM judge 或训练出来的 verifier。</p>
+</table></div></section><section class="panel" id="t1-rollout-过滤"><div class="meta">构建方式</div><h2><span class="no">01</span>rollout + 过滤</h2><p><strong>做法</strong>：先有可执行的环境和能自动判对错的任务，再让强模型（或正在训练的模型）多次采样，只保留判为成功的轨迹，也就是拒绝采样。判官可以是单元测试、规则、LLM judge 或训练出来的 verifier。</p>
 <p><strong>代表工作</strong></p>
 <ul>
 <li><a href="https://arxiv.org/abs/2412.21139">SWE-Gym</a>（2024-12）：2,438 个真实 Python 任务，每个带可执行环境和单元测试。用采样出的轨迹微调 agent，SWE-Bench Verified 和 Lite 上 resolve rate 最多提升 19 个百分点；又用轨迹训练 verifier 做推理时筛选，Verified 32.0%、Lite 26.0%。轨迹已公开。</li>
@@ -97,7 +96,7 @@
 <li><a href="https://arxiv.org/abs/2507.02592">WebSailor</a>（2025-07，通义）：先用结构化采样和信息混淆造高不确定性的搜索题，再做 RFT 冷启动（拒绝采样微调），然后 RL。</li>
 </ul>
 <p><strong>质量控制</strong>：判官准不准决定一切。单元测试最可靠，但只适用于代码；开放任务要靠 rubric + LLM judge。</p>
-<p><strong>坑</strong>：只留成功轨迹，模型学不到出错后怎么办；强模型的风格和偏好会被整体继承；判官有漏洞时，「投机成功」的轨迹也会被留下。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t2-人工示范"><div class="meta">构建方式</div><h2><span class="no">02</span>人工示范</h2><p><strong>做法</strong>：标注员在真实电脑、手机或浏览器上完成任务，录制工具记下截图、动作和时间。之后通常还要补上每一步的「思考」，因为人做任务时不会把想法写下来。</p>
+<p><strong>坑</strong>：只留成功轨迹，模型学不到出错后怎么办；强模型的风格和偏好会被整体继承；判官有漏洞时，「投机成功」的轨迹也会被留下。</p></section><section class="panel" id="t2-人工示范"><div class="meta">构建方式</div><h2><span class="no">02</span>人工示范</h2><p><strong>做法</strong>：标注员在真实电脑、手机或浏览器上完成任务，录制工具记下截图、动作和时间。之后通常还要补上每一步的「思考」，因为人做任务时不会把想法写下来。</p>
 <p><strong>代表工作</strong></p>
 <ul>
 <li><a href="https://arxiv.org/abs/2508.09123">OpenCUA</a>（2025-08）：开源了录制标注工具；数据集 AgentNet 覆盖 3 个操作系统、200+ 应用和网站，是第一个这个规模的电脑操作任务集；再把示范转成状态-动作对，并补上带反思的长思维链。OpenCUA-72B 在 OSWorld-Verified 上平均成功率 45.0%。</li>
@@ -105,13 +104,13 @@
 <li><a href="https://arxiv.org/abs/2412.04454">Aguvis</a>（2024-12）：汇总了多源 GUI 数据，补充 grounding 和推理标注，分两阶段训练。</li>
 </ul>
 <p><strong>成本</strong>：训练用人工示范的单条成本，以上论文的摘要都没有给出，标为未公开。评测侧可以参考 <a href="https://arxiv.org/abs/2506.21506">Mind2Web 2</a>：130 道长程搜索题，构建花了 1000+ 小时人工。</p>
-<p><strong>坑</strong>：人的操作路径和模型不同，比如人会凭记忆跳步；补出来的思考是事后写的，未必反映真实决策；录制涉及隐私，账号和环境搭建也很费事。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t3-真实使用日志"><div class="meta">构建方式</div><h2><span class="no">03</span>真实使用日志</h2><p><strong>做法</strong>：从产品里真实用户和 agent 的交互中取数据。好处是分布最真实；难处在隐私、授权，以及日志里没有「对错」标签。</p>
+<p><strong>坑</strong>：人的操作路径和模型不同，比如人会凭记忆跳步；补出来的思考是事后写的，未必反映真实决策；录制涉及隐私，账号和环境搭建也很费事。</p></section><section class="panel" id="t3-真实使用日志"><div class="meta">构建方式</div><h2><span class="no">03</span>真实使用日志</h2><p><strong>做法</strong>：从产品里真实用户和 agent 的交互中取数据。好处是分布最真实；难处在隐私、授权，以及日志里没有「对错」标签。</p>
 <p><strong>能查到的</strong></p>
 <ul>
 <li><a href="https://arxiv.org/abs/2412.13678">Clio</a>（2024-12，Anthropic）：一个保护隐私的系统，用来分析 Claude 的真实使用情况。它做的是使用分析，不是训练数据生产。</li>
 <li>前沿实验室是否、以及如何把真实 agent 使用日志用于训练：未公开。</li>
 </ul>
-<p><strong>对 PM 的意义</strong>：日志最大的用处往往不是直接训练，而是告诉你该造哪些任务：真实分布里哪些任务多、哪些失败多，再回到合成或人工去补。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t4-反向合成与探索"><div class="meta">构建方式</div><h2><span class="no">04</span>反向合成与探索</h2><p><strong>做法</strong>：不先写任务。让 agent 在环境里探索、点来点去，再根据它实际走过的路径倒推出一个任务描述。这样任务和轨迹天然对得上，而且覆盖的是环境里真实存在的功能。</p>
+<p><strong>对 PM 的意义</strong>：日志最大的用处往往不是直接训练，而是告诉你该造哪些任务：真实分布里哪些任务多、哪些失败多，再回到合成或人工去补。</p></section><section class="panel" id="t4-反向合成与探索"><div class="meta">构建方式</div><h2><span class="no">04</span>反向合成与探索</h2><p><strong>做法</strong>：不先写任务。让 agent 在环境里探索、点来点去，再根据它实际走过的路径倒推出一个任务描述。这样任务和轨迹天然对得上，而且覆盖的是环境里真实存在的功能。</p>
 <p><strong>代表工作</strong></p>
 <ul>
 <li><a href="https://arxiv.org/abs/2412.19723">OS-Genesis</a>（2024-12）：先交互、后推任务，再用轨迹奖励模型筛质量。</li>
@@ -119,7 +118,7 @@
 <li><a href="https://arxiv.org/abs/2502.11357">Explorer</a>（2025-02）：9.4 万+ 条成功的多模态网页轨迹，4.9 万个 URL、72 万张截图；每条成功轨迹平均约 0.28 美元。</li>
 <li><a href="https://arxiv.org/abs/2412.09605">AgentTrek</a>（2024-12）：先从网上抓教程类文本，转成带步骤的任务，再让 VLM agent 在真实环境里执行，VLM 评估器判对错。每条高质量轨迹 0.55 美元，不需要人工标注。</li>
 </ul>
-<p><strong>坑</strong>：倒推出的任务往往偏简单、偏「功能演示」，和真实用户的复杂意图有差距；环境本身的覆盖面决定上限。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t5-蓝图-模拟用户"><div class="meta">构建方式</div><h2><span class="no">05</span>蓝图 + 模拟用户</h2><p><strong>做法</strong>：多轮、带用户的任务（客服、订票、个人助理）光有 agent 不够，还需要一个「用户」。先由 pipeline 生成任务蓝图，写清用户目标和标准动作序列，再让一个 LLM 扮演用户、一个扮演 agent，把对话跑出来。最后对照蓝图验证。</p>
+<p><strong>坑</strong>：倒推出的任务往往偏简单、偏「功能演示」，和真实用户的复杂意图有差距；环境本身的覆盖面决定上限。</p></section><section class="panel" id="t5-蓝图-模拟用户"><div class="meta">构建方式</div><h2><span class="no">05</span>蓝图 + 模拟用户</h2><p><strong>做法</strong>：多轮、带用户的任务（客服、订票、个人助理）光有 agent 不够，还需要一个「用户」。先由 pipeline 生成任务蓝图，写清用户目标和标准动作序列，再让一个 LLM 扮演用户、一个扮演 agent，把对话跑出来。最后对照蓝图验证。</p>
 <p><strong>代表工作</strong></p>
 <ul>
 <li><a href="https://arxiv.org/abs/2504.03601">APIGen-MT</a>（2025-04，Salesforce）：两阶段。第一阶段生成带 ground-truth 动作的蓝图，由 LLM 评审委员会审核、迭代；第二阶段通过模拟人机互动生成完整轨迹。训练的 xLAM-2-fc-r（1B–70B）在 τ-bench 和 BFCL 上超过 GPT-4o 和 Claude 3.5。开源 5K 条轨迹。</li>
@@ -127,7 +126,7 @@
 <li>Kimi K2：同样用 LLM 生成的用户画像跑多轮轨迹，见上一节。</li>
 </ul>
 <p><strong>和交互性数据的关系</strong>：这是你说的「交互性数据」里最可规模化的一种。核心资产是可信的用户模拟器，不是单条对话。</p>
-<p><strong>坑</strong>：模拟用户太配合、太会说话，和真实用户差距大；蓝图写死了标准答案，会惩罚其他合理的做法。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t6-修复与改写"><div class="meta">构建方式</div><h2><span class="no">06</span>修复与改写</h2><p><strong>做法</strong>：模型学不会纠错，是因为训练数据里几乎全是一次做对的轨迹。于是把失败轨迹拿来，找到第一个出错的步骤，接上正确的后续，或者插入「发现错误、反思、改正」的片段。</p>
+<p><strong>坑</strong>：模拟用户太配合、太会说话，和真实用户差距大；蓝图写死了标准答案，会惩罚其他合理的做法。</p></section><section class="panel" id="t6-修复与改写"><div class="meta">构建方式</div><h2><span class="no">06</span>修复与改写</h2><p><strong>做法</strong>：模型学不会纠错，是因为训练数据里几乎全是一次做对的轨迹。于是把失败轨迹拿来，找到第一个出错的步骤，接上正确的后续，或者插入「发现错误、反思、改正」的片段。</p>
 <p><strong>代表工作</strong></p>
 <ul>
 <li><a href="https://arxiv.org/abs/2501.11425">Agent-R</a>（2025-01，字节）：用 MCTS 搜出正确和错误路径，由模型自己找到失败轨迹里第一个出错步骤，再拼接上同一父节点下的正确路径，迭代自训练。</li>
@@ -135,13 +134,13 @@
 <li><a href="https://arxiv.org/abs/2501.12326">UI-TARS</a>（2025-01，字节）：在推理中加入任务分解、反思、里程碑识别等模式，并迭代收集带反思的在线轨迹。</li>
 <li><a href="https://arxiv.org/abs/2508.09123">OpenCUA</a>：给人工示范补「反思式长思维链」，也属于这一类。</li>
 </ul>
-<p><strong>坑</strong>：人为插入的错误如果不像模型真会犯的错，学到的是表演式反思。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t7-步骤级标注"><div class="meta">构建方式</div><h2><span class="no">07</span>步骤级标注</h2><p><strong>做法</strong>：不只判最后成没成，而是对每一步打标签：这步对不对、犯了哪类错。可以人工标，也可以用 Monte Carlo rollout 自动估计每一步的价值。</p>
+<p><strong>坑</strong>：人为插入的错误如果不像模型真会犯的错，学到的是表演式反思。</p></section><section class="panel" id="t7-步骤级标注"><div class="meta">构建方式</div><h2><span class="no">07</span>步骤级标注</h2><p><strong>做法</strong>：不只判最后成没成，而是对每一步打标签：这步对不对、犯了哪类错。可以人工标，也可以用 Monte Carlo rollout 自动估计每一步的价值。</p>
 <p><strong>代表工作</strong></p>
 <ul>
 <li><a href="https://arxiv.org/abs/2505.08638">TRAIL</a>（2025-05，Patronus AI）：定义了 agent 错误类型的分类体系，人工标注 148 条长轨迹，覆盖单 agent 和多 agent 系统。最强的 Gemini-2.5-pro 在定位错误上只有 11%。</li>
 <li><a href="https://arxiv.org/abs/2502.10325">AgentPRM</a>（2025-02）：用 Monte Carlo rollout 算每一步的奖励目标，训练过程奖励模型；另提出 InversePRM，直接从示范中学过程奖励。在 ALFWorld 上，3B 模型超过 GPT-4o 基线。</li>
 </ul>
-<p><strong>成本</strong>：步骤级人工标注的单价，以上论文都没有公开。可以确定的是长轨迹的人工审读很慢，TRAIL 只标了 148 条。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t8-轨迹与评测"><div class="meta">关系</div><h2><span class="no">08</span>轨迹与评测</h2><p>轨迹数据和评测是同一批东西的两面：拿去训练是数据，留出来打分就是评测。</p>
+<p><strong>成本</strong>：步骤级人工标注的单价，以上论文都没有公开。可以确定的是长轨迹的人工审读很慢，TRAIL 只标了 148 条。</p></section><section class="panel" id="t8-轨迹与评测"><div class="meta">关系</div><h2><span class="no">08</span>轨迹与评测</h2><p>轨迹数据和评测是同一批东西的两面：拿去训练是数据，留出来打分就是评测。</p>
 <ul>
 <li><strong>从只看结果到看过程</strong>：<a href="https://arxiv.org/abs/2410.10934">Agent-as-a-Judge</a>（2024-10）用 agent 检查 agent 的中间过程，在 DevAI（55 个任务、365 条分层需求）上明显好于 LLM-as-a-Judge，可靠程度和人工基线相当。</li>
 <li><strong>LLM 判官本身要被评测</strong>：<a href="https://arxiv.org/abs/2504.08942">AgentRewardBench</a>（2025-04）有 1,302 条网页 agent 轨迹，每条由专家判断是否成功、有无副作用、是否重复。12 个 LLM 判官里没有一个在所有 benchmark 上都最好；规则判分会低估成功率。</li>
@@ -149,7 +148,7 @@
 <li><strong>找错比判对错更难</strong>：TRAIL 显示，在长轨迹里定位错误，最强模型也只有 11%。</li>
 <li><strong>失败模式分析</strong>：<a href="https://arxiv.org/abs/2509.16941">SWE-Bench Pro</a>（Scale AI）对收集到的 agent 轨迹做失败模式聚类。</li>
 </ul>
-<p>对评测 PM 来说，过程评测要回答三个问题：成没成（结果）、过程有没有副作用（比如删了不该删的、泄露了隐私）、是不是低效（反复绕圈）。最后两个只能从轨迹里看。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t9-和三类数据的关系"><div class="meta">关系</div><h2><span class="no">09</span>和三类数据的关系</h2><p>轨迹不是第四类数据，而是三类数据在 agent 场景下的共同载体：</p>
+<p>对评测 PM 来说，过程评测要回答三个问题：成没成（结果）、过程有没有副作用（比如删了不该删的、泄露了隐私）、是不是低效（反复绕圈）。最后两个只能从轨迹里看。</p></section><section class="panel" id="t9-和三类数据的关系"><div class="meta">关系</div><h2><span class="no">09</span>和三类数据的关系</h2><p>轨迹不是第四类数据，而是三类数据在 agent 场景下的共同载体：</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -177,7 +176,7 @@
 </tbody>
 </table></div>
 <p>可以把它理解成：前面三类决定「题」从哪来，轨迹决定「解题过程」从哪来。很多 pipeline 是先用三类方法之一造任务，再用 rollout 生产轨迹。</p>
-<p>还有一个通用的工程问题：格式不统一。<a href="https://arxiv.org/abs/2510.24702">Agent Data Protocol</a>（2025-10）把 13 个已有 agent 数据集统一成一种格式，SFT 后相对基座平均提升约 20%。它的观点是瓶颈不是数据源太少，而是格式太碎。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t10-谁在卖"><div class="meta">数据公司</div><h2><span class="no">10</span>谁在卖</h2><p>只列官网上能直接查到的表述：</p>
+<p>还有一个通用的工程问题：格式不统一。<a href="https://arxiv.org/abs/2510.24702">Agent Data Protocol</a>（2025-10）把 13 个已有 agent 数据集统一成一种格式，SFT 后相对基座平均提升约 20%。它的观点是瓶颈不是数据源太少，而是格式太碎。</p></section><section class="panel" id="t10-谁在卖"><div class="meta">数据公司</div><h2><span class="no">10</span>谁在卖</h2><p>只列官网上能直接查到的表述：</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -208,20 +207,20 @@
 </tr>
 </tbody>
 </table></div>
-<p>能看出的趋势：头部厂商的公开话术已经从「标注数据」转向「RL 环境」。卖的是能跑轨迹、能自动判分的环境，轨迹是环境的副产品。各家的报价和交付规模都未公开。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t11-什么稀缺"><div class="meta">数据公司</div><h2><span class="no">11</span>什么稀缺</h2><p>根据上面的论文，可以确定的几点：</p>
+<p>能看出的趋势：头部厂商的公开话术已经从「标注数据」转向「RL 环境」。卖的是能跑轨迹、能自动判分的环境，轨迹是环境的副产品。各家的报价和交付规模都未公开。</p></section><section class="panel" id="t11-什么稀缺"><div class="meta">数据公司</div><h2><span class="no">11</span>什么稀缺</h2><p>根据上面的论文，可以确定的几点：</p>
 <ol>
 <li><strong>便宜的轨迹不稀缺</strong>。合成方法已经把单条成本压到几毛钱（Explorer 约 0.28 美元，AgentTrek 0.55 美元）。</li>
 <li><strong>稀缺的是可信的判官</strong>。rollout + 过滤的质量取决于判官，而 AgentRewardBench 和 TRAIL 都显示 LLM 判官还不可靠。专家写的 rubric 和步骤级错误标注有价值。</li>
 <li><strong>稀缺的是真实分布</strong>。合成和反向构建的任务偏简单、偏功能演示；真实用户的复杂、模糊意图，只能来自人工示范或真实日志。</li>
 <li><strong>稀缺的是纠错数据</strong>。只有成功轨迹的数据会让模型不会从错误中恢复（Agent-R、AgentRefine 的出发点）。</li>
 <li><strong>稀缺的是可信的模拟用户</strong>。交互类轨迹能否规模化，取决于模拟用户像不像真人。</li>
-</ol><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t12-面试谈资"><div class="meta">数据公司</div><h2><span class="no">12</span>面试谈资</h2><ul>
+</ol></section><section class="panel" id="t12-面试谈资"><div class="meta">数据公司</div><h2><span class="no">12</span>面试谈资</h2><ul>
 <li><strong>一句话框架</strong>：轨迹不是第四类数据，而是三类数据在 agent 场景的载体：题从专家、知识合成或交互中来，过程靠 rollout、示范或修复产出，质量由判官把关。</li>
 <li><strong>数据公司的价值在判官和真实性，而不是条数</strong>。合成轨迹已经很便宜，客户买单的理由是「你的判官比我自己的准」，以及「你的任务比我合成的更像真实用户」。</li>
 <li><strong>过程评测是评测 PM 的增量</strong>。结果评测已经成熟，副作用、低效、隐私越界只能从轨迹看。AgentRewardBench 的三个问题（成功、副作用、重复）可以直接用作框架。</li>
 <li><strong>个人 agent 方向</strong>：主动性、长程记忆、discretion 都是过程属性，最终结果对了不代表过程得体。这类评测需要「模拟用户 + 轨迹级 rubric」，正好连接交互性数据和过程评测。</li>
 <li><strong>可以主动问面试官的问题</strong>：你们交付的是轨迹、环境还是判官？客户怎么验收轨迹质量？纠错类数据是怎么造的？</li>
-</ul><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section></div>
+</ul></section></div>
 <footer class="foot">来源均为原文 PDF、官方仓库、HF 数据集或官网页面；引用保留原文措辞。</footer>
 </main>
 <script>
