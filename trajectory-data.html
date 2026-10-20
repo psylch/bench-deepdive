@@ -1,18 +1,34 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<!doctype html><html lang="zh-CN" class="no-js"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Agent 轨迹数据：怎么造、怎么评、谁在卖</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Reenie+Beanie&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css"></head><body>
-<main class="pw wide" id="top">
+<link rel="stylesheet" href="https://psylch.github.io/assets/report.css">
+<style>
+.meta a{color:var(--mute)}.meta a:hover{color:var(--ink)}
+.lead>p:last-child{margin:0}
+.tabbar{display:flex;flex-direction:column;gap:8px;padding:0 0 18px;margin:0 0 8px;border-bottom:1px solid var(--line)}
+.grp{display:flex;align-items:center;gap:12px;min-width:0}
+.gl{flex:0 0 auto;min-width:84px;font:11px/1.6 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.tabbar .tabs{margin:0;min-width:0}
+@media(min-width:561px){.tabbar .tabs{flex-wrap:wrap;width:auto;border-radius:18px}}
+@media(max-width:560px){.grp{flex-direction:column;align-items:flex-start;gap:4px}.gl{min-width:0}}
+.panel>.meta{margin-top:28px}
+.report .panel>h2{margin-top:.3em;padding-top:0;border-top:0}
+.report h2 .no{margin-right:10px;font:13px var(--mono);letter-spacing:.1em;color:var(--faint);vertical-align:.2em}
+.totop{display:inline-block;margin-top:40px;font:11px var(--mono);letter-spacing:.14em;color:var(--mute)!important;border:0!important}
+.art td:first-child{color:var(--ink)}
+.art .table-wrap>table{min-width:680px}
+.art blockquote p{margin:6px 0}
+.art code{word-break:break-word}
+</style>
+</head><body class="report">
+<main class="wide" id="top">
+<a class="back" href="https://psylch.github.io/">← psylch</a>
 <div class="meta">NOTES · 2026-10 · <a class="sw" href="index.html">Agent 评测论文精读 →</a></div>
-<h1 class="ph1">Agent 轨迹数据：怎么造、怎么评、谁在卖</h1>
-<div class="art lead"><blockquote>
-<p>2026-10-14 · 另见：<a href="index.html">Agent 评测论文精读</a> · <a href="kg-task-synthesis.html">知识图谱造题</a> · <a href="tech-reports-data.html">Tech report 数据部分</a>
-轨迹是 agent 完成一个任务的完整过程：每一步看到了什么、想了什么、调了什么工具、环境返回了什么，最后成没成。它既是 SFT 和过程监督的训练数据，也是过程评测的对象。本页按构建方式整理近一年的代表工作，数字和措辞来自论文摘要或原文，原文没给的标「未公开」。</p>
-</blockquote></div>
+<h1>Agent 轨迹数据：怎么造、怎么评、谁在卖</h1>
+<div class="lead"><p>2026-10-14 · 另见：<a href="index.html">Agent 评测论文精读</a> · <a href="kg-task-synthesis.html">知识图谱造题</a> · <a href="tech-reports-data.html">Tech report 数据部分</a>
+轨迹是 agent 完成一个任务的完整过程：每一步看到了什么、想了什么、调了什么工具、环境返回了什么，最后成没成。它既是 SFT 和过程监督的训练数据，也是过程评测的对象。本页按构建方式整理近一年的代表工作，数字和措辞来自论文摘要或原文，原文没给的标「未公开」。</p></div>
 <nav class="tabbar"><div class="grp"><div class="tabs"><a href="#t0-总览" data-t="t0-总览">总览</a></div></div><div class="grp"><span class="gl">构建方式</span><div class="tabs"><a href="#t1-rollout-过滤" data-t="t1-rollout-过滤">rollout + 过滤</a><a href="#t2-人工示范" data-t="t2-人工示范">人工示范</a><a href="#t3-真实使用日志" data-t="t3-真实使用日志">真实使用日志</a><a href="#t4-反向合成与探索" data-t="t4-反向合成与探索">反向合成与探索</a><a href="#t5-蓝图-模拟用户" data-t="t5-蓝图-模拟用户">蓝图 + 模拟用户</a><a href="#t6-修复与改写" data-t="t6-修复与改写">修复与改写</a><a href="#t7-步骤级标注" data-t="t7-步骤级标注">步骤级标注</a></div></div><div class="grp"><span class="gl">关系</span><div class="tabs"><a href="#t8-轨迹与评测" data-t="t8-轨迹与评测">轨迹与评测</a><a href="#t9-和三类数据的关系" data-t="t9-和三类数据的关系">和三类数据的关系</a></div></div><div class="grp"><span class="gl">数据公司</span><div class="tabs"><a href="#t10-谁在卖" data-t="t10-谁在卖">谁在卖</a><a href="#t11-什么稀缺" data-t="t11-什么稀缺">什么稀缺</a><a href="#t12-面试谈资" data-t="t12-面试谈资">面试谈资</a></div></div></nav>
-<div class="art"><section class="panel" id="t0-总览"><h2><span class="no">00</span>总览</h2><div class="tw"><table>
+<div class="art"><section class="panel" id="t0-总览"><h2><span class="no">00</span>总览</h2><div class="table-wrap"><table>
 <thead>
 <tr>
 <th>构建方式</th>
@@ -134,7 +150,7 @@
 <li><strong>失败模式分析</strong>：<a href="https://arxiv.org/abs/2509.16941">SWE-Bench Pro</a>（Scale AI）对收集到的 agent 轨迹做失败模式聚类。</li>
 </ul>
 <p>对评测 PM 来说，过程评测要回答三个问题：成没成（结果）、过程有没有副作用（比如删了不该删的、泄露了隐私）、是不是低效（反复绕圈）。最后两个只能从轨迹里看。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t9-和三类数据的关系"><div class="meta">关系</div><h2><span class="no">09</span>和三类数据的关系</h2><p>轨迹不是第四类数据，而是三类数据在 agent 场景下的共同载体：</p>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>你的分类</th>
@@ -162,7 +178,7 @@
 </table></div>
 <p>可以把它理解成：前面三类决定「题」从哪来，轨迹决定「解题过程」从哪来。很多 pipeline 是先用三类方法之一造任务，再用 rollout 生产轨迹。</p>
 <p>还有一个通用的工程问题：格式不统一。<a href="https://arxiv.org/abs/2510.24702">Agent Data Protocol</a>（2025-10）把 13 个已有 agent 数据集统一成一种格式，SFT 后相对基座平均提升约 20%。它的观点是瓶颈不是数据源太少，而是格式太碎。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t10-谁在卖"><div class="meta">数据公司</div><h2><span class="no">10</span>谁在卖</h2><p>只列官网上能直接查到的表述：</p>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>公司</th>
@@ -206,7 +222,7 @@
 <li><strong>个人 agent 方向</strong>：主动性、长程记忆、discretion 都是过程属性，最终结果对了不代表过程得体。这类评测需要「模拟用户 + 轨迹级 rubric」，正好连接交互性数据和过程评测。</li>
 <li><strong>可以主动问面试官的问题</strong>：你们交付的是轨迹、环境还是判官？客户怎么验收轨迹质量？纠错类数据是怎么造的？</li>
 </ul><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section></div>
-<footer class="meta foot">来源均为原文 PDF、官方仓库、HF 数据集或官网页面；引用保留原文措辞。</footer>
+<footer class="foot">来源均为原文 PDF、官方仓库、HF 数据集或官网页面；引用保留原文措辞。</footer>
 </main>
 <script>
 (function(){
@@ -219,4 +235,6 @@
  window.addEventListener('hashchange',function(){show(decodeURIComponent(location.hash.slice(1)),false)});
  show(decodeURIComponent(location.hash.slice(1)),false);
 })();
-</script></body></html>
+</script>
+<script src="https://psylch.github.io/assets/report.js"></script>
+</body></html>

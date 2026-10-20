@@ -1,15 +1,31 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<!doctype html><html lang="zh-CN" class="no-js"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>用知识图谱和分类树规模化造题：近一年论文与开源项目</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Reenie+Beanie&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css"></head><body>
-<main class="pw wide" id="top">
+<link rel="stylesheet" href="https://psylch.github.io/assets/report.css">
+<style>
+.meta a{color:var(--mute)}.meta a:hover{color:var(--ink)}
+.lead>p:last-child{margin:0}
+.tabbar{display:flex;flex-direction:column;gap:8px;padding:0 0 18px;margin:0 0 8px;border-bottom:1px solid var(--line)}
+.grp{display:flex;align-items:center;gap:12px;min-width:0}
+.gl{flex:0 0 auto;min-width:84px;font:11px/1.6 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.tabbar .tabs{margin:0;min-width:0}
+@media(min-width:561px){.tabbar .tabs{flex-wrap:wrap;width:auto;border-radius:18px}}
+@media(max-width:560px){.grp{flex-direction:column;align-items:flex-start;gap:4px}.gl{min-width:0}}
+.panel>.meta{margin-top:28px}
+.report .panel>h2{margin-top:.3em;padding-top:0;border-top:0}
+.report h2 .no{margin-right:10px;font:13px var(--mono);letter-spacing:.1em;color:var(--faint);vertical-align:.2em}
+.totop{display:inline-block;margin-top:40px;font:11px var(--mono);letter-spacing:.14em;color:var(--mute)!important;border:0!important}
+.art td:first-child{color:var(--ink)}
+.art .table-wrap>table{min-width:680px}
+.art blockquote p{margin:6px 0}
+.art code{word-break:break-word}
+</style>
+</head><body class="report">
+<main class="wide" id="top">
+<a class="back" href="https://psylch.github.io/">← psylch</a>
 <div class="meta">NOTES · 2026-10 · <a class="sw" href="index.html">Agent 评测论文精读 →</a></div>
-<h1 class="ph1">用知识图谱和分类树规模化造题：近一年论文与开源项目</h1>
-<div class="art lead"><blockquote>
-<p>收录 2025-10 至 2026-10 期间用「知识图谱 / 概念树 / 层级 taxonomy / 工具图」来规模化合成 LLM 和 agent 训练或评测任务的工作，参照对象是 Kimi K3 技术报告 4.2.2 节。另附 2024–2025 年的奠基工作作为前史。每条的数字均出自原文；原文没写的标「未公开」。</p>
-</blockquote></div>
+<h1>用知识图谱和分类树规模化造题：近一年论文与开源项目</h1>
+<div class="lead"><p>收录 2025-10 至 2026-10 期间用「知识图谱 / 概念树 / 层级 taxonomy / 工具图」来规模化合成 LLM 和 agent 训练或评测任务的工作，参照对象是 Kimi K3 技术报告 4.2.2 节。另附 2024–2025 年的奠基工作作为前史。每条的数字均出自原文；原文没写的标「未公开」。</p></div>
 <nav class="tabbar"><div class="grp"><span class="gl">总览</span><div class="tabs"><a href="#t0-归类与对比表" data-t="t0-归类与对比表">归类与对比表</a></div></div><div class="grp"><span class="gl">参照</span><div class="tabs"><a href="#t1-kimi-k3-4-2-2" data-t="t1-kimi-k3-4-2-2">Kimi K3 4.2.2</a></div></div><div class="grp"><span class="gl">A 分类树</span><div class="tabs"><a href="#t2-simula-google" data-t="t2-simula-google">Simula（Google）</a><a href="#t3-steps" data-t="t3-steps">STEPS</a><a href="#t4-cli-universe" data-t="t4-cli-universe">CLI-Universe</a><a href="#t5-nemotron-terminal-nvidia" data-t="t5-nemotron-terminal-nvidia">Nemotron-Terminal（NVIDIA）</a><a href="#t6-longcrafter" data-t="t6-longcrafter">LongCrafter</a><a href="#t7-benchbench-评测侧" data-t="t7-benchbench-评测侧">BenchBench（评测侧）</a><a href="#t8-nodesyn-google-research" data-t="t8-nodesyn-google-research">NodeSyn（Google Research）</a></div></div><div class="grp"><span class="gl">B 实体图</span><div class="tabs"><a href="#t9-searchart-华为云" data-t="t9-searchart-华为云">SearchArt（华为云）</a><a href="#t10-nemotron-3-ultra-搜索数据" data-t="t10-nemotron-3-ultra-搜索数据">Nemotron 3 Ultra 搜索数据</a><a href="#t11-graphwalker" data-t="t11-graphwalker">GraphWalker</a><a href="#t12-graph2eval-评测侧" data-t="t12-graph2eval-评测侧">Graph2Eval（评测侧）</a><a href="#t13-knight-评测侧" data-t="t13-knight-评测侧">KNIGHT（评测侧）</a></div></div><div class="grp"><span class="gl">C 工具图</span><div class="tabs"><a href="#t14-skillsynth-腾讯混元" data-t="t14-skillsynth-腾讯混元">SkillSynth（腾讯混元）</a><a href="#t15-toolverse-美团-longcat" data-t="t15-toolverse-美团-longcat">ToolVerse（美团 LongCat）</a><a href="#t16-gais" data-t="t16-gais">GAIS</a><a href="#t17-firefly" data-t="t17-firefly">FireFly</a><a href="#t18-envfactory" data-t="t18-envfactory">EnvFactory</a><a href="#t19-astra-贝壳" data-t="t19-astra-贝壳">ASTRA（贝壳）</a></div></div><div class="grp"><span class="gl">D 自动建树</span><div class="tabs"><a href="#t20-atlas" data-t="t20-atlas">ATLAS</a></div></div><div class="grp"><span class="gl">前史</span><div class="tabs"><a href="#t21-2024-2025-前作精读" data-t="t21-2024-2025-前作精读">2024–2025 前作精读</a></div></div><div class="grp"><span class="gl">开源工具</span><div class="tabs"><a href="#t22-可直接用的框架" data-t="t22-可直接用的框架">可直接用的框架</a></div></div><div class="grp"><span class="gl">类比</span><div class="tabs"><a href="#t23-和植物识别数据全集" data-t="t23-和植物识别数据全集">和植物识别数据全集</a></div></div><div class="grp"><span class="gl">面试</span><div class="tabs"><a href="#t24-可以讲的观点" data-t="t24-可以讲的观点">可以讲的观点</a></div></div></nav>
 <div class="art"><section class="panel" id="t0-归类与对比表"><div class="meta">总览</div><h2><span class="no">00</span>归类与对比表</h2><h3>按方法归类</h3>
 <ul>
@@ -19,7 +35,7 @@
 <li><strong>D. 由 agent 自动长出分类树</strong>（只建树，不造题，但方法可直接借用）：ATLAS。</li>
 </ul>
 <h3>对比表</h3>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>名称</th>
@@ -286,7 +302,7 @@
 <li><strong>成本</strong>：Simula 每个数据点的推理调用最多是基线的 5 倍；但原文认为，算上训练成本，数据量更小、质量更高反而更省。</li>
 </ul>
 <h3>六、与 K3 4.2.2 对照</h3>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -353,7 +369,7 @@
 <p>把选中的技能组合和对应的参考样例一起给 LLM，让它生成同时体现这些技能的新指令和解答。附录给了样例对话，例如表 5「金库初始化里的对象操作 + 数学优化」，表 6「并发金融分析手机 App 的架构与实现指南」。</p>
 <p><strong>验证</strong>：论文没有单独的题目质量过滤环节。</p>
 <h3>五、实验数字</h3>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>设置</th>
@@ -457,7 +473,7 @@
 <h3>一、两路数据</h3>
 <p><strong>1. 数据集改写（不需要 LLM 参与）</strong></p>
 <p>把现有 prompt 直接套进 Terminus 2 的系统模板，再按数据类型加指令后缀。SWE prompt 里提到的每个代码文件都在环境里建出来。没有测试用例。</p>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>来源</th>
@@ -515,7 +531,7 @@
 <li>教师模型是 DeepSeek-V3.2。</li>
 </ul>
 <h3>四、实验与消融（Qwen3-8B，Terminal-Bench 2.0）</h3>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>数据</th>
@@ -615,7 +631,7 @@
 <li><strong>未公开</strong>：最终数据量、淘汰率、成本。</li>
 </ul>
 <h3>六、实验与消融（Qwen2.5-7B，LongBench v1 / LongBench v2 / LooGLE 平均）</h3>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>设置</th>
@@ -791,7 +807,7 @@
 <h3>六、局限（原文 Future Work）</h3>
 <p>只做文本检索，图片、图表、视频等多模态信息检索列为下一步。</p>
 <h3>七、与 K3 4.2.2 对照</h3>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -905,7 +921,7 @@
 <li>只在 CWQ 上训练，迁移到 WebQSP 达 91.5% EM。</li>
 </ul>
 <p><strong>消融</strong>（GrailQA EM / F1，GraphWalkerBench EM）：</p>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>设置</th>
@@ -1299,7 +1315,7 @@
 </ol>
 <p>流程是：基于工具链先构造用户画像和场景，再推出数据库初始状态，然后生成查询，跑轨迹，最后过滤并选出一条通过的轨迹。prompt 在附录 I。</p>
 <h3>五、成本（原文表 4，单个环境 + 查询合成）</h3>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>构建模型</th>
@@ -1449,7 +1465,7 @@
 <li><strong>评审</strong>：用 GPT-5.4 交叉验证 LLM 评审结果，42 组「方法 × 指标」的 Pearson r = 0.995。</li>
 </ul>
 <p><strong>消融</strong>（2K 分层样本，NCP 指标）：</p>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>设置</th>
@@ -1481,7 +1497,7 @@
 </table></div>
 <p>关掉修正循环后，2,001 个仓库里有 296 个停在非叶节点。</p>
 <h3>四、成本</h3>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>规模</th>
@@ -1513,7 +1529,7 @@
 </table></div>
 <p>基线方法用的 token 少 5–40 倍。</p>
 <h3>五、与 K3 4.2.2 对照</h3>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -1599,7 +1615,7 @@
 <li><strong>与 K3</strong>：直接取材于知识图谱。K3 的素材是网页、论文和代码，覆盖面更广，但没有图结构可以保证答案唯一。</li>
 </ul>
 <h3>一览表</h3>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>名称</th>
@@ -1653,7 +1669,7 @@
 </tr>
 </tbody>
 </table></div>
-<p>WebSailor 和 WebShaper 的代码在 <a href="https://github.com/Alibaba-NLP/DeepResearch">Alibaba-NLP/DeepResearch</a>（原 WebAgent 仓库已重定向到这里），20,047⭐，最近更新 2026-02-27。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t22-可直接用的框架"><div class="meta">开源工具</div><h2><span class="no">22</span>可直接用的框架</h2><div class="tw"><table>
+<p>WebSailor 和 WebShaper 的代码在 <a href="https://github.com/Alibaba-NLP/DeepResearch">Alibaba-NLP/DeepResearch</a>（原 WebAgent 仓库已重定向到这里），20,047⭐，最近更新 2026-02-27。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t22-可直接用的框架"><div class="meta">开源工具</div><h2><span class="no">22</span>可直接用的框架</h2><div class="table-wrap"><table>
 <thead>
 <tr>
 <th>项目</th>
@@ -1732,7 +1748,7 @@
 </tbody>
 </table></div>
 <p>⭐ 和更新时间为 2026-10-14 的数据。</p><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section><section class="panel" id="t23-和植物识别数据全集"><div class="meta">类比</div><h2><span class="no">23</span>和植物识别数据全集</h2><p>植物识别的做法：先用物种分类（界门纲目科属种）定义「全集」，再在每个叶子上找图片，按类目补齐数量，长尾物种单独补采。对照下来：</p>
-<div class="tw"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>植物识别</th>
@@ -1777,7 +1793,7 @@
 <li><strong>图的节点类型决定能练什么能力。</strong> 概念节点练知识覆盖（K3），实体节点练多跳搜索（SearchArt、DeepDive），工具或技能节点练执行轨迹（SkillSynth、ToolVerse）。设计评测时先问清楚：要测的是知识面、搜索深度，还是工作流执行。</li>
 <li><strong>评测集本身也可以这样生成和体检。</strong> BenchBench 发现出题能力和答题能力只中等相关（ρ≈0.37），无效题会拉低区分度（r≈−0.62）；Graph2Eval 用可达性分析保证可解。做评测岗可以讲：自动生成的评测集要报告无效率和区分度，而不只是模型分数。</li>
 </ol><a class="totop" href="javascript:window.scrollTo(0,0)">↑ 回到目录</a></section></div>
-<footer class="meta foot">来源均为原文 PDF、官方仓库、HF 数据集或官网页面；引用保留原文措辞。</footer>
+<footer class="foot">来源均为原文 PDF、官方仓库、HF 数据集或官网页面；引用保留原文措辞。</footer>
 </main>
 <script>
 (function(){
@@ -1790,4 +1806,6 @@
  window.addEventListener('hashchange',function(){show(decodeURIComponent(location.hash.slice(1)),false)});
  show(decodeURIComponent(location.hash.slice(1)),false);
 })();
-</script></body></html>
+</script>
+<script src="https://psylch.github.io/assets/report.js"></script>
+</body></html>
