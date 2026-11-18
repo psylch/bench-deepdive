@@ -1,0 +1,231 @@
+<!doctype html><html lang="zh-CN" class="no-js"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BenchCAD 2.0 / 2.1 精读</title>
+<meta name="description" content="OpenAI 引用的 CAD 评测 BenchCAD 2.0 / 2.1：6 个任务、打分公式、harness、数据划分、失败模式，以及对专家轨迹的启发。">
+<link rel="stylesheet" href="https://psylch.github.io/assets/report.css">
+<style>
+.meta a{color:var(--mute)}.meta a:hover{color:var(--ink)}
+.lead>p:last-child{margin:0}
+.tabbar{display:flex;flex-direction:column;gap:8px;padding:0 0 18px;margin:0 0 8px;border-bottom:1px solid var(--line)}
+.grp{display:flex;align-items:center;gap:12px;min-width:0}
+.gl{flex:0 0 auto;min-width:84px;font:500 11px/1.6 var(--sans);color:var(--mute)}
+.tabbar .tabs{margin:0;min-width:0}
+@media(min-width:561px){.tabbar .tabs{flex-wrap:wrap;width:auto;border-radius:18px}}
+@media(max-width:560px){.grp{flex-direction:column;align-items:flex-start;gap:4px}.gl{min-width:0}}
+.report .panel>h2{margin-top:.3em;padding-top:0;border-top:0}
+.report h2 .no{margin-right:10px;font:500 13px var(--sans);color:var(--faint);vertical-align:.2em}
+.art code{word-break:break-word}
+pre{overflow-x:auto}
+</style>
+</head><body class="report">
+<main class="wide" id="top">
+<a class="back" href="https://psylch.github.io/bench-deepdive/">← Agent 评测精读</a>
+<div class="meta">RESEARCH · 2026-11-18 · 公开资料精读</div>
+<h1>BenchCAD 2.0 / 2.1 精读</h1>
+<div class="lead"><p><b>一句话：</b>BenchCAD 2.0 让模型在离线沙箱里写 CadQuery 代码，从工程图或渲染图做出零件和装配体，再从 PCB 渲染图还原电路连线。打分全部由几何和图匹配程序自动完成，不用 LLM 当裁判。2.1 没换题，改的是 harness 规则：轮数、token 预算、推理过程跨轮保留，T6 匹配也更严。</p>
+<p><b>最值得记住的三点：</b>① 模型输在装配上，形状做对了、位置放错了，电路则是连线和电源网络出错。② 同一个模型换 harness 分数差很多，比如 Opus 5.5 标准 2.1 得 0.49，在 Claude Code 里得 0.65。③ 公开集条款禁止拿来训练或搭 RL 环境，专家轨迹只能借鉴它的设计。</p></div>
+
+<div class="stats"><div class="stat"><b>6</b><span>任务</span></div><div class="stat"><b>100</b><span>Core 题（不公开）</span></div><div class="stat"><b>100</b><span>Public 题（与 Core 不重叠）</span></div><div class="stat"><b>0.59</b><span>2.0 最高分（GPT-6 Astra max）</span></div></div>
+
+<nav class="tabbar">
+<div class="grp"><div class="tabs"><a href="#s0" data-t="s0">定位</a></div></div>
+<div class="grp"><span class="gl">设计</span><div class="tabs"><a href="#s1" data-t="s1">6 个任务</a><a href="#s2" data-t="s2">打分公式</a><a href="#s3" data-t="s3">Harness</a><a href="#s4" data-t="s4">数据</a></div></div>
+<div class="grp"><span class="gl">结果</span><div class="tabs"><a href="#s5" data-t="s5">榜单</a><a href="#s6" data-t="s6">失败模式</a></div></div>
+<div class="grp"><span class="gl">我们</span><div class="tabs"><a href="#s7" data-t="s7">对专家轨迹</a><a href="#s8" data-t="s8">来源</a></div></div>
+</nav>
+
+<div class="art">
+<!-- ================= 0 ================= -->
+<section class="panel on" id="s0"><h2><span class="no">00</span>定位，以及 OpenAI 为什么用它</h2>
+<p>BenchCAD 是第三方团队做的评测，1.0 论文作者来自 UVA、UCSD 和 Rice。OpenAI 在两个地方引用了它，用的是两个不同版本：</p>
+<table><thead><tr><th>OpenAI 页面</th><th>版本</th><th>测什么</th><th>数字（OpenAI 口径）</th></tr></thead><tbody>
+<tr><td><a href="https://openai.com/index/gpt-6-astra/">GPT-6 Astra 发布页</a></td><td>1.0</td><td>从多视角渲染图写 CAD 代码还原零件</td><td>带工具时几何重合度 95.9%，GPT-5.6 Sol 83.3%，Claude Fable 5.1 84.3%</td></tr>
+<tr><td><a href="https://openai.com/index/accelerating-engineering-for-the-physical-world/">Accelerating engineering for the physical world</a>（11-03）</td><td>2.0</td><td>3D 零件、装配体、电路板连线</td><td>内部未发布模型 0.875，GPT-6 Astra 最高档 0.594</td></tr>
+<tr><td><a href="https://benchcad.com/blog/benchcad-2-1">GPT-6.2 发布</a>（11-17，BenchCAD 2.1 博文转述）</td><td>2.1</td><td>同上，在 Codex 里跑</td><td>GPT-6.2 Astra max 0.825（每题 $5.43），GPT-6.2 Sol 0.731（$1.60）</td></tr>
+</tbody></table>
+<p><b>1.0 和 2.0 是两回事。</b>1.0 是 17,900 个程序生成的 CadQuery 零件，覆盖 106 个工业零件族，题型有 VQA、代码问答、图生代码和指令改代码。顶级模型已经接近满分。2.0 换成真实工程场景：带尺寸的工程图、几十个零件的装配体，以及 PCB 逆向。最好的模型在 2.0 上只有 0.59。</p>
+<p><b>OpenAI 为什么选它（推断）：</b>一是打分完全确定、可复现，没有 LLM 裁判，厂商之间不好吵。二是题来自真实工程活：读图、装配、逆向。OpenAI 博文讲的也是硬件团队的 CAD、出图和 PCB 工作，跟这套题对得上。三是 1.0 已经被刷到 95.9%，需要一个还没饱和的版本来拉开差距。BenchCAD 致谢里写了 Anthropic 和 OpenAI 提供 API credits。</p>
+<div class="callout"><b>注意口径：</b>BenchCAD 2.1 博文把 OpenAI 内部模型的 0.875 放在「Customized harness」榜（模型在自家 agent 里跑），注明是用 2.0 打分器算的。Astra 的 0.594 则是标准 2.0 harness 的成绩。所以 0.875 和 0.594 不是同一个设置下的对比，差距里有一部分来自 harness。</div>
+</section>
+
+<!-- ================= 1 ================= -->
+<section class="panel" id="s1"><h2><span class="no">01</span>6 个任务逐个拆</h2>
+<p>6 个任务分两类工作：<b>按图建模</b>（T1、T2、T5）和<b>逆向工程</b>（T3、T4、T6）。输出都是一段 Python 程序：建模类用 CadQuery 留下实体，或者用工具写出装配目录；ECAD 类留下一个图结构的 dict。括号里是 2.0 Core 各任务的题数，见 <a href="https://github.com/BenchCAD-org/benchcad-2-main/releases/tag/v2.0-core1">v2.0 release</a>。</p>
+<table><thead><tr><th>任务</th><th>输入</th><th>输出</th><th>考什么能力</th><th>指标</th></tr></thead><tbody>
+<tr><td>T1 图纸→零件（6）</td><td>一张带尺寸的零件工程图，默认第一角投影，图框、标题栏和明细表裁掉；字太小时另给切片</td><td>CadQuery 实体，和图纸视图轴对齐</td><td>读工程图、尺寸、投影法</td><td><code>part_v1</code>，朝向自由</td></tr>
+<tr><td>T2 零件+装配图→装配（11）</td><td>每个零件的 STEP（已居中，并随机转了 90° 倍数）、装配图、<code>bom.json</code>（零件号、数量、气球号）</td><td>每个实例一个刚体 4×4 变换</td><td>看懂装配图，只管摆放</td><td><code>asm_v1</code></td></tr>
+<tr><td>T3 四视图→零件（28）</td><td>2×2 平行投影四视图。右上角那张相机方向精确是 (1,1,1)，另外三张偏了 3–8°，偏多少不告诉模型</td><td>CadQuery 实体，位置和尺度自由</td><td>从图像重建 3D</td><td><code>part_v1</code>，朝向固定</td></tr>
+<tr><td>T4 视图→零件+装配（25）</td><td>整机四视图；每个零件两张图：单独一张看形状，另一张在装配里标红看位置和相对大小；bom。不给任何 3D 文件</td><td>每个零件 + 装配</td><td>逆向整套机构</td><td><code>avg_part × asm_v1</code>，尺度自由</td></tr>
+<tr><td>T5 图纸集+部分零件→装配（18）</td><td>装配图；要自己画的零件给零件图；外购件给 STEP（已打乱朝向）；bom 标明每个零件是 drawing 还是 step</td><td>按图纸尺寸建模的零件 + 全部摆放</td><td>T1 加 T2 的组合，最像真实出图</td><td><code>avg_part × asm_v1</code>，只对自建零件算 avg_part</td></tr>
+<tr><td>T6 PCB 渲染→连线图（12）</td><td>6 张渲染：顶、底，每面两个斜视角；多层板另给每个内层铜的俯视图；附板子说明 README</td><td>元件（类型、引脚顺序、数值）+ 网络 + 引脚归属；位置模式下还要报元件和引脚坐标</td><td>认元件、追铜线、判断哪些引脚同网</td><td><code>ecad_v2</code></td></tr>
+</tbody></table>
+<p>任务说明原文在仓库 <code>envs/&lt;task&gt;/TASK.md</code>。几个防投机的细节：STEP 都先居中再随机转向，模型拿不到原始位姿；T3/T4 相机加了不公开的扰动；明细表从图纸上裁掉，只以 <code>bom.json</code> 给出。图纸里画了但 bom 没列的标准件，不算答案。</p>
+</section>
+
+<!-- ================= 2 ================= -->
+<section class="panel" id="s2"><h2><span class="no">02</span>打分公式（以 docs/METRICS.md 和代码为准）</h2>
+<p>所有分数都在 0–1 之间。参考答案按要求的格式交回去，正好得 1.0，有测试保证这一点。全程没有 LLM 裁判。</p>
+<h3>part_v1（T1、T3，也是装配任务里的单件分）</h3>
+<pre><code>part_v1 = 0.8 · iou_term + 0.2 · topology      （2026-09-22 起）</code></pre>
+<ul>
+<li><b>归一化：</b>两个形状各自按包围盒归一，中心放到 0.5，最长边缩成 1。所以单件分不计位置和绝对尺寸。</li>
+<li><b>iou_term：</b>先三角化（偏差 0.05），再做 128³ 实心体素化，算体素 IoU。朝向自由的任务取 24 种正交旋转里最好的一种，朝向固定的就按交上来的姿态算。然后做「机会校正」：<code>iou_term = clip((x − x0)/(1 − x0), 0, 1)</code>，其中 x0 是参考件跟它自己的包围盒、包围球、轴对齐圆柱的最好 IoU。交一个方块或圆柱，这一项是 0。</li>
+<li><b>topology：</b>数 Betti 数：b0 是块数，b1 是亏格（孔），b2 是封闭空腔。每项 <code>s_i = ((min+1)/(max+1))²</code>，三项相乘。这条规则来自 CADGenBench，和姿态、尺寸都无关。</li>
+<li><b>硬门槛：</b>没有正体积实体（只交了壳或面），或者三角面超过 400 万，直接 0 分。网格化超时（每次 600 s CPU）也是 0。</li>
+<li><b>认同规则：</b>交上来的和参考件在曲面层面重合（体积、面积、尺寸误差在 0.5% 以内，表面距离在噪声范围内），直接给 1.0，免得 STEP 来回转换的数值误差扣分。</li>
+<li><b>改过的地方：</b>09-22 之前的公式是 <code>0.5 iou + 0.3 surf_f1 + 0.2 pix_fg</code>，体素是 64³。pix_fg 被删，是因为同一形状在 macOS 和 Linux 上渲染，轮廓像素差了 30%，分数会随打分机器变。surf_f1 现在只记录，不计分。（仓库 <code>docs/RUNNING.md</code> 里还写着旧公式，以 METRICS.md 为准。）</li>
+<li><b>交一个方块能拿几分：</b>2.1 release 说他们拿 10 mm 方块对 34 道 Core 零件题都打了一遍，IoU 项全是 0。只有在无孔零件上能拿满 0.2 的拓扑分，平均 0.065。</li>
+</ul>
+<h3>asm_v1（T2，以及 T4、T5 的装配因子）</h3>
+<ul>
+<li>按 bom 把交上来的零件和变换拼成整体，参考答案也这样拼，放在同一个 128³ 网格上，先整体对齐一次：包围盒中心对齐。T2、T5 用参考件的最长边定尺度（scale fixed，要算绝对尺寸），T4 用提交物自己的（scale free）。</li>
+<li>对齐的旋转候选是 24 个正交旋转，再加 1 个用 Kabsch 从单实例零件的质心算出来的任意角旋转。原因是真实参考件留在原 CAD 坐标系里：held-out 集里有 3/19 个 T2 和 2/13 个 T5 整体偏了 19–51°。</li>
+<li><b>核心是逐类留一：</b><pre><code>full       = IoU(S, G)
+baseline_k = IoU(S 去掉第 k 类所有实例, G)
+score_k    = clip((full − baseline_k)/(1 − baseline_k), 0, 1)
+asm_v1     = 可测零件类的 score_k 平均</code></pre>某类零件放错、转反或重复放，对整体 IoU 没有增益，这一类就是 0 分。这样小零件也能单独算分，不会被大件的体积淹没。参考体素占比不到 0.1% 的类别不计入平均。</li>
+</ul>
+<h3>avg_part × asm_v1（T4、T5）</h3>
+<p>avg_part 是每个零件文件按 part_v1 打分，先按类平均，再在各类之间平均。T4 算所有类，T5 只算要按图自建的类。直接交回原样的外购 STEP 算 1.0。两个因子相乘，<b>形状做对但放错位置，只在 asm_v1 那一项扣分</b>。</p>
+<h3>ecad_v2（T6）</h3>
+<pre><code>S = S_component · S_terminal · S_net · P_short · P_open
+P_short = max(0, 1 − 3·short_rate)，P_open = max(0, 1 − 3·open_rate)
+电源轨级短路/断路（占比 ≥ 70%）→ 整板 0 分</code></pre>
+<ul>
+<li><b>为什么相乘：</b>还原原理图是一环扣一环的任务。元件全认对也救不了连线错，用平均的话强项会掩盖弱项，代码注释里明确这么写。</li>
+<li><b>对应关系怎么找：</b>早期靠搜索把交上来的元件和参考元件对上，最坏要算一小时，有的板子算不完。现在是位置模式：模型同时报告元件中心和引脚坐标，按位置用匈牙利算法匹配，几毫秒算完，结果确定。见 <code>docs/T6_SCORING.md</code>。</li>
+<li><b>2.1 的规则 B：</b>一个预测元件只能匹配离它最近的那个参考元件，任何类型的其他元件都不能比它近超过 0.005。另外，两个以上预测元件挤在 0.0005 范围内，全部算没匹配上。这个阈值取自真值里最近的两个真实元件，相距 0.000716。改规则是为了堵「同一个元件换个类型报两次去蹭分」的口子：21 块位置板上因此去掉了 16 个这样的匹配，涉及 7 块板。</li>
+<li>打分器的 digest 写在数据里，2.0 是 <code>f4dd1410…</code>，2.1 是 <code>c4799cc2…</code>，对不上就拒绝打分。</li>
+</ul>
+<p><b>整体分：</b>先把每道题的多次运行取平均，再对 100 道 Core 题等权平均。没有 submit 的运行算 0。打分只看几何、摆放和连通性，不管能不能制造、性能怎么样。</p>
+</section>
+
+<!-- ================= 3 ================= -->
+<section class="panel" id="s3"><h2><span class="no">03</span>Harness 设计</h2>
+<h3>沙箱和交互协议</h3>
+<ul>
+<li>Docker 沙箱：Python 3.12、cadquery 2.3（OCP 7.9）、numpy、scipy、PIL、trimesh、vtk、matplotlib、ezdxf。<b>不能联网</b>，每次运行限 600 s、2 GB、1 CPU。</li>
+<li><b>每轮只能回一个代码块</b>。<code>```python</code> 块在工作目录里起一个新进程运行：文件保留，内存不保留。返回 stdout/stderr，各截前后 5,000 字节，外加程序在根目录写出的所有 PNG。<code>```submit</code> 块是最终答案，交了就结束本题，只按它打分。</li>
+<li><code>tools.py</code> 提供 <code>crop(png, box)</code>（从 2 倍高清母图上裁局部看细节）、<code>use_part</code>（拷入外购件）、<code>export_part</code>（导出自建件）和 <code>submit_assembly</code>（写出摆放结果，必须是刚体变换，不能镜像或缩放）。</li>
+<li><b>没有内置渲染工具</b>，模型要检查自己的结果，得自己写渲染代码。这是有意的设计，博文分析了模型不渲染自检会吃什么亏。</li>
+<li>图纸只存 PDF，进沙箱时自动转成 300 dpi 的阅读区 PNG。字太小、API 缩图后看不清的才另外切片。系统提示末尾那句「整条回复必须只有一个代码块」被写成接口约定：去掉它，有的模型只输出计划、不出代码。</li>
+<li>上下文快满时，按 Terminus 2 的做法写交接摘要，再让「下一个 agent」提问、由上一个回答。</li>
+</ul>
+<h3>2.0 → 2.1-beta → 2.1 的改动</h3>
+<table><thead><tr><th></th><th>2.0</th><th>2.1-beta</th><th>2.1</th></tr></thead><tbody>
+<tr><td>每题轮数</td><td class="num">30</td><td class="num">40</td><td class="num">60</td></tr>
+<tr><td>输出 token 预算（含 thinking）</td><td>无</td><td>500k</td><td>500k</td></tr>
+<tr><td>推理过程跨轮保留</td><td>否，只回传文本</td><td>是</td><td>是</td></tr>
+<tr><td>上下文压缩阈值</td><td>180k</td><td>800k</td><td>800k</td></tr>
+<tr><td>提示里写明限额和已用量</td><td>否</td><td>—</td><td>是，每轮开头写 <code>Round N/60 · output tokens spent / 500,000</code></td></tr>
+<tr><td>提示里写明「不 submit 记 0 分」</td><td>否</td><td>否</td><td>是</td></tr>
+<tr><td>被丢弃重问的回复算不算预算</td><td>—</td><td>算</td><td>不算</td></tr>
+<tr><td>T6 打分器</td><td><code>f4dd1410…</code></td><td><code>f4dd1410…</code></td><td><code>c4799cc2…</code>（规则 B + 重复判错）</td></tr>
+</tbody></table>
+<p><b>为什么改：</b></p>
+<ul>
+<li><b>推理跨轮保留：</b>2.0 每轮只回传文本，推理型模型每一轮都得从头想，又慢又费 token。现在按各家原生格式回传：Anthropic 带签名的 thinking、OpenAI 的加密 reasoning、Gemini 的 thought signature。</li>
+<li><b>加 token 预算、把限额写进提示：</b>2.0 里 Opus 5.5 max 每题用 130 万 token、$28，Haiku 5.5 max 用 560 万 token。设了预算并告诉模型，比的就是「同样的预算下谁做得好」。</li>
+<li><b>写明不交算 0：</b>Haiku 5.5 低档有 62/100 题用满 30 轮也没交，它把「运行程序」当成了「交卷」（见附录分析）。</li>
+<li><b>11-05 修了两个口子：</b>以前 T6 没 submit，但工作目录里有 <code>pred_graph.json</code>，也会被拿去打分。现在不算了。这一改，GPT-6 Astra max 的 2.0 成绩会从 0.594 变成 0.589，官方保留原值但写了说明。另一个是 headline 分数要求每次重复运行都有结果，否则这道题标为待定。</li>
+<li>限额标注为「暂定，可能和各实验室商量后调整」。</li>
+</ul>
+<h3>Customized harness 赛道（2.1 新增）</h3>
+<ul>
+<li>同样的 100 道 Core 题、同样的任务说明、答案格式和 2.1 打分器，打包成 Harbor 任务，模型在自家 agent 里跑：Claude Code、Codex、Gemini CLI、mini-swe-agent、OpenHands。</li>
+<li>规则：每题输出 token 上限 500k，由一个计量代理在模型 API 那一侧统计，子 agent 的调用也算进去。<b>没有轮数上限</b>，8 小时墙钟只用来防失控，不许重试。网络只通到模型 API，Codex 被强制走 HTTP，这样才能计量。</li>
+<li>答案是 <code>/work/answer.py</code>，放进另一个断网的独立容器里运行一次，由 2.1 打分器打分。agent 看不到参考答案和打分代码。</li>
+<li>这一赛道单独出榜，不和标准赛道放在一起比。</li>
+</ul>
+</section>
+
+<!-- ================= 4 ================= -->
+<section class="panel" id="s4"><h2><span class="no">04</span>数据设计和防污染</h2>
+<table><thead><tr><th>集合</th><th>题数</th><th>怎么拿</th><th>用途</th></tr></thead><tbody>
+<tr><td>Core</td><td class="num">100（T1 6 / T2 11 / T3 28 / T4 25 / T5 18 / T6 12）</td><td>签只做评测的协议，在 HF 上申请</td><td>唯一能报告的分数</td></tr>
+<tr><td>Public</td><td class="num">100（T1 21 / T2 14 / T3 23 / T4 27 / T5 6 / T6 9）</td><td>HF 上勾两个框，即时下载，407 MB</td><td>试跑 harness，分数不能报告；与 Core 不重叠</td></tr>
+<tr><td>Dev samples</td><td class="num">9</td><td>直接在 git 仓库 <code>examples/</code> 里</td><td>对齐管线：参考答案交回去必须复现 <code>expected.json</code> 的分数</td></tr>
+</tbody></table>
+<p><b>防污染做了这几层：</b></p>
+<ul>
+<li><b>Canary：</b>每个任务都带 <code>CANARY.txt</code>，Public 和 Core 的 GUID 不同，要求训练语料把含这个字符串的文档过滤掉。</li>
+<li><b>条款：</b>Public 只能用于评测，不能训练、微调、蒸馏，<b>不能搭 RL 环境</b>，不能放进预训练、检索或搜索语料。不许转载题目、图纸、渲染图和参考答案，可以描述结果、报告汇总分数。</li>
+<li><b>Core 只给评测用：</b>Customized harness 跑完会删掉 gated 的输入文件和图片，只留 agent 自己写的代码。</li>
+<li><b>Provenance 不外传：</b>题目来源链接、交付报告、账号名放在 <code>provenance/</code> 里，不随数据发出。发出的 PDF 会清掉元数据。</li>
+<li><b>版本钉死：</b>每个 release 的 JSON 钉住代码 commit、HF 数据 revision、T6 打分器 digest 和各项限额。<code>run_core.sh</code> 开跑前先校验 <code>MANIFEST.sha256</code> 和 digest，对不上就在花钱之前停下。不同版本的分数不能比。</li>
+</ul>
+<p>题目来源：博文和仓库都没写 2.0 的题从哪来。代码注释里能看出用的是真实 CAD 源文件：参考件留在原 CAD 坐标系里，还有「来源报告」「账号名」这类 provenance 字段。具体来源未公开。</p>
+</section>
+
+<!-- ================= 5 ================= -->
+<section class="panel" id="s5"><h2><span class="no">05</span>榜单要点</h2>
+<h3>2.0 标准 harness（30 轮，max 档，各任务分）</h3>
+<p>数据来自仓库 <code>results/core_reference.json</code>。Astra 是 3 次运行的平均，T6 只跑了 1 次，Claude 都是单次运行。官方估计单次运行整体噪声大约 ±0.03。</p>
+<table><thead><tr><th>模型（max）</th><th class="num">总分</th><th class="num">T1</th><th class="num">T2</th><th class="num">T3</th><th class="num">T4</th><th class="num">T5</th><th class="num">T6</th><th class="num">$/题</th></tr></thead><tbody>
+<tr><td>GPT-6 Astra</td><td class="num">0.594</td><td class="num">0.807</td><td class="num">0.721</td><td class="num">0.576</td><td class="num">0.501</td><td class="num">0.690</td><td class="num">0.464</td><td class="num">11.0</td></tr>
+<tr><td>Claude Opus 5.5</td><td class="num">0.566</td><td class="num">0.837</td><td class="num">0.667</td><td class="num">0.592</td><td class="num">0.440</td><td class="num">0.661</td><td class="num">0.398</td><td class="num">27.6</td></tr>
+<tr><td>Claude Sonnet 5.5</td><td class="num">0.414</td><td class="num">0.793</td><td class="num">0.342</td><td class="num">0.591</td><td class="num">0.438</td><td class="num">0.223</td><td class="num">0.114</td><td class="num">43.3</td></tr>
+<tr><td>Claude Fable 5.1</td><td class="num">0.303</td><td class="num">0.521</td><td class="num">0.398</td><td class="num">0.310</td><td class="num">0.246</td><td class="num">0.372</td><td class="num">0.104</td><td class="num">48.5</td></tr>
+<tr><td>Claude Haiku 5.5</td><td class="num">0.181</td><td class="num">0.561</td><td class="num">0.091</td><td class="num">0.316</td><td class="num">0.154</td><td class="num">0.010</td><td class="num">0.072</td><td class="num">8.7</td></tr>
+</tbody></table>
+<ul>
+<li>Astra 和 Opus 分数差不多，但 Astra 每题 $11、中位 62 分钟、13.5 万 token，Opus 每题 $28、224 分钟、130 万 token。</li>
+<li>推理档位影响极大：Astra 低档 0.14，max 0.59；Opus 低档 0.06，max 0.57。</li>
+<li>单件任务 T1 已经到 0.8 左右，装配（T4）和电路（T6）仍在 0.4–0.5。</li>
+</ul>
+<h3>2.1（与 2.0 不可比）</h3>
+<table><thead><tr><th>模型</th><th>赛道</th><th class="num">分数</th><th>备注</th></tr></thead><tbody>
+<tr><td>GPT-6.2 Astra max</td><td>Customized（Codex）</td><td class="num">0.825</td><td>每题 $5.43，OpenAI 提供</td></tr>
+<tr><td>Claude Fable 5.2 max</td><td>Customized（Claude Code）</td><td class="num">0.835</td><td>出自 Anthropic system card §8.13.2</td></tr>
+<tr><td>Claude Fable 5.2 max</td><td>标准 2.1</td><td class="num">0.754</td><td>Anthropic 自己实现的 2.1 协议</td></tr>
+<tr><td>GPT-6.2 Sol max</td><td>Customized（Codex）</td><td class="num">0.731</td><td>每题 $1.60</td></tr>
+<tr><td>Claude Opus 5.5</td><td>Customized（Claude Code）</td><td class="num">0.65</td><td>Anthropic 5 次运行</td></tr>
+<tr><td>GPT-6 Astra max</td><td>Customized（Codex）</td><td class="num">0.626</td><td></td></tr>
+<tr><td>GPT-6.1 Sol max</td><td>Customized（Codex）</td><td class="num">0.526</td><td></td></tr>
+<tr><td>Claude Opus 5.5 max</td><td>标准 2.1</td><td class="num">0.49</td><td>每题 $8.1，5 次运行平均</td></tr>
+</tbody></table>
+<p>OpenAI 内部模型的 0.875 也在 Customized 榜上，但用的是 2.0 打分器，成本是从 OpenAI 博文的相对成本轴估出来的。榜单页面：<a href="https://benchcad.com/leaderboard.html">benchcad.com/leaderboard</a>。</p>
+</section>
+
+<!-- ================= 6 ================= -->
+<section class="panel" id="s6"><h2><span class="no">06</span>失败模式</h2>
+<div class="item"><div class="nm">① 零件对了，位置错了</div><p>每个模型的装配分都比同类输入的单件分低。GPT-6 Astra、Opus 5.5、Sonnet 5.5 的装配题里，得 0 分的零件类有 83–96% <b>形状是对的，只是放错了地方</b>。例子：Astra 低档做支架，零件全放上了，但三根角钢装反了。档位开到最高也没解决：一个回转夹紧机构，Astra 把 36 个夹爪的两种可能位置都建出来、并排渲染对比，最后还是交了错的那个，每个夹爪往外偏 22 mm。</p></div>
+<div class="item"><div class="nm">② 不交卷，或者交得太快</div><p>max 档下，Sonnet 5.5 有 4/12 块电路板没交答案，Fable 5.1 有 3 块。低档时 Astra 和 Opus 做视图转零件，通常一两轮就交，很少渲染自检。Haiku 5.5 的情况：低档 62/100 题用满 30 轮没交（中档 28，高档 6），这些题耗掉了它总 15.5 小时里的 13.6 小时。原因是它把「跑了程序」当成「交了卷」，一直等一个任务根本不会给的渲染反馈，反复跑同一段程序。</p></div>
+<div class="item"><div class="nm">③ 电路不查短路和断路</div><p>模型能认出板上 85–96% 的元件，但连线对得少：max 档 Astra 80%，Opus 68%。最费分的是电源轨。一块 101 个元件的板子上，Astra 把 +3.3V、+5V、GND、VDD 并成了一个网络，Opus 把 +5V 拆成了 14 个网络，结果整板 0 分。两次运行都没做过短路或断路检查。</p></div>
+<p><b>作者的结论：</b>答案乍一看都对，机架零件齐全，板上元件也差不多齐了。错的是一眼看不出的地方：零件朝向、哪些引脚同网。更好的 CAD agent 需要的是<b>对摆放和连通性的检查</b>，光把生成做得更好不够。</p>
+</section>
+
+<!-- ================= 7 ================= -->
+<section class="panel" id="s7"><h2><span class="no">07</span>对专家轨迹的启发（推断）</h2>
+<div class="callout bad"><b>许可红线：</b>BenchCAD 2.0 Public 的条款明确禁止训练、微调、蒸馏和<b>搭 RL 环境</b>，也禁止转载题目、图纸、渲染图和参考答案。Core 只能用于评测。所以专家轨迹<b>不能用它的数据</b>，只能借鉴设计思路，或者把它当外部评测、在条款允许的范围内跑分。1.0 的论文写的是 CC-BY-4.0，但用之前要核对 1.0 数据集自己的许可页。</div>
+<p>下面都是我的推断：</p>
+<div class="item"><div class="nm">1. 它的打分器思路可以直接用来设计我们的 reward</div><p>机会校正 IoU（交个方块得 0）、Betti 拓扑分、按零件类留一打装配分、电路分多项相乘外加致命错误直接归零。这些都是确定性、几毫秒到几分钟就能出结果的可执行验证，很适合做 RL 的结果奖励。我们得用自己的题和参考答案实现一遍，不能用它的数据。</p></div>
+<div class="item"><div class="nm">2. 模型缺的正好是专家轨迹最该采的那部分</div><p>模型主要输在摆放、朝向，以及不做短路断路检查，而不是不会建模。专家操作里那些<b>自检动作</b>（转视角看装配关系、做干涉检查、ERC/DRC）和背后的「为什么」，比单纯的建模步骤更稀缺。采集和标注时可以专门给「验证步骤」打标签。</p></div>
+<div class="item"><div class="nm">3. 「什么时候交卷」本身就是一种能力</div><p>Haiku 不交卷、低档模型交得太快，说明停止和提交的判断要专门教。轨迹里应该保留专家「确认无误再交付」的那一步。</p></div>
+<div class="item"><div class="nm">4. Harness 会造成很大的分数差，评测得把 harness 钉死</div><p>Opus 5.5 标准 2.1 得 0.49，在 Claude Code 里得 0.65。我们自己做 CAD 评测时，要像它这样把轮数、token、工具、版本和打分器 digest 都钉死，并分赛道报告。</p></div>
+<div class="item"><div class="nm">5. 它只覆盖代码式 CAD，GUI 操作是空白</div><p>BenchCAD 全程是 CadQuery 代码，没有 SolidWorks、Fusion、KiCad 这类 GUI 里的操作序列。专家轨迹采的是专业软件里的真实操作，这块和它是互补的，可以当成我们数据的差异点。OpenAI 博文里也在找工程师和软件厂商合作，说明他们缺这类真实工作流数据。</p></div>
+<div class="item"><div class="nm">6. 防投机细节值得照抄</div><p>输入件先居中、随机转向，相机加不公开的扰动，图纸裁掉明细表，确保参考答案交回去正好 1.0、交方块接近 0，做 canary，provenance 不外传，按 release 钉死数据 revision。自建 RL 环境时，这些能少踩很多被 reward hacking 的坑：T6 规则 B 就是被「重复报同一个元件」钻了空子之后补上的。</p></div>
+</section>
+
+<!-- ================= 8 ================= -->
+<section class="panel" id="s8"><h2><span class="no">08</span>来源</h2>
+<div class="list">
+<a href="https://benchcad.com/blog/benchcad-2"><b>Introducing BenchCAD 2.0</b><span>BenchCAD 博文 · 任务、结果、失败模式、Haiku 附录</span></a>
+<a href="https://benchcad.com/blog/benchcad-2-1"><b>BenchCAD 2.1</b><span>BenchCAD 博文 · 改动表、Customized harness、2.1 结果</span></a>
+<a href="https://github.com/BenchCAD-org/benchcad-2-main"><b>benchcad-2-main 仓库</b><span>README、docs/METRICS.md、docs/T6_SCORING.md、docs/CASE_FORMAT.md、envs/*/TASK.md、envs/common/episode.py、own_agent/README.md、results/core_reference.json</span></a>
+<a href="https://github.com/BenchCAD-org/benchcad-2-main/releases/tag/v2.1"><b>Release v2.1</b><span>GitHub · 规则 B、去重规则、tag 几次移动的说明</span></a>
+<a href="https://github.com/BenchCAD-org/benchcad-2-main/releases/tag/v2.0-core1"><b>Release v2.0-core1</b><span>GitHub · Core 各任务题数</span></a>
+<a href="https://github.com/BenchCAD-org/benchcad-2-main/blob/main/releases/README.md"><b>releases/README.md</b><span>2.0 / 2.1-beta / 2.1 对照表</span></a>
+<a href="https://huggingface.co/datasets/BenchCAD/benchcad-2.0-public"><b>BenchCAD 2.0 Public 数据卡</b><span>Hugging Face · 题数、canary、评测条款</span></a>
+<a href="https://arxiv.org/abs/2605.10865"><b>BenchCAD 1.0 论文</b><span>arXiv 2605.10865 · 17,900 个零件、106 个零件族</span></a>
+<a href="https://openai.com/index/accelerating-engineering-for-the-physical-world/"><b>Accelerating engineering for the physical world</b><span>OpenAI · 2026-11-03 · 0.875 vs 0.594</span></a>
+<a href="https://openai.com/index/gpt-6-astra/"><b>GPT-6 Astra 发布页</b><span>OpenAI · BenchCAD 1.0 95.9%</span></a>
+<a href="https://benchcad.com/leaderboard.html"><b>BenchCAD 榜单</b><span>标准赛道和 Customized 赛道</span></a>
+</div>
+<p>本页只描述公开资料，没有转载题目、图纸、渲染图或参考答案。数字都出自上面的来源；标「推断」的是我的判断。</p>
+</section>
+</div>
+<div class="foot">GolemXIV · 应用技术研究 · 2026-11-18 · 资料来源见「来源」一节</div>
+</main>
+<script src="https://psylch.github.io/assets/report.js"></script>
+</body></html>
